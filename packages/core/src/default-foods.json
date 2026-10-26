@@ -1,0 +1,452 @@
+[
+  {
+    "id": "lamb-shoulder-raw",
+    "name": "Lamb shoulder, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 282,
+    "p": 16.6,
+    "c": 0,
+    "f": 23.4
+  },
+  {
+    "id": "ground-beef-lamb-mix-raw",
+    "name": "Ground beef/lamb mix (80/20), raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 254,
+    "p": 17.2,
+    "c": 0,
+    "f": 20.0
+  },
+  {
+    "id": "beef-shank-raw",
+    "name": "Beef shank / chuck, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 201,
+    "p": 20.1,
+    "c": 0,
+    "f": 13.0
+  },
+  {
+    "id": "chicken-breast-raw",
+    "name": "Chicken breast, boneless skinless, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 120,
+    "p": 22.5,
+    "c": 0,
+    "f": 2.6
+  },
+  {
+    "id": "chicken-thigh-raw",
+    "name": "Chicken thigh, skinless, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 144,
+    "p": 19.3,
+    "c": 0,
+    "f": 7.0
+  },
+  {
+    "id": "egg-whole-raw",
+    "name": "Egg, whole, raw",
+    "serving": "1 large (50 g)",
+    "gramsPerServing": 50,
+    "cal": 72,
+    "p": 6.3,
+    "c": 0.4,
+    "f": 4.8
+  },
+  {
+    "id": "whitefish-trout-raw",
+    "name": "Trout / Whitefish, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 141,
+    "p": 19.8,
+    "c": 0,
+    "f": 6.3
+  },
+  {
+    "id": "ghee-clarified-butter",
+    "name": "Ghee / Clarified butter (Roghan Heyvani)",
+    "serving": "1 tbsp (14 g)",
+    "gramsPerServing": 14,
+    "cal": 123,
+    "p": 0,
+    "c": 0,
+    "f": 13.9
+  },
+  {
+    "id": "vegetable-sunflower-oil",
+    "name": "Vegetable / Sunflower oil",
+    "serving": "1 tbsp (14 g)",
+    "gramsPerServing": 14,
+    "cal": 124,
+    "p": 0,
+    "c": 0,
+    "f": 14.0
+  },
+  {
+    "id": "unsalted-butter",
+    "name": "Unsalted butter",
+    "serving": "1 tbsp (14 g)",
+    "gramsPerServing": 14,
+    "cal": 102,
+    "p": 0.1,
+    "c": 0,
+    "f": 11.5
+  },
+  {
+    "id": "whole-milk-yogurt",
+    "name": "Plain yogurt, whole milk (Mast)",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 61,
+    "p": 3.5,
+    "c": 4.7,
+    "f": 3.3
+  },
+  {
+    "id": "strained-yogurt-mast-chekideh",
+    "name": "Strained / Greek yogurt (Mast Chekideh)",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 97,
+    "p": 9.0,
+    "c": 3.6,
+    "f": 5.0
+  },
+  {
+    "id": "kashk-liquid-whey",
+    "name": "Kashk (Liquid whey paste)",
+    "serving": "1 tbsp (15 g)",
+    "gramsPerServing": 15,
+    "cal": 25,
+    "p": 2.0,
+    "c": 1.5,
+    "f": 1.2
+  },
+  {
+    "id": "lighvan-feta-cheese",
+    "name": "Lighvan / Feta cheese",
+    "serving": "30 g",
+    "gramsPerServing": 30,
+    "cal": 79,
+    "p": 4.3,
+    "c": 1.2,
+    "f": 6.3
+  },
+  {
+    "id": "basmati-rice-dry",
+    "name": "Basmati rice, dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 356,
+    "p": 7.0,
+    "c": 78.0,
+    "f": 0.6
+  },
+  {
+    "id": "reshteh-soup-noodle-dry",
+    "name": "Reshteh (Persian soup noodles), dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 350,
+    "p": 12.0,
+    "c": 71.0,
+    "f": 1.5
+  },
+  {
+    "id": "sangak-flatbread",
+    "name": "Sangak flatbread",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 260,
+    "p": 9.0,
+    "c": 52.0,
+    "f": 1.2
+  },
+  {
+    "id": "barbari-flatbread",
+    "name": "Barbari flatbread",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 275,
+    "p": 9.5,
+    "c": 55.0,
+    "f": 1.5
+  },
+  {
+    "id": "potato-raw",
+    "name": "Potato, raw (for Tahdig)",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 77,
+    "p": 2.0,
+    "c": 17.5,
+    "f": 0.1
+  },
+  {
+    "id": "yellow-split-peas-dry",
+    "name": "Yellow split peas (Lapeh), dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 341,
+    "p": 24.5,
+    "c": 60.0,
+    "f": 1.2
+  },
+  {
+    "id": "red-kidney-beans-dry",
+    "name": "Red kidney beans, dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 333,
+    "p": 23.6,
+    "c": 60.0,
+    "f": 0.8
+  },
+  {
+    "id": "pinto-beans-dry",
+    "name": "Pinto beans, dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 347,
+    "p": 21.4,
+    "c": 62.6,
+    "f": 1.2
+  },
+  {
+    "id": "brown-lentils-dry",
+    "name": "Brown / Green lentils, dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 353,
+    "p": 25.8,
+    "c": 60.0,
+    "f": 1.1
+  },
+  {
+    "id": "chickpeas-dry",
+    "name": "Chickpeas (Nokhod), dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 364,
+    "p": 19.3,
+    "c": 60.7,
+    "f": 6.0
+  },
+  {
+    "id": "mung-beans-dry",
+    "name": "Mung beans (Mash), dry",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 347,
+    "p": 23.9,
+    "c": 62.6,
+    "f": 1.2
+  },
+  {
+    "id": "yellow-onion-raw",
+    "name": "Yellow onion, raw",
+    "serving": "1 medium (110 g)",
+    "gramsPerServing": 110,
+    "cal": 44,
+    "p": 1.2,
+    "c": 10.3,
+    "f": 0.1
+  },
+  {
+    "id": "eggplant-raw",
+    "name": "Eggplant, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 25,
+    "p": 1.0,
+    "c": 5.9,
+    "f": 0.2
+  },
+  {
+    "id": "zucchini-raw",
+    "name": "Zucchini, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 17,
+    "p": 1.2,
+    "c": 3.1,
+    "f": 0.3
+  },
+  {
+    "id": "green-beans-raw",
+    "name": "Green beans, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 31,
+    "p": 1.8,
+    "c": 7.0,
+    "f": 0.2
+  },
+  {
+    "id": "tomato-raw",
+    "name": "Tomato, raw",
+    "serving": "1 medium (123 g)",
+    "gramsPerServing": 123,
+    "cal": 22,
+    "p": 1.1,
+    "c": 4.8,
+    "f": 0.2
+  },
+  {
+    "id": "tomato-paste",
+    "name": "Tomato paste (Rob-e Gojeh)",
+    "serving": "1 tbsp (16 g)",
+    "gramsPerServing": 16,
+    "cal": 13,
+    "p": 0.7,
+    "c": 3.0,
+    "f": 0.1
+  },
+  {
+    "id": "garlic-raw",
+    "name": "Garlic, raw",
+    "serving": "1 clove (3 g)",
+    "gramsPerServing": 3,
+    "cal": 4,
+    "p": 0.2,
+    "c": 1.0,
+    "f": 0
+  },
+  {
+    "id": "pumpkin-raw",
+    "name": "Pumpkin, raw",
+    "serving": "100 g",
+    "gramsPerServing": 100,
+    "cal": 26,
+    "p": 1.0,
+    "c": 6.5,
+    "f": 0.1
+  },
+  {
+    "id": "english-walnuts",
+    "name": "English walnuts (Gherdoo)",
+    "serving": "30 g",
+    "gramsPerServing": 30,
+    "cal": 196,
+    "p": 4.6,
+    "c": 4.1,
+    "f": 19.6
+  },
+  {
+    "id": "barberries-zereshk-dried",
+    "name": "Barberries, dried (Zereshk)",
+    "serving": "10 g",
+    "gramsPerServing": 10,
+    "cal": 31,
+    "p": 0.4,
+    "c": 6.4,
+    "f": 0.4
+  },
+  {
+    "id": "pistachio-slivers",
+    "name": "Pistachio slivers",
+    "serving": "15 g",
+    "gramsPerServing": 15,
+    "cal": 84,
+    "p": 3.0,
+    "c": 4.1,
+    "f": 6.8
+  },
+  {
+    "id": "almond-slivers",
+    "name": "Almond slivers",
+    "serving": "15 g",
+    "gramsPerServing": 15,
+    "cal": 87,
+    "p": 3.2,
+    "c": 3.2,
+    "f": 7.5
+  },
+  {
+    "id": "dried-prunes-aloo-bokhara",
+    "name": "Dried prunes / plums (Aloo Bokhara)",
+    "serving": "1 piece (10 g)",
+    "gramsPerServing": 10,
+    "cal": 24,
+    "p": 0.2,
+    "c": 6.4,
+    "f": 0
+  },
+  {
+    "id": "dried-apricots-gheysi",
+    "name": "Dried apricots (Gheysi)",
+    "serving": "1 piece (8 g)",
+    "gramsPerServing": 8,
+    "cal": 19,
+    "p": 0.3,
+    "c": 4.9,
+    "f": 0
+  },
+  {
+    "id": "pomegranate-paste-molasses",
+    "name": "Pomegranate paste / molasses (Rob-e Anar)",
+    "serving": "1 tbsp (20 g)",
+    "gramsPerServing": 20,
+    "cal": 54,
+    "p": 0.1,
+    "c": 13.4,
+    "f": 0.1
+  },
+  {
+    "id": "dried-figs",
+    "name": "Whole dried figs (Anjeer Khoshk)",
+    "serving": "1 piece (8 g)",
+    "gramsPerServing": 8,
+    "cal": 20,
+    "p": 0.3,
+    "c": 5.1,
+    "f": 0.1
+  },
+  {
+    "id": "granulated-sugar",
+    "name": "Granulated white sugar",
+    "serving": "1 tbsp (12.5 g)",
+    "gramsPerServing": 12.5,
+    "cal": 48,
+    "p": 0,
+    "c": 12.5,
+    "f": 0
+  },
+  {
+    "id": "grape-molasses-sireh-angoor",
+    "name": "Grape molasses (Sireh Angoor)",
+    "serving": "1 tbsp (20 g)",
+    "gramsPerServing": 20,
+    "cal": 58,
+    "p": 0.2,
+    "c": 14.2,
+    "f": 0
+  },
+  {
+    "id": "date-molasses-sireh-khorma",
+    "name": "Date molasses (Sireh Khorma)",
+    "serving": "1 tbsp (20 g)",
+    "gramsPerServing": 20,
+    "cal": 55,
+    "p": 0.3,
+    "c": 13.5,
+    "f": 0
+  },
+  {
+    "id": "mazafati-dates",
+    "name": "Dates, Mazafati",
+    "serving": "1 date (8 g)",
+    "gramsPerServing": 8,
+    "cal": 23,
+    "p": 0.2,
+    "c": 6.0,
+    "f": 0
+  }
+]

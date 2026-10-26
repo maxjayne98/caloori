@@ -1,0 +1,8 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@source "../../../../packages/ui/src";
+@import '@nourish/ui/styles.css';
+@import '../styles/themes.css';
+@import '../styles/nourish.css';
+@import '../styles/settings.css';

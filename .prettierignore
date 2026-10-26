@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+pnpm-lock.yaml
+public/icons
+
+next-env.d.ts

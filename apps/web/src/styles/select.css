@@ -1,0 +1,206 @@
+.nourish-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid var(--neutral-e2e2e8);
+  border-radius: 13px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 14px;
+  text-align: left;
+}
+.nourish-select > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nourish-select > svg {
+  flex-shrink: 0;
+  color: var(--neutral-85858b);
+}
+.nourish-select[data-placeholder] {
+  color: var(--neutral-85858b);
+}
+.nourish-select[data-state='open'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.nourish-select-menu {
+  z-index: 200;
+  max-width: calc(100vw - 24px);
+  min-width: var(--radix-select-trigger-width);
+  max-height: min(320px, var(--radix-select-content-available-height));
+  overflow: hidden;
+  border: 1px solid var(--neutral-e8e8ed);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 12px 40px #00000020;
+  animation: select-appear 0.15s ease-out;
+}
+.nourish-select-options {
+  padding: 5px;
+}
+.nourish-select-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 35px 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+}
+.nourish-select-option[data-highlighted] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.nourish-select-option[data-state='checked'] {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+.nourish-select-option[data-disabled] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.nourish-select-check {
+  position: absolute;
+  right: 12px;
+  display: grid;
+  place-items: center;
+}
+.nourish-select-scroll {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  color: var(--neutral-85858b);
+}
+.portion-toolbar .toolbar-meal .nourish-select {
+  width: 112px;
+  min-height: 34px;
+  border-radius: 10px;
+  padding: 6px 9px;
+  font-size: 11px;
+  gap: 5px;
+}
+.amount-unit-row .nourish-select {
+  min-height: 64px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 24px;
+  font-weight: 600;
+}
+.activity-history .card-top > .nourish-select {
+  width: auto;
+  max-width: 65%;
+  font-size: 11px;
+  min-height: 36px;
+}
+.food-nutrition {
+  padding: 10px 12px;
+  gap: 10px;
+  border-radius: 16px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+.food-nutrition .portion-energy {
+  padding-right: 9px;
+  gap: 3px;
+}
+.food-nutrition .portion-energy b {
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+.food-nutrition .nutrition-caption,
+.food-nutrition .portion-macro > span {
+  font-size: 9px;
+  margin-bottom: 3px;
+}
+.food-nutrition .portion-macro {
+  padding-top: 0;
+  min-width: 0;
+}
+.food-nutrition .portion-macro:before {
+  display: none;
+}
+.food-nutrition .portion-macro b {
+  font-size: 16px;
+  line-height: 1.2;
+}
+.food-nutrition .portion-macro small,
+.food-nutrition .portion-energy div > span {
+  font-size: 9px;
+}
+.food-nutrition .portion-macros {
+  gap: 10px;
+}
+.nutrition-track {
+  height: 3px;
+  border-radius: 4px;
+  background: var(--neutral-f2f2f5);
+  margin: 7px 3px 2px 0;
+}
+.nutrition-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  position: relative;
+  background: currentColor;
+}
+.nutrition-track i:after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: -1px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.protein .nutrition-track {
+  color: #ff9f0a;
+}
+.carbs .nutrition-track {
+  color: #30b9c6;
+}
+.fat .nutrition-track {
+  color: #af7bea;
+}
+.macro .track {
+  overflow: visible;
+  margin-right: 4px;
+}
+.macro .track i {
+  position: relative;
+}
+.macro .track i:after {
+  content: '';
+  position: absolute;
+  top: -1.5px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: inherit;
+}
+@keyframes select-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nourish-select-menu {
+    animation: none;
+  }
+}

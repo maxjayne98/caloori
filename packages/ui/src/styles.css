@@ -1,0 +1,9 @@
+@theme inline {
+  --color-background: var(--canvas);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--accent);
+  --color-primary-foreground: white;
+  --color-muted: var(--neutral-f2f2f5);
+  --color-border: var(--neutral-e9e9ee);
+  --color-ring: var(--accent);
+}

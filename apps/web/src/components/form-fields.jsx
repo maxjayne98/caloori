@@ -1,0 +1,37 @@
+'use client';
+import { Select } from '@nourish/ui';
+
+export function field(label, name, value, type = 'number') {
+  return (
+    <div>
+      <label htmlFor={name}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        defaultValue={value ?? ''}
+        type={type}
+        required={true}
+        min={type === 'number' ? 0 : undefined}
+        step={type === 'number' ? 'any' : undefined}
+      />
+    </div>
+  );
+}
+export function formData(e) {
+  e.preventDefault();
+  return Object.fromEntries(new FormData(e.target));
+}
+export function select(label, name, opts, value) {
+  return (
+    <div>
+      <label htmlFor={name}>{label}</label>
+      <Select
+        required
+        name={name}
+        id={name}
+        defaultValue={value ?? ''}
+        options={opts.map((option) => ({ value: option, label: option }))}
+      />
+    </div>
+  );
+}

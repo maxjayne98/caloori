@@ -1,0 +1,21 @@
+{
+  "name": "nourish-monorepo",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "pnpm --filter @nourish/web dev",
+    "build": "pnpm --filter @nourish/web build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "tsx --test packages/core/src/*.test.ts packages/database/src/*.test.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
+  }
+}

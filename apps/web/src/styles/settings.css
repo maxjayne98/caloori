@@ -1,0 +1,316 @@
+.settings-panel h3 {
+  font-size: 19px;
+  letter-spacing: -0.5px;
+  margin: 12px 0 6px;
+}
+.settings-panel p {
+  font-size: 12px;
+}
+.settings-segments {
+  display: flex;
+  gap: 5px;
+  background: var(--neutral-e9e9ee);
+  padding: 4px;
+  border-radius: 12px;
+}
+.settings-segments button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--foreground);
+}
+.settings-segments .selected {
+  background: var(--surface);
+}
+.accent-swatches {
+  display: flex;
+  gap: 13px;
+  padding: 6px 0;
+}
+.accent-swatches button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: white;
+  font-size: 17px;
+  border: 3px solid transparent;
+}
+.accent-swatches .selected {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+.import-review {
+  padding: 15px;
+  background: var(--surface);
+  border-radius: 15px;
+}
+.sync-warning {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  max-width: 480px;
+  margin: auto;
+  padding: 12px 18px;
+  font:
+    12px -apple-system,
+    sans-serif;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.sync-warning button {
+  text-decoration: underline;
+}
+.dark .meal-icon {
+  background: #302c23;
+}
+.dark .meal-group:nth-child(2) .meal-icon {
+  background: #233229;
+}
+.dark .meal-group:nth-child(3) .meal-icon {
+  background: #292737;
+}
+.dark .meal-group:nth-child(4) .meal-icon {
+  background: #372631;
+}
+.dark input,
+.dark select {
+  color-scheme: dark;
+}
+.dark .nav {
+  background: #24242aee;
+}
+.dark .tag,
+.dark .plus,
+.dark .use-meal {
+  background: var(--accent-soft);
+}
+.dark .food-nutrition,
+.dark .builder-ingredient,
+.dark .template-card {
+  background: var(--surface);
+}
+/* Safe areas do not change desktop geometry; installed iPhone apps clear the notch/home indicator. */
+.app {
+  padding-top: calc(24px + env(safe-area-inset-top));
+  padding-bottom: calc(100px + max(12px, env(safe-area-inset-bottom)));
+}
+.nav {
+  height: calc(78px + max(12px, env(safe-area-inset-bottom)));
+}
+/* Header logging streak and compact day strip */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logging-streak {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--neutral-999);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.logging-streak svg {
+  color: #cf8b38;
+  opacity: 0.65;
+}
+.logging-streak.is-active svg {
+  color: #ff9f0a;
+  opacity: 1;
+  fill: #ff9f0a18;
+}
+.logging-streak.is-active span {
+  color: var(--foreground);
+}
+.day-strip.has-calendar {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 2px;
+}
+.day-strip.has-calendar .day-ring {
+  width: 100%;
+  max-width: 43px;
+  height: auto;
+  aspect-ratio: 1;
+}
+.day-strip.has-calendar .calendar-ring {
+  width: calc(100% - 4px);
+  max-width: 39px;
+  border: 2.5px solid var(--neutral-e8e8ed);
+  border-radius: 50%;
+  color: var(--neutral-999);
+}
+.calendar-ring svg {
+  position: static;
+  inset: auto;
+  transform: none;
+  width: 18px;
+  height: 18px;
+}
+.calendar-trigger[aria-expanded='true'] .calendar-ring {
+  color: var(--accent);
+}
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 24px;
+  gap: 10px;
+}
+.calendar-navigation > button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+.calendar-month-picker {
+  position: relative;
+  text-align: center;
+  min-width: 0;
+}
+.calendar-month-picker label {
+  margin: 0;
+  padding: 10px;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+  font-weight: 600;
+}
+.calendar-month-picker input {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.calendar-weekdays {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--neutral-999);
+}
+.calendar-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 40px;
+  aspect-ratio: 1;
+  width: 100%;
+  padding: 4px;
+  border-radius: 50%;
+  font-size: 13px;
+  color: var(--foreground);
+}
+.calendar-day.is-selected {
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 650;
+}
+.calendar-day.is-today::after {
+  content: '';
+  position: absolute;
+  width: 11px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.calendar-log-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #ff9f0a;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.calendar-day.is-today .calendar-log-dot {
+  bottom: 10px;
+}
+.calendar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--neutral-e9e9ee);
+  padding-top: 18px;
+  margin-top: 20px;
+}
+.calendar-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--neutral-999);
+}
+.calendar-footer i {
+  width: 4px;
+  height: 4px;
+  background: #ff9f0a;
+  border-radius: 50%;
+}
+@media (max-width: 350px) {
+  .calendar-grid,
+  .calendar-weekdays {
+    gap: 3px;
+  }
+  .calendar-day {
+    min-height: 35px;
+  }
+  .header-actions {
+    gap: 11px;
+  }
+}
+.profile-setup-card h2 {
+  margin: 15px 0 9px;
+  font-size: 25px;
+  letter-spacing: -0.7px;
+}
+.profile-setup-card p,
+.profile-setup-copy {
+  color: var(--neutral-85858b);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.profile-setup-card .primary {
+  margin-top: 10px;
+}
+.setup-intake {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  border-top: 1px solid var(--neutral-e8e8ed);
+  margin-top: 22px;
+  padding-top: 17px;
+}
+.setup-intake span {
+  font-size: 10px;
+  color: var(--neutral-85858b);
+}
+.setup-intake b {
+  display: block;
+  color: var(--foreground);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.profile-account-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid var(--neutral-e8e8ed); }
+.profile-account-row > span { color: var(--neutral-85858b); font-size: 12px; }
+.sign-out-button { display: inline-flex; justify-content: center; align-items: center; gap: 7px; color: var(--accent-text); min-height: 40px; padding: 8px 12px; background: var(--accent-soft); border-radius: 12px; font-size: 12px; font-weight: 600; }
+.sign-out-button:disabled { opacity: .5; cursor: wait; }
+.profile-account-row { margin: 26px 0 0; padding: 16px 0 0; border-bottom: 0; border-top: 1px solid var(--neutral-e8e8ed); }
