@@ -1,4 +1,5 @@
 'use client';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Select } from '@nourish/ui';
 
 import React from 'react';
@@ -93,18 +94,18 @@ export function ProgressCharts({ entries, activities, today }) {
           Current period
         </Button>
       </div>
-      <div className="progress-period">
+      <div className="date progress-period">
         <Button aria-label="Previous progress period" onClick={() => shift(-1)} variant="unstyled">
-          ‹
+          <ChevronLeft size={18} aria-hidden="true" />
         </Button>
-        <span>{dayName(days[0].date) + ' – ' + dayName(end)}</span>
+        <strong>{dayName(days[0].date) + ' – ' + dayName(end)}</strong>
         <Button
           aria-label="Next progress period"
           disabled={end >= today}
           onClick={() => shift(1)}
           variant="unstyled"
         >
-          ›
+          <ChevronRight size={18} aria-hidden="true" />
         </Button>
       </div>
       <section className="card intake-history">

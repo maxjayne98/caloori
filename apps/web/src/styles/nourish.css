@@ -2067,23 +2067,9 @@ label {
   color: var(--neutral-27272e);
   box-shadow: 0 1px 3px var(--neutral-00000005);
 }
+/* Shares the Today page's `.date` navigator styles. */
 .progress-period {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-.progress-period span {
-  font-size: 11px;
-  color: var(--neutral-8c8c96);
-}
-.progress-period button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--surface);
-  font-size: 22px;
-  color: var(--neutral-656570);
+  margin: 0 0 18px;
 }
 .progress-period button:disabled {
   opacity: 0.35;
