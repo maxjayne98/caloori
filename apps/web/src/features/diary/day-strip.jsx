@@ -54,6 +54,8 @@ export function DayStrip({ day, entries, goal, onSelect }) {
             cal = foods.reduce((v, x) => v + x.cal * x.qty, 0),
             dayGoal = savedDayGoal(foods) ?? (key === today ? goal : null),
             overGoal = dayGoal > 0 && cal > dayGoal,
+            // Finished days that ended well under goal get a soft blue ring.
+            lowGoal = key < today && dayGoal > 0 && cal > 0 && cal < dayGoal * 0.8,
             ratio = dayGoal > 0 ? Math.min(cal / dayGoal, 1) : 0;
           return (
             <Button
@@ -62,7 +64,8 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                 'day-button' +
                 (key === day ? ' selected' : '') +
                 (key === today ? ' is-today' : '') +
-                (overGoal ? ' over-goal' : '')
+                (overGoal ? ' over-goal' : '') +
+                (lowGoal ? ' low-goal' : '')
               }
               aria-label={
                 d.toLocaleDateString('en-US', {
@@ -72,7 +75,8 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                 ', ' +
                 Math.round(cal) +
                 ' calories' +
-                (overGoal ? ', above recorded goal' : '')
+                (overGoal ? ', above recorded goal' : '') +
+                (lowGoal ? ', well below recorded goal' : '')
               }
               aria-pressed={key === day}
               aria-current={key === today ? 'date' : undefined}
@@ -94,7 +98,7 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                     cy={24}
                     r={20}
                     fill="none"
-                    stroke={overGoal ? '#ff6a00' : 'var(--accent)'}
+                    stroke={overGoal ? '#ff6a00' : lowGoal ? '#7fb2f2' : 'var(--accent)'}
                     strokeWidth={3}
                     strokeLinecap="round"
                     strokeDasharray={125.66}
