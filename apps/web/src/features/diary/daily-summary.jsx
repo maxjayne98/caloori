@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@nourish/ui';
-import { portionNumber } from '@nourish/core';
+import { RollingNumber } from '@/components/rolling-number';
 export function DailySummary({ tot, profile, onEdit }) {
   if (!profile.cal)
     return (
@@ -14,16 +14,28 @@ export function DailySummary({ tot, profile, onEdit }) {
         </Button>
         <div className="setup-intake">
           <span>
-            Consumed <b>{Math.round(tot.cal).toLocaleString('en-US')} kcal</b>
+            Consumed{' '}
+            <b>
+              <RollingNumber value={Math.round(tot.cal)} /> kcal
+            </b>
           </span>
           <span>
-            Protein <b>{portionNumber(tot.p)} g</b>
+            Protein{' '}
+            <b>
+              <RollingNumber value={tot.p} decimals={2} /> g
+            </b>
           </span>
           <span>
-            Carbs <b>{portionNumber(tot.c)} g</b>
+            Carbs{' '}
+            <b>
+              <RollingNumber value={tot.c} decimals={2} /> g
+            </b>
           </span>
           <span>
-            Fat <b>{portionNumber(tot.f)} g</b>
+            Fat{' '}
+            <b>
+              <RollingNumber value={tot.f} decimals={2} /> g
+            </b>
           </span>
         </div>
       </section>
@@ -36,13 +48,13 @@ export function DailySummary({ tot, profile, onEdit }) {
     <div className="macro" key={k}>
       <small>{name}</small>
       <b>
-        {portionNumber(tot[k])}
-        <em>{'g / ' + profile[k] + 'g'}</em>
+        <RollingNumber value={tot[k]} decimals={2} />
+        <em>g / {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}g</em>
       </b>
       <div className="track">
         <i
           style={{
-            width: Math.min((tot[k] / profile[k]) * 100, 100) + '%',
+            width: (profile[k] > 0 ? Math.min((tot[k] / profile[k]) * 100, 100) : 0) + '%',
             background: color,
           }}
         />
@@ -66,26 +78,33 @@ export function DailySummary({ tot, profile, onEdit }) {
         />
       </svg>
       <div className="inside">
-        <b>{Math.round(Math.abs(profile.cal - tot.cal)).toLocaleString('en-US')}</b>
+        <b>
+          <RollingNumber value={Math.round(Math.abs(profile.cal - tot.cal))} />
+        </b>
         <span>{tot.cal > profile.cal ? 'kcal over goal' : 'kcal remaining'}</span>
       </div>
     </div>
   );
   const energy = (
     <div className="cal-footer">
-      <div>
-        <small>Consumed</small>
+      <small>Consumed / Daily goal</small>
+      <div className="energy-amounts">
         <b>
-          {Math.round(tot.cal).toLocaleString('en-US')} <em>kcal</em>
+          <RollingNumber value={Math.round(tot.cal)} />
         </b>
-      </div>
-      <div>
-        <small>Daily goal</small>
-        <Button onClick={onEdit} variant="unstyled">
+        <span className="energy-divider" aria-hidden="true">
+          /
+        </span>
+        <Button
+          aria-label={`Daily goal ${profile.cal} kcal. Edit profile and goals`}
+          onClick={onEdit}
+          variant="unstyled"
+        >
           <b>
-            {Number(profile.cal).toLocaleString('en-US')} <em>kcal</em>
+            <RollingNumber value={Number(profile.cal)} decimals={2} />
           </b>
         </Button>
+        <em>kcal</em>
       </div>
     </div>
   );
@@ -95,11 +114,13 @@ export function DailySummary({ tot, profile, onEdit }) {
         <span>Daily energy</span>
         <span className="tag">YOUR BALANCE</span>
       </div>
-      {ring}
-      {energy}
-      <div className="dashboard-macro-block">
-        <div className="macros">{macroItems}</div>
+      <div className="energy-details">
+        {energy}
+        <div className="dashboard-macro-block">
+          <div className="macros">{macroItems}</div>
+        </div>
       </div>
+      {ring}
     </section>
   );
 }

@@ -363,3 +363,166 @@ button.brand {
   padding: 0;
   text-align: left;
 }
+
+/* Keep all daily information beside the energy ring in one compact card. */
+.daily-summary.energy-card {
+  grid-template-columns: minmax(0, 1.25fr) minmax(112px, 1fr);
+  column-gap: 16px;
+}
+.daily-summary > .energy-details {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+.daily-summary > .energy-ring {
+  grid-column: 2;
+  grid-row: 2;
+  max-width: 152px;
+  align-self: center;
+}
+.daily-summary .cal-footer {
+  display: block;
+  border: 0;
+  padding: 0;
+  text-align: left;
+}
+.daily-summary .cal-footer small {
+  font-size: 10px;
+  margin-bottom: 7px;
+}
+.daily-summary .energy-amounts {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.daily-summary .energy-amounts b {
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+}
+.daily-summary .energy-amounts button {
+  color: var(--foreground);
+}
+.daily-summary .energy-amounts em {
+  font-size: 10px;
+}
+.energy-divider {
+  color: var(--neutral-85858b);
+  font-size: 17px;
+}
+.daily-summary .dashboard-macro-block {
+  border: 0;
+  margin: 18px 0 0;
+  padding: 0;
+}
+.daily-summary .dashboard-macro-block .macros {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 11px;
+  margin: 0;
+}
+.daily-summary .macro {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 5px;
+  align-items: baseline;
+}
+.daily-summary .macro small {
+  margin: 0;
+  font-size: 10px;
+}
+.daily-summary .dashboard-macro-block .macro b {
+  justify-self: end;
+  font-size: 13px;
+  letter-spacing: -0.3px;
+}
+.daily-summary .dashboard-macro-block .macro b em {
+  font-size: 9px;
+  margin-left: 1px;
+}
+.daily-summary .macro .track {
+  grid-column: 1/-1;
+  margin: 5px 0 0;
+  height: 4px;
+}
+.daily-summary .inside b {
+  font-size: clamp(26px, 6.5vw, 34px);
+  line-height: 1.15;
+}
+.daily-summary .inside > span {
+  font-size: 9px;
+}
+.rolling-number {
+  display: inline-block;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  vertical-align: -0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.rolling-number .number-digits {
+  display: inline-flex;
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+}
+.rolling-number .number-slot {
+  position: relative;
+  width: 0.6em;
+  height: 1em;
+  overflow: hidden;
+  display: inline-block;
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+}
+.rolling-number .number-reel {
+  display: block;
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+}
+.rolling-number .number-reel > span {
+  display: block;
+  height: 1em;
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+  text-align: center;
+}
+.rolling-number .number-mark {
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+}
+@media (max-width: 360px) {
+  .daily-summary.energy-card {
+    padding: 16px;
+    column-gap: 10px;
+  }
+  .daily-summary .energy-amounts {
+    gap: 3px;
+  }
+  .daily-summary .energy-amounts b {
+    font-size: 17px;
+  }
+  .daily-summary .dashboard-macro-block .macro b {
+    font-size: 12px;
+  }
+}
+.daily-summary .inside .rolling-number,
+.daily-summary .inside .rolling-number span,
+.setup-intake .rolling-number,
+.setup-intake .rolling-number span {
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+}
+.daily-summary .energy-ring circle:last-child {
+  transition: stroke-dashoffset 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .daily-summary .energy-ring circle:last-child {
+    transition: none;
+  }
+}
