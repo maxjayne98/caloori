@@ -467,7 +467,8 @@ button.brand {
   position: relative;
   width: 0.6em;
   height: 1em;
-  overflow: hidden;
+  /* Clip the reel vertically only, so wide bold glyphs aren't cut at the sides */
+  clip-path: inset(0 -0.15em);
   display: inline-block;
   font: inherit;
   color: inherit;
@@ -796,6 +797,10 @@ button.brand {
 .today-intro .today-actions .today-shortcut {
   position: static;
 }
+.weekly-report-anchor {
+  position: relative;
+  display: grid;
+}
 .weekly-report-shortcut {
   position: relative;
   display: grid;
@@ -1062,12 +1067,12 @@ button.brand {
 .report-first-message {
   position: absolute;
   bottom: calc(100% + 10px);
-  right: 0;
+  right: -6px;
   white-space: nowrap;
   padding: 8px 10px;
   border-radius: 11px;
-  background: #ffda6b;
-  color: #382500;
+  background: var(--accent);
+  color: #fff;
   font-size: 11px;
   font-weight: 600;
   box-shadow: 0 4px 14px #0001;
@@ -1078,10 +1083,10 @@ button.brand {
   content: '';
   position: absolute;
   bottom: -4px;
-  left: 17px;
+  right: 19px;
   width: 8px;
   height: 8px;
-  background: #ffda6b;
+  background: var(--accent);
   transform: rotate(45deg);
 }
 @keyframes report-message-appear {
