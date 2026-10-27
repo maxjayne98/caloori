@@ -89,7 +89,7 @@ export function DailySummary({ tot, profile, onEdit }) {
     <div className="cal-footer">
       <small>Consumed / Daily goal</small>
       <div className="energy-amounts">
-        <b>
+        <b className="consumed-value">
           <RollingNumber value={Math.round(tot.cal)} />
         </b>
         <span className="energy-divider" aria-hidden="true">

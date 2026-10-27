@@ -526,3 +526,16 @@ button.brand {
     transition: none;
   }
 }
+
+/* Make intake the first number the eye finds in the consumed / goal comparison. */
+.daily-summary .energy-amounts > .consumed-value {
+  color: var(--accent-text);
+  font-size: 30px;
+  font-weight: 780;
+  letter-spacing: -1px;
+}
+@media (max-width: 360px) {
+  .daily-summary .energy-amounts > .consumed-value {
+    font-size: 24px;
+  }
+}
