@@ -1,5 +1,5 @@
 [functions.nourish-assistant]
 # The handler validates the access token with Supabase Auth before doing any work.
 # Supports the project's asymmetric JWT signing keys rather than the legacy gateway check.
-# Keep the gateway check until the owner approves switching to the handler-based check.
-verify_jwt = true
+# Owner approved handler-based token verification on 2026-10-27.
+verify_jwt = false

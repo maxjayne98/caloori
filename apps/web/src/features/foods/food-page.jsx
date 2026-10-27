@@ -8,10 +8,10 @@ import { RefreshCw } from 'lucide-react';
 import { foods } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { MealLibrary } from '@/features/meals/meal-library';
-import { SavedMealPreview } from '@/features/meals/saved-meal-preview';
 import { FoodRows } from '@/features/foods/food-rows';
 export function FoodPage({
   filter,
+  notify,
   setFilter,
   libraryProps,
   query,
@@ -30,47 +30,52 @@ export function FoodPage({
     [refreshMessage, setRefreshMessage] = useState('');
   return (
     <>
-      <div className="intro">
+      <div className="intro food-intro">
         <div className="eyebrow">GOOD FOOD, LESS EFFORT</div>
         <h1>Your food library.</h1>
         <p>Find a favorite. Make it your own.</p>
+        {refreshFoods && (
+          <div className="food-refresh-row">
+            <Button
+              type="button"
+              variant="unstyled"
+              className="link"
+              aria-label="Refresh foods"
+              title="Refresh foods"
+              disabled={refreshing}
+              onClick={async () => {
+                setRefreshing(true);
+                setRefreshMessage('');
+                try {
+                  await refreshFoods();
+                  setRefreshMessage('Food library updated.');
+                  notify('Food library updated.');
+                } catch (error) {
+                  setRefreshMessage(
+                    error instanceof Error ? error.message : 'Could not update foods. Try again.',
+                  );
+                  notify(error instanceof Error ? error.message : 'Could not update foods.');
+                } finally {
+                  setRefreshing(false);
+                }
+              }}
+            >
+              {refreshing ? (
+                <HeartLoader inline label="" />
+              ) : (
+                <>
+                  <RefreshCw size={17} aria-hidden="true" />
+                </>
+              )}
+            </Button>
+            <span className="sr-only" role="status">
+              {refreshMessage || (refreshing ? 'Updating foods…' : '')}
+            </span>
+          </div>
+        )}
       </div>
-      {refreshFoods && (
-        <div className="food-refresh-row">
-          <Button
-            type="button"
-            variant="unstyled"
-            className="link"
-            disabled={refreshing}
-            onClick={async () => {
-              setRefreshing(true);
-              setRefreshMessage('');
-              try {
-                await refreshFoods();
-                setRefreshMessage('Food library updated.');
-              } catch (error) {
-                setRefreshMessage(
-                  error instanceof Error ? error.message : 'Could not update foods. Try again.',
-                );
-              } finally {
-                setRefreshing(false);
-              }
-            }}
-          >
-            {refreshing ? (
-              <HeartLoader inline label="Updating…" />
-            ) : (
-              <>
-                <RefreshCw size={14} aria-hidden="true" />
-                Refresh foods
-              </>
-            )}
-          </Button>
-          <span role="status">{refreshMessage}</span>
-        </div>
-      )}
       <div className="pills">
-        {['All foods', 'Recent', 'My foods', 'Recipes', 'Saved meals'].map((x) => (
+        {['All foods', 'Saved meals', 'My foods', 'Recent', 'Recipes'].map((x) => (
           <Button
             className={filter === x ? 'selected' : ''}
             onClick={() => setFilter(x)}
@@ -93,14 +98,6 @@ export function FoodPage({
             aria-label="Search food library"
             unstyled
           />
-          {filter === 'All foods' && (
-            <SavedMealPreview
-              templates={templates}
-              onUse={useTemplate}
-              onCreate={() => createTemplate()}
-              onViewAll={() => setFilter('Saved meals')}
-            />
-          )}
           <div className="food-library-actions">
             <Button
               className="link"

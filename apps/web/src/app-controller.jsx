@@ -225,6 +225,7 @@ export function App() {
     body = (
       <FoodPage
         filter={filter}
+        notify={notify}
         setFilter={setFilter}
         libraryProps={libraryProps}
         query={query}
@@ -535,10 +536,15 @@ export function App() {
   return (
     <main className="app">
       <header className="top">
-        <div className="brand">
+        <Button
+          variant="unstyled"
+          className="brand"
+          aria-label="Nourish — go to Today"
+          onClick={() => navigate('Today')}
+        >
           <span>♥</span>
           nourish
-        </div>
+        </Button>
         <div className="header-actions">
           <Button
             variant="unstyled"

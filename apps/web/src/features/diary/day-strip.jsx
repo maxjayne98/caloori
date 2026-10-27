@@ -25,6 +25,9 @@ export function DayStrip({ day, entries, goal, onSelect }) {
         <span className="day-ring calendar-ring">
           <CalendarDays aria-hidden="true" size={19} />
         </span>
+        <span className="day-weekday" aria-hidden="true">
+          Date
+        </span>
       </Button>
       {calendarOpen && (
         <ModalSheet title="Choose a day" onClose={() => setCalendarOpen(false)}>
@@ -92,6 +95,9 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                   />
                 </svg>
                 <b>{d.getDate()}</b>
+              </span>
+              <span className="day-weekday" aria-hidden="true">
+                {d.toLocaleDateString('en-US', { weekday: 'short' })}
               </span>
             </Button>
           );

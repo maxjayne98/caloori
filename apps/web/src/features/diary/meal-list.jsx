@@ -161,7 +161,6 @@ export function MealList({ list, onAdd, onEdit, onDelete, onMove, onView, onSave
           {drag.name}
         </div>
       )}
-      <p className="drag-hint">Drag the handle to move food between meals.</p>
     </>
   );
 }
