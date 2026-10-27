@@ -9,7 +9,14 @@ import { ModalSheet } from '@/components/modal-sheet';
 import { SettingsPanel } from '@/features/settings/settings-panel';
 import { useState, useEffect } from 'react';
 import { Button, Input } from '@nourish/ui';
-import { foods, today, freshKey, reusableItems, appendDiaryEntries } from '@nourish/core';
+import {
+  foods,
+  today,
+  freshKey,
+  reusableItems,
+  appendDiaryEntries,
+  rememberScannedFood,
+} from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { LoggingStreak } from '@/features/diary/logging-streak';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
@@ -459,6 +466,8 @@ export function App() {
       <BarcodeScanner
         onCreate={() => setSheet('custom')}
         onFound={(f) => {
+          setCustom((previous) => rememberScannedFood(previous, f));
+          notify('Food saved to My foods');
           setChosen(f);
           setQty(1);
           setSheet('add');

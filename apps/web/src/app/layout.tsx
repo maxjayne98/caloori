@@ -3,6 +3,7 @@ import { AppearanceProvider } from '@/providers/appearance-provider';
 import './globals.css';
 import '../styles/login.css';
 import '../styles/select.css';
+import '../styles/mobile-inputs.css';
 export const metadata: Metadata = {
   title: 'Nourish — Your daily nutrition',
   description: 'A little more mindful. Your simple daily nutrition companion.',

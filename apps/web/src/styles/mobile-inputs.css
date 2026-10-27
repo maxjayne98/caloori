@@ -1,0 +1,15 @@
+/* Keep editable text readable so iOS does not zoom on focus. Pinch zoom stays available. */
+@media (pointer: coarse), (max-width: 600px) {
+  html
+    body
+    .app
+    input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not([type='file']),
+  html body .app textarea,
+  html body .app select:not([aria-hidden='true']) {
+    font-size: max(16px, 1em);
+  }
+  /* Preserve the intentionally large portion amount. */
+  html body .app .amount-unit-row input {
+    font-size: 24px;
+  }
+}

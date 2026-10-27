@@ -1,3 +1,4 @@
+import type { SnapshotCache } from './snapshot-cache';
 import { emptyState, validateState, type AppState } from '@nourish/core';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { RevisionConflict, type NourishRepository, type Snapshot } from './repository';
@@ -7,14 +8,19 @@ export class SupabaseRepository implements NourishRepository {
   constructor(
     private client: SupabaseClient,
     private ownerId: string,
+    private cache?: SnapshotCache,
   ) {}
   private async requireOwner() {
     const { data, error } = await this.client.auth.getUser();
-    if (error || data.user?.id !== this.ownerId)
+    if (error || data.user?.id !== this.ownerId) {
+      this.cache?.clear();
       throw new Error('Please sign in again before accessing this data.');
+    }
   }
   async load(): Promise<Snapshot> {
     await this.requireOwner();
+    const cached = this.cache?.read();
+    if (cached) return cached;
     const { data, error } = await this.client
       .from('nourish_documents')
       .select('data, revision')
@@ -22,8 +28,11 @@ export class SupabaseRepository implements NourishRepository {
       .maybeSingle();
     if (error)
       throw new Error('Could not load your data. Check the database setup and connection.');
-    if (!data) return { state: emptyState(), revision: 0 };
-    return { state: validateState(data.data), revision: Number(data.revision) };
+    const snapshot = data
+      ? { state: validateState(data.data), revision: Number(data.revision) }
+      : { state: emptyState(), revision: 0 };
+    this.cache?.write(snapshot);
+    return snapshot;
   }
   async save(state: AppState, expectedRevision: number) {
     await this.requireOwner();
@@ -33,13 +42,17 @@ export class SupabaseRepository implements NourishRepository {
       p_expected_user_id: this.ownerId,
     });
     if (error) {
-      if (error.code === '40001') throw new RevisionConflict();
+      if (error.code === '40001') {
+        this.cache?.clear();
+        throw new RevisionConflict();
+      }
       throw new Error(
         'Could not save to the database. Your unsaved changes remain on this screen.',
       );
     }
     if (!Number.isSafeInteger(Number(data)))
       throw new Error('The database returned an invalid revision.');
+    this.cache?.write({ state: validateState(state), revision: Number(data) });
     return Number(data);
   }
 }

@@ -5,7 +5,7 @@ import { Button, Input } from '@nourish/ui';
 import { barcodeIsValid, barcodeProductToFood } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import * as ZXingBrowser from '@zxing/browser';
-export function BarcodeScanner({ onFound, onCreate }) {
+export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
   const [code, setCode] = React.useState(''),
     [status, setStatus] = React.useState('ready'),
     [error, setError] = React.useState(''),
@@ -45,6 +45,11 @@ export function BarcodeScanner({ onFound, onCreate }) {
       return;
     }
     stop();
+    const saved = custom.find((food) => food.barcode === barcode);
+    if (saved) {
+      onFound(saved);
+      return;
+    }
     setBusy(true);
     setStatus('Looking up product…');
     const controller = new AbortController();

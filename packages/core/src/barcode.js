@@ -40,3 +40,12 @@ export function barcodeProductToFood(product, code) {
     productSize: basis,
   };
 }
+
+/** Re-scanning a known barcode preserves the user's existing food and its edits. */
+export function rememberScannedFood(foods, food) {
+  return foods.some(
+    (entry) => entry.id === food.id || (food.barcode && entry.barcode === food.barcode),
+  )
+    ? foods
+    : [...foods, food];
+}

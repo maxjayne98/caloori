@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createClient, type SupabaseClient, type Session } from '@nourish/database';
 import { LocalRepository, SupabaseRepository, type NourishRepository } from '@nourish/database';
+import { SnapshotCache } from '@nourish/database';
 import { DataProvider } from './data-provider';
 import { LoginScreen } from '@/features/auth/login-screen';
 
@@ -14,6 +15,14 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
   const [localPreview, setLocalPreview] = useState(false);
   const [accountId, setAccountId] = useState('');
   const owner = useRef<string | null>(null);
+  const activeCache = useRef<SnapshotCache | null>(null);
+  function createSnapshotCache(id: string) {
+    try {
+      return new SnapshotCache(sessionStorage, id);
+    } catch {
+      return null;
+    }
+  }
   const driver = process.env.NEXT_PUBLIC_STORAGE_DRIVER || 'local';
 
   useEffect(() => {
@@ -42,9 +51,15 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
       if (!active) return;
       setChecking(false);
       if (owner.current === (session?.user.id ?? null)) return;
+      activeCache.current?.dispose();
+      activeCache.current = session ? createSnapshotCache(session.user.id) : null;
       owner.current = session?.user.id ?? null;
       setAccountId(session?.user.id ?? '');
-      setRepository(session ? new SupabaseRepository(supabase, session.user.id) : null);
+      setRepository(
+        session
+          ? new SupabaseRepository(supabase, session.user.id, activeCache.current ?? undefined)
+          : null,
+      );
       setBusy(false);
       setMessage('');
     }
@@ -106,6 +121,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
             ? async () => {
                 const { error } = await client.auth.signOut({ scope: 'local' });
                 if (error) throw new Error('Could not sign out. Please try again.');
+                activeCache.current?.dispose();
               }
             : async () => {
                 setLocalPreview(false);
