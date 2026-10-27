@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@nourish/ui';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 export function ModalSheet({
   title,
   onClose,
@@ -17,6 +17,7 @@ export function ModalSheet({
   onClose: () => void;
   children: ReactNode;
 }) {
+  const sheet = useRef<HTMLElement>(null);
   return (
     <Dialog
       open
@@ -31,10 +32,18 @@ export function ModalSheet({
             if (e.target === e.currentTarget) onClose();
           }}
         >
-          <DialogContent asChild aria-describedby={undefined} onEscapeKeyDown={(event) => {
-            if (document.querySelector('.nourish-select-menu')) event.preventDefault();
-          }}>
-            <section className="sheet">
+          <DialogContent
+            asChild
+            aria-describedby={undefined}
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              sheet.current?.focus({ preventScroll: true });
+            }}
+            onEscapeKeyDown={(event) => {
+              if (document.querySelector('.nourish-select-menu')) event.preventDefault();
+            }}
+          >
+            <section ref={sheet} tabIndex={-1} className="sheet">
               <div className="handle" />
               <div className="sheet-head">
                 <DialogTitle asChild>

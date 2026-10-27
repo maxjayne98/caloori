@@ -68,7 +68,6 @@ export function AddFoodSheet({
         className="search"
         placeholder="Search for a food"
         value={query}
-        autoFocus={true}
         onChange={(e) => setQuery(e.target.value)}
         aria-label="Search for food"
         unstyled
