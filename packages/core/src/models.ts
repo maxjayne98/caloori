@@ -22,6 +22,17 @@ export const ProfileSchema = z
     weight: positive.max(700).nullable(),
     goal: z.enum(['Lose weight', 'Maintain weight', 'Gain weight']).nullable(),
     activity: z.enum(['Not very active', 'Lightly active', 'Active', 'Very active']).nullable(),
+    // Small square image resized on-device; stored inline so it syncs with the rest of the profile.
+    photo: z
+      .string()
+      .max(150_000)
+      .regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/)
+      .optional(),
+    // Which avatar to show: the first letter of the name, the photo, or pattern N (identicon variant).
+    avatar: z
+      .string()
+      .regex(/^(initial|photo|pattern:\d{1,2})$/)
+      .optional(),
   })
   .passthrough();
 export const PortionSchema = z.object({

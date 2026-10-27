@@ -34,3 +34,28 @@ test('only the untouched old nameless preset is cleared, entered values survive'
   assert.deepEqual(validateState({ ...emptyState(), profile: real }).profile, real);
   assert.throws(() => validateState({ ...emptyState(), profile: { ...real, weight: -1 } }));
 });
+test('profile photo accepts small image data URLs and rejects anything else', () => {
+  const base = emptyState();
+  const photo = 'data:image/jpeg;base64,/9j/4AAQSkZJRg==';
+  assert.equal(
+    validateState({ ...base, profile: { ...base.profile, photo } }).profile.photo,
+    photo,
+  );
+  assert.equal(validateState(base).profile.photo, undefined);
+  for (const bad of [
+    'https://example.com/a.jpg',
+    'data:image/svg+xml;base64,PHN2Zz4=',
+    'data:text/html,<b>',
+  ])
+    assert.throws(() => validateState({ ...base, profile: { ...base.profile, photo: bad } }));
+});
+test('profile avatar choice accepts initial, photo and pattern variants only', () => {
+  const base = emptyState();
+  for (const avatar of ['initial', 'photo', 'pattern:0', 'pattern:7'])
+    assert.equal(
+      validateState({ ...base, profile: { ...base.profile, avatar } }).profile.avatar,
+      avatar,
+    );
+  for (const bad of ['pattern:', 'pattern:123', 'emoji'])
+    assert.throws(() => validateState({ ...base, profile: { ...base.profile, avatar: bad } }));
+});

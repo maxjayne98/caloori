@@ -1,10 +1,86 @@
 'use client';
 import { Button } from '@nourish/ui';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-provider';
+import { useNourishData } from '@/providers/data-provider';
+import {
+  PATTERN_COUNT,
+  ProfileAvatar,
+  avatarChoice,
+  resizeProfilePhoto,
+} from '@/components/profile-photo';
 export function SettingsPanel() {
   const { theme, setTheme, accent, setAccent } = useAppearance();
+  const { profile, setProfile, accountId } = useNourishData();
+  const picker = useRef<HTMLInputElement>(null);
+  const [photoError, setPhotoError] = useState('');
+  const current = avatarChoice(profile);
+  function setAvatar(avatar: string) {
+    setProfile((previous) => ({ ...previous, avatar }));
+  }
+  async function choosePhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setPhotoError('');
+    try {
+      const photo = await resizeProfilePhoto(file);
+      setProfile((previous) => ({ ...previous, photo, avatar: 'photo' }));
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : 'That photo could not be used.');
+    }
+  }
+  function removePhoto() {
+    setProfile(({ photo: _removed, ...rest }) => ({
+      ...rest,
+      avatar: rest.avatar === 'photo' ? 'pattern:0' : rest.avatar,
+    }));
+  }
+  const choices = [
+    'initial',
+    ...Array.from({ length: PATTERN_COUNT }, (_, i) => `pattern:${i}`),
+    ...(profile.photo ? ['photo'] : []),
+  ];
   return (
     <div className="settings-panel">
+      <h3>Avatar</h3>
+      <div className="avatar-choices" role="radiogroup" aria-label="Avatar">
+        {choices.map((choice) => (
+          <Button
+            key={choice}
+            variant="unstyled"
+            role="radio"
+            aria-checked={current === choice}
+            aria-label={
+              choice === 'initial'
+                ? 'First letter of your name'
+                : choice === 'photo'
+                  ? 'Your photo'
+                  : `Pattern ${Number(choice.slice(8)) + 1}`
+            }
+            className={current === choice ? 'selected' : ''}
+            onClick={() => setAvatar(choice)}
+          >
+            <ProfileAvatar profile={profile} seed={accountId} choice={choice} size={26} />
+          </Button>
+        ))}
+      </div>
+      <div className="settings-photo-actions">
+        <Button
+          variant="unstyled"
+          className="settings-photo-choose"
+          onClick={() => picker.current?.click()}
+        >
+          {profile.photo ? 'Change photo' : 'Upload photo'}
+        </Button>
+        {profile.photo && (
+          <Button variant="unstyled" className="settings-photo-remove" onClick={removePhoto}>
+            Remove photo
+          </Button>
+        )}
+        <input ref={picker} type="file" accept="image/*" hidden onChange={choosePhoto} />
+      </div>
+      {photoError && <p role="alert">{photoError}</p>}
       <h3>Appearance</h3>
       <p>Make Nourish feel like you.</p>
       <label>Theme</label>

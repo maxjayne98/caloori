@@ -20,3 +20,15 @@ export function HeartLoader({
     </div>
   );
 }
+
+/** Full-screen loading state shared by every startup phase, so a refresh shows one loader. */
+export function AppLoading() {
+  return (
+    <main className="app">
+      <div className="brand">
+        <span>♥</span>nourish
+      </div>
+      <HeartLoader label="Opening your diary…" />
+    </main>
+  );
+}

@@ -52,6 +52,10 @@ button:active {
   margin-right: 5px;
 }
 .avatar {
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
   background: var(--surface);
   width: 42px;
   height: 42px;
@@ -822,14 +826,14 @@ label {
   font-size: 12px;
 }
 .today-shortcut {
-  min-height: 36px;
-  padding: 7px 13px;
+  min-height: 32px;
+  padding: 6px 12px;
   border: 1px solid var(--neutral-e2e2e8);
-  border-radius: 18px;
-  background: var(--surface);
-  color: var(--accent);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--neutral-85858b);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 550;
 }
 .day-strip {
   margin-top: 0;

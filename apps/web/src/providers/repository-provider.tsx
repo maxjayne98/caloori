@@ -6,6 +6,7 @@ import { LocalRepository, SupabaseRepository, type NourishRepository } from '@no
 import { FoodCache, SnapshotCache } from '@nourish/database';
 import { DataProvider } from './data-provider';
 import { LoginScreen } from '@/features/auth/login-screen';
+import { AppLoading } from '@/components/heart-loader';
 
 export function RepositoryProvider({ children }: { children: React.ReactNode }) {
   const [repository, setRepository] = useState<NourishRepository | null>(null);
@@ -169,6 +170,8 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
       </DataProvider>
     );
   }
+  // Restoring a saved session: show the diary loader rather than flashing the login page.
+  if (checking) return <AppLoading />;
   return (
     <LoginScreen
       ready={!!client}

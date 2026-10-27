@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { HeartLoader } from '@/components/heart-loader';
+import { AppLoading } from '@/components/heart-loader';
 import {
   applyAssistantProposal,
   type AssistantRequest,
@@ -207,14 +207,15 @@ export function DataProvider({
       setState(valid);
     },
   };
+  if (!ready && !error) return <AppLoading />;
   if (!ready)
     return (
       <main className="app">
         <div className="brand">
           <span>♥</span>nourish
         </div>
-        {error ? <p role="alert">{error}</p> : <HeartLoader label="Opening your diary…" />}
-        {error && <p>Export your browser data before attempting recovery. Refresh to retry.</p>}
+        <p role="alert">{error}</p>
+        <p>Export your browser data before attempting recovery. Refresh to retry.</p>
       </main>
     );
   return (

@@ -31,6 +31,25 @@ export function TodayPage({
   const { accountId } = useNourishData();
   const [reportMessage, setReportMessage] = useState(false);
   const reportWeek = weeklyReport.days[0].date;
+  const openedKey = `nourish:report-opened:${accountId}:${reportWeek}`;
+  // The shortcut is a one-time nudge per week; afterwards the report lives under Progress.
+  const [reportOpened, setReportOpened] = useState(true);
+  useEffect(() => {
+    try {
+      setReportOpened(!!localStorage.getItem(openedKey));
+    } catch {
+      setReportOpened(false);
+    }
+  }, [openedKey]);
+  function openWeeklyReport() {
+    try {
+      localStorage.setItem(openedKey, 'opened');
+    } catch {
+      /* Without storage the shortcut simply stays available. */
+    }
+    setReportOpened(true);
+    onWeeklyReport();
+  }
   useEffect(() => {
     if (!weeklyReport.ready) return;
     const key = `nourish:report-seen:${accountId}:${reportWeek}`;
@@ -51,7 +70,7 @@ export function TodayPage({
     <>
       <div className="intro today-intro">
         <div className="today-actions">
-          {weeklyReport.ready && (
+          {weeklyReport.ready && !reportOpened && (
             <span className="weekly-report-anchor">
               {reportMessage && (
                 <span className="report-first-message" role="status">
@@ -61,7 +80,7 @@ export function TodayPage({
               <Button
                 variant="unstyled"
                 className="weekly-report-shortcut"
-                onClick={onWeeklyReport}
+                onClick={openWeeklyReport}
                 aria-label="View last week’s report"
                 title="Last week’s report is ready"
               >

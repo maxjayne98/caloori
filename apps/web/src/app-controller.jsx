@@ -22,6 +22,7 @@ import {
   rememberScannedFood,
 } from '@nourish/core';
 import { Icon } from '@/components/icon';
+import { ProfileAvatar } from '@/components/profile-photo';
 import { BottomNavigation } from '@/components/bottom-navigation';
 import { LoggingStreak } from '@/features/diary/logging-streak';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
@@ -50,6 +51,7 @@ export function App() {
     setCustom,
     setTemplates,
     setActivities,
+    accountId,
   } = useNourishData();
   const [tab, setTab] = useState('Today'),
     [day, setDay] = useState(today),
@@ -257,6 +259,8 @@ export function App() {
         setSheet={setSheet}
         entries={entries}
         activities={activities}
+        weeklyReport={weeklyReport}
+        onWeeklyReport={() => navigate('Weekly')}
       />
     );
   if (tab === 'Profile')
@@ -543,7 +547,7 @@ export function App() {
           aria-label="Nourish — go to Today"
           onClick={() => navigate('Today')}
         >
-          <span>♥</span>
+          <span className="brand-heart">♥</span>
           nourish
         </Button>
         <div className="header-actions">
@@ -565,10 +569,8 @@ export function App() {
           >
             {tab === 'Profile' ? (
               <Settings size={20} aria-hidden="true" />
-            ) : profile.name ? (
-              profile.name.slice(0, 1).toUpperCase()
             ) : (
-              'You'
+              <ProfileAvatar profile={profile} seed={accountId} />
             )}
           </Button>
         </div>
