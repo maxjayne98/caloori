@@ -123,13 +123,14 @@
   margin-top: 24px;
 }
 .assistant-launch {
+  position: relative;
   width: 36px;
   height: 36px;
   display: grid;
   place-items: center;
-  color: var(--accent-text);
   border-radius: 50%;
-  background: var(--accent-soft);
+  /* Google palette on purpose: the assistant is an external AI, not part of the Nourish theme. */
+  background: linear-gradient(45deg, #34a8531f, #4285f41f 40%, #9b72cb1f 70%, #ea43351f);
 }
 .assistant-thread {
   display: flex;

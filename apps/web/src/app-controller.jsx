@@ -557,7 +557,16 @@ export function App() {
             aria-label="Open Nourish assistant"
             onClick={() => navigate('Assistant')}
           >
-            <Sparkles size={19} />
+            {/* Google-colored gradient marks the assistant as an outside AI service. */}
+            <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
+              <linearGradient id="assistant-gradient" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stopColor="#34a853" />
+                <stop offset="0.35" stopColor="#4285f4" />
+                <stop offset="0.7" stopColor="#9b72cb" />
+                <stop offset="1" stopColor="#ea4335" />
+              </linearGradient>
+            </svg>
+            <Sparkles size={19} stroke="url(#assistant-gradient)" aria-hidden="true" />
           </Button>
           <LoggingStreak entries={entries} today={today} />
           <Button
