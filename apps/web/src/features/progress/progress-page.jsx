@@ -5,6 +5,7 @@ import { ProgressCharts } from '@/features/progress/progress-charts';
 import { WeightSummary } from '@/features/progress/weight-summary';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
+import { ReportIcon } from '@/components/report-icon';
 
 const dateLabel = (date) =>
   new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -26,7 +27,10 @@ export function ProgressPage({
       </div>
       {weeklyReport.ready && (
         <Button variant="unstyled" className="card weekly-report-link" onClick={onWeeklyReport}>
-          <span>
+          <span className="weekly-report-shortcut">
+            <ReportIcon animated />
+          </span>
+          <span className="weekly-report-link-text">
             <strong>Weekly report</strong>
             <small>
               {dateLabel(weeklyReport.days[0].date)} – {dateLabel(weeklyReport.days[6].date)}

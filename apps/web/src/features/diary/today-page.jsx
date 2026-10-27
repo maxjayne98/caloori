@@ -9,6 +9,7 @@ import { DayStrip } from '@/features/diary/day-strip';
 import { MealList } from '@/features/diary/meal-list';
 import { ActivityList } from '@/features/activities/activity-list';
 import { DailySummary } from '@/features/diary/daily-summary';
+import { ReportIcon } from '@/components/report-icon';
 export function TodayPage({
   setDay,
   profile,
@@ -84,22 +85,7 @@ export function TodayPage({
                 aria-label="View last week’s report"
                 title="Last week’s report is ready"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="M4 21v-4m5 4v-7m5 7v-5m5 5V11"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M3 13 8 8 12 12 20 3"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle className="report-ready-dot" cx="20" cy="3" r="1.8" fill="currentColor" />
-                </svg>
+                <ReportIcon animated />
               </Button>
             </span>
           )}

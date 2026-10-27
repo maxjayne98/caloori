@@ -1179,15 +1179,19 @@ button.brand {
 .weekly-report-link {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   width: 100%;
   margin-bottom: 14px;
   text-align: left;
   color: var(--neutral-85858b);
 }
-.weekly-report-link > span {
+.weekly-report-link .weekly-report-shortcut {
+  flex: none;
+}
+.weekly-report-link-text {
   display: grid;
   gap: 3px;
+  flex: 1;
 }
 .weekly-report-link strong {
   color: var(--foreground);
