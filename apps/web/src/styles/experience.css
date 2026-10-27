@@ -1477,3 +1477,13 @@ button.brand {
     animation: none;
   }
 }
+
+/* Neutral spacing inside each clipping window preserves the full glyph edge. */
+.rolling-number .number-slot {
+  width: 0.64em;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+.rolling-number .number-reel {
+  letter-spacing: 0;
+}
