@@ -195,15 +195,11 @@ export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
         )}
         {camera && <div className="scanner-frame" />}
       </div>
-      <div className="scanner-status" role="status">
-        {busy || status === 'Opening camera…' ? (
-          <HeartLoader inline label={status} />
-        ) : status === 'ready' ? (
-          'Camera starts only when you tap below.'
-        ) : (
-          status
-        )}
-      </div>
+      {status !== 'ready' && (
+        <div className="scanner-status" role="status">
+          {busy || status === 'Opening camera…' ? <HeartLoader inline label={status} /> : status}
+        </div>
+      )}
       <div className="scanner-actions">
         <Button
           className="primary"

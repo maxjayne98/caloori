@@ -20,14 +20,12 @@ export function ProfilePage({ profile, setProfile, notify, onBack, onSettings })
         <h1 id="profile-title">Made for you.</h1>
         <p>Your details. Your goals. Your own pace.</p>
       </div>
-      <div className="card profile-card">
-        <ProfileForm
-          profile={profile}
-          setProfile={setProfile}
-          notify={notify}
-          onSettings={onSettings}
-        />
-      </div>
+      <ProfileForm
+        profile={profile}
+        setProfile={setProfile}
+        notify={notify}
+        onSettings={onSettings}
+      />
     </section>
   );
 }

@@ -105,24 +105,21 @@
 .assistant-page .intro {
   margin-top: 20px;
 }
-.profile-card {
-  padding: 22px;
-}
-.profile-card form > p {
+.profile-form > p {
   font-size: 13px;
   color: var(--neutral-85858b);
   line-height: 1.6;
 }
-.profile-card label {
+.profile-form label {
   display: block;
   font-size: 12px;
   font-weight: 600;
   margin: 18px 0 8px;
 }
-.profile-card input {
+.profile-form input {
   width: 100%;
 }
-.profile-card .primary {
+.profile-form .primary {
   margin-top: 24px;
 }
 .assistant-launch {

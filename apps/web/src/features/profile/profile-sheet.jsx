@@ -7,6 +7,7 @@ import { field, select, formData } from '@/components/form-fields';
 export function ProfileForm({ notify, setProfile, profile, onSettings }) {
   return (
     <form
+      className="profile-form"
       onSubmit={(e) => {
         const d = formData(e);
         if (![d.age, d.height, d.weight].every((value) => Number.isFinite(+value) && +value > 0))
