@@ -1,6 +1,6 @@
 'use client';
 
-import { portionNumber } from '@nourish/core';
+import { RollingNumber } from '@/components/rolling-number';
 export function FoodNutrition({ values }) {
   const macroEnergy = Math.max(0, values.p * 4 + values.c * 4 + values.f * 9);
   return (
@@ -8,7 +8,9 @@ export function FoodNutrition({ values }) {
       <div className="portion-energy">
         <span className="nutrition-caption">Energy</span>
         <div>
-          <b>{portionNumber(values.cal)}</b>
+          <b>
+            <RollingNumber value={values.cal} decimals={2} />
+          </b>
           <span>{' kcal'}</span>
         </div>
       </div>
@@ -21,7 +23,7 @@ export function FoodNutrition({ values }) {
           <div key={key} className={'portion-macro ' + cls}>
             <span>{label}</span>
             <b>
-              {portionNumber(values[key])}
+              <RollingNumber value={values[key]} decimals={2} />
               <small>{' g'}</small>
             </b>
             <div

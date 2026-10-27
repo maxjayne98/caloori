@@ -1,8 +1,22 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { balanceStatus } from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
-export function DailySummary({ tot, profile, onEdit }) {
+export function DailySummary({ tot, profile, onEdit, day }) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  const status = balanceStatus(tot.cal, profile.cal, day, now);
+  const labels = {
+    neutral: 'YOUR BALANCE',
+    over: 'ABOVE GOAL',
+    low: 'EVENING CHECK-IN',
+    reached: 'GOAL REACHED',
+  };
   if (!profile.cal)
     return (
       <section className="card profile-setup-card">
@@ -109,10 +123,10 @@ export function DailySummary({ tot, profile, onEdit }) {
     </div>
   );
   return (
-    <section className="card energy-card daily-summary">
+    <section className={`card energy-card daily-summary balance-${status}`}>
       <div className="card-top">
         <span>Daily energy</span>
-        <span className="tag">YOUR BALANCE</span>
+        <span className="tag">{labels[status]}</span>
       </div>
       <div className="energy-details">
         {energy}
@@ -121,6 +135,15 @@ export function DailySummary({ tot, profile, onEdit }) {
         </div>
       </div>
       {ring}
+      {status !== 'neutral' && (
+        <p className="balance-message" role="status">
+          {status === 'over'
+            ? 'Above your logged goal. One day is only part of the picture.'
+            : status === 'low'
+              ? 'Below 80% of your goal this evening. Check for any meals you haven’t logged.'
+              : 'You’ve reached your daily energy goal.'}
+        </p>
+      )}
     </section>
   );
 }

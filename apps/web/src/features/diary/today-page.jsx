@@ -23,6 +23,8 @@ export function TodayPage({
   setMeal,
   activities,
   setActivity,
+  weeklyReport,
+  onWeeklyReport,
 }) {
   return (
     <>
@@ -77,7 +79,16 @@ export function TodayPage({
           <ChevronRight size={18} aria-hidden="true" />
         </Button>
       </div>
-      <DailySummary tot={tot} profile={profile} onEdit={() => setSheet('profile')} />
+      <DailySummary day={day} tot={tot} profile={profile} onEdit={() => setSheet('profile')} />
+      {weeklyReport.ready && (
+        <Button variant="unstyled" className="weekly-report-link" onClick={onWeeklyReport}>
+          <span>
+            <small>YOUR WEEK IN REVIEW</small>
+            <strong>Last week’s report is ready</strong>
+          </span>
+          <ChevronRight size={20} aria-hidden="true" />
+        </Button>
+      )}
       <div className="section">
         <h2>Your meals</h2>
         <div className="meal-section-actions">

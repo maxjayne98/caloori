@@ -1,4 +1,6 @@
 'use client';
+import { buildWeeklyReport } from '@nourish/core';
+import { WeeklyReportPage } from '@/features/progress/weekly-report-page';
 
 import { AddFoodSheet } from '@/features/foods/add-sheet';
 import { ProfilePage } from '@/features/profile/profile-page';
@@ -79,6 +81,7 @@ export function App() {
         progress: 'Progress',
         profile: 'Profile',
         assistant: 'Assistant',
+        weekly: 'Weekly',
       };
       setTab(pages[window.location.hash.slice(1)] || 'Today');
       setSheetState(null);
@@ -201,10 +204,15 @@ export function App() {
       notify('Saved meal deleted');
     },
   };
+  const weeklyReport = buildWeeklyReport(entries, activities, weights);
   let body;
+  if (tab === 'Weekly')
+    body = <WeeklyReportPage report={weeklyReport} onBack={() => navigate('Today')} />;
   if (tab === 'Today')
     body = (
       <TodayPage
+        weeklyReport={weeklyReport}
+        onWeeklyReport={() => navigate('Weekly')}
         setDay={setDay}
         profile={profile}
         day={day}

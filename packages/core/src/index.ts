@@ -8,3 +8,4 @@ export * from './progress';
 export * from './calendar';
 
 export * from './assistant';
+export * from './weekly-report';
