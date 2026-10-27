@@ -153,6 +153,7 @@ export function TodayPage({
         </div>
       </div>
       <MealList
+        day={day}
         list={list}
         onAdd={openAdd}
         onEdit={editItem}

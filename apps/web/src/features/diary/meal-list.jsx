@@ -4,10 +4,36 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@nourish/ui';
 import { meals, portionNumber, formatPortion } from '@nourish/core';
 import { Icon } from '@/components/icon';
-export function MealList({ list, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
+export function MealList({ day, list, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
   const [drag, setDrag] = useState(null),
     [over, setOver] = useState(null),
-    ref = React.useRef(null);
+    [logged, setLogged] = useState([]),
+    ref = React.useRef(null),
+    previous = React.useRef(null);
+  // Animate a meal's icon when it gains items on the same day (not when switching days).
+  const countKey = meals.map((m) => list.filter((x) => x.meal === m).length).join(',');
+  useEffect(() => {
+    const counts = Object.fromEntries(countKey.split(',').map((n, i) => [meals[i], +n]));
+    const before = previous.current;
+    previous.current = { day, counts };
+    if (!before || before.day !== day) return;
+    const grown = meals.filter((m) => counts[m] > before.counts[m]);
+    if (!grown.length) return;
+    // Wait for the add sheet (and its scroll lock) to close, bring the meal into view,
+    // then celebrate so the animation is actually seen.
+    const timers = [];
+    timers.push(
+      setTimeout(() => {
+        const section = document.querySelector(`[data-meal="${grown[0]}"]`);
+        const box = section?.getBoundingClientRect();
+        const hidden = !!box && (box.top < 70 || box.bottom > innerHeight - 100);
+        if (hidden) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        timers.push(setTimeout(() => setLogged(grown), hidden ? 450 : 0));
+        timers.push(setTimeout(() => setLogged([]), (hidden ? 450 : 0) + 1300));
+      }, 120),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [day, countKey]);
   function finish() {
     const d = ref.current;
     if (d && d.target) onMove(d.key, d.target);
@@ -59,7 +85,7 @@ export function MealList({ list, onAdd, onEdit, onDelete, onMove, onView, onSave
               className={'meal-group' + (over === m ? ' drop-over' : '')}
             >
               <div className="meal-heading">
-                <div className="meal-icon">
+                <div className={'meal-icon' + (logged.includes(m) ? ' is-logged' : '')}>
                   <Icon type={['Sun', 'Lunch', 'Moon', 'Snack'][i]} />
                 </div>
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
