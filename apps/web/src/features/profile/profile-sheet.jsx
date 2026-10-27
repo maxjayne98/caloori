@@ -4,7 +4,7 @@ import { Button } from '@nourish/ui';
 import { ProfileSchema } from '@nourish/core';
 import { SignOutButton } from './sign-out-button';
 import { field, select, formData } from '@/components/form-fields';
-export function ProfileForm({ notify, setProfile, profile, onSettings }) {
+export function ProfileForm({ notify, setProfile, profile }) {
   return (
     <form
       className="profile-form"
@@ -48,9 +48,6 @@ export function ProfileForm({ notify, setProfile, profile, onSettings }) {
       {field('Fat (g)', 'f', profile.f)}
       <Button className="primary" variant="unstyled">
         Save profile & goals
-      </Button>
-      <Button type="button" variant="unstyled" className="secondary" onClick={onSettings}>
-        Appearance & data
       </Button>
       <div className="profile-account-row">
         <span>Your account</span>

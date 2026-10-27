@@ -3,7 +3,7 @@
 import { AddFoodSheet } from '@/features/foods/add-sheet';
 import { ProfilePage } from '@/features/profile/profile-page';
 import { AssistantPage } from '@/features/assistant/assistant-page';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Settings } from 'lucide-react';
 import { LogWeightSheet } from '@/features/progress/weight-sheet';
 import { MealDetailSheet } from '@/features/diary/diary-sheet';
 import { CopyDaySheet } from '@/features/diary/copy-sheet';
@@ -251,15 +251,7 @@ export function App() {
       />
     );
   if (tab === 'Profile')
-    body = (
-      <ProfilePage
-        profile={profile}
-        setProfile={setProfile}
-        notify={notify}
-        onBack={() => navigate('Today')}
-        onSettings={() => setSheet('settings')}
-      />
-    );
+    body = <ProfilePage profile={profile} setProfile={setProfile} notify={notify} />;
   if (tab === 'Assistant') body = <AssistantPage day={day} onBack={() => navigate('Today')} />;
   let content = null;
   if (sheet === 'edit' && editing)
@@ -556,12 +548,19 @@ export function App() {
           </Button>
           <LoggingStreak entries={entries} today={today} />
           <Button
-            className="avatar"
-            aria-label="Your profile"
-            onClick={() => setSheet('profile')}
+            className={tab === 'Profile' ? 'avatar profile-settings' : 'avatar'}
+            aria-label={tab === 'Profile' ? 'Appearance & data' : 'Your profile'}
+            title={tab === 'Profile' ? 'Appearance & data' : 'Your profile'}
+            onClick={() => setSheet(tab === 'Profile' ? 'settings' : 'profile')}
             variant="unstyled"
           >
-            {profile.name ? profile.name.slice(0, 1).toUpperCase() : 'You'}
+            {tab === 'Profile' ? (
+              <Settings size={20} aria-hidden="true" />
+            ) : profile.name ? (
+              profile.name.slice(0, 1).toUpperCase()
+            ) : (
+              'You'
+            )}
           </Button>
         </div>
       </header>

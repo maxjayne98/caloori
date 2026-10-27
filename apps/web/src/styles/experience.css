@@ -536,3 +536,8 @@ button.brand {
     font-size: 24px;
   }
 }
+
+.profile-settings {
+  display: grid;
+  place-items: center;
+}
