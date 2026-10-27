@@ -271,14 +271,6 @@ export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
       <p className="scanner-privacy">
         Camera images stay on your device. Only the barcode number is sent to Open Food Facts.
       </p>
-      <a
-        className="scanner-credit"
-        href="https://world.openfoodfacts.org"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Food data from Open Food Facts
-      </a>
     </div>
   );
 }
