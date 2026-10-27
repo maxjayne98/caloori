@@ -1,4 +1,8 @@
 :root {
+  /* Macros: protein = strength (electric blue), carbs = fresh grains and greens (mint), fat = rich butter/oil (yellow). */
+  --macro-protein: #4d7cff;
+  --macro-carbs: #2fcf8f;
+  --macro-fat: #ffbf1f;
   --progress-track: #ededf2;
   --accent: #ff375f;
   --accent-soft: #fff0f3;

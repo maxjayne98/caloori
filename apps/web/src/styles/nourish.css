@@ -1146,13 +1146,13 @@ label {
   left: 0;
   width: 24px;
   border-radius: 3px;
-  background: #ff9f0a;
+  background: var(--macro-protein);
 }
 .portion-macro.carbs:before {
-  background: #30b9c6;
+  background: var(--macro-carbs);
 }
 .portion-macro.fat:before {
-  background: #af7bea;
+  background: var(--macro-fat);
 }
 .portion-macro > span {
   display: block;

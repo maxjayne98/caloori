@@ -154,13 +154,13 @@
   background: currentColor;
 }
 .protein .nutrition-track {
-  color: #ff9f0a;
+  color: var(--macro-protein);
 }
 .carbs .nutrition-track {
-  color: #30b9c6;
+  color: var(--macro-carbs);
 }
 .fat .nutrition-track {
-  color: #af7bea;
+  color: var(--macro-fat);
 }
 .macro .track {
   overflow: visible;

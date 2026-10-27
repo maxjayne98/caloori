@@ -55,9 +55,9 @@ export function DailySummary({ tot, profile, onEdit, day }) {
       </section>
     );
   const macroItems = [
-    ['Protein', 'p', '#ff9f0a'],
-    ['Carbs', 'c', '#30b9c6'],
-    ['Fat', 'f', '#af7bea'],
+    ['Protein', 'p', 'var(--macro-protein)'],
+    ['Carbs', 'c', 'var(--macro-carbs)'],
+    ['Fat', 'f', 'var(--macro-fat)'],
   ].map(([name, k, color]) => (
     <div className="macro" key={k}>
       <small>{name}</small>
