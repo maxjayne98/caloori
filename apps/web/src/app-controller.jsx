@@ -20,6 +20,7 @@ import {
   rememberScannedFood,
 } from '@nourish/core';
 import { Icon } from '@/components/icon';
+import { BottomNavigation } from '@/components/bottom-navigation';
 import { LoggingStreak } from '@/features/diary/logging-streak';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
 import { Recipe } from '@/features/recipes/recipe-editor';
@@ -567,40 +568,19 @@ export function App() {
       <div className="page-transition" key={tab}>
         {body}
       </div>
-      <nav className="nav" aria-label="Main navigation">
-        {['Today', 'Food', 'Add', 'Progress'].map((x) =>
-          x === 'Add' ? (
-            <Button
-              key={x}
-              className="add-nav"
-              aria-label="Add food"
-              onClick={() => openAdd()}
-              variant="unstyled"
-            >
-              <span className="nav-icon">
-                <Icon type="Add" />
-              </span>
-              <span className="nav-label">Add</span>
-            </Button>
-          ) : (
-            <Button
-              key={x}
-              className={tab === x ? 'active' : ''}
-              onClick={() => {
-                navigate(x);
-                setQuery('');
-              }}
-              aria-current={tab === x ? 'page' : undefined}
-              variant="unstyled"
-            >
-              <span className="nav-icon">
-                <Icon type={x} />
-              </span>
-              <span className="nav-label">{x}</span>
-            </Button>
-          ),
-        )}
-      </nav>
+      <BottomNavigation
+        tab={tab}
+        sheet={sheet}
+        onNavigate={(next) => {
+          navigate(next);
+          setQuery('');
+        }}
+        onAddFood={() => openAdd()}
+        onLogActivity={() => {
+          setActivity(null);
+          setSheet('activity');
+        }}
+      />
       {sheet && (
         <ModalSheet title={titles[sheet]} onClose={() => setSheet(null)}>
           {content}

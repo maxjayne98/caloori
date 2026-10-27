@@ -541,3 +541,100 @@ button.brand {
   display: grid;
   place-items: center;
 }
+
+/* One floating dock, with equal touch targets and a separate workout shortcut. */
+.nav.floating-dock {
+  width: min(448px, calc(100% - 24px));
+  height: 76px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  gap: 3px;
+  border: 1px solid color-mix(in srgb, var(--neutral-e8e8ed) 78%, transparent);
+  border-radius: 27px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    0 12px 36px -10px #00000026,
+    inset 0 1px 0 color-mix(in srgb, var(--surface) 85%, transparent);
+}
+.nav.floating-dock .dock-item {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: 58px;
+  padding: 3px 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  border-radius: 19px;
+  background: transparent;
+  color: var(--neutral-85858b);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+.nav.floating-dock .dock-item.active {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}
+.nav.floating-dock .dock-item:hover:not(.active):not(.add-nav) {
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+}
+.nav.floating-dock .nav-icon {
+  width: 40px;
+  height: 33px;
+  border-radius: 13px;
+  background: transparent;
+}
+.nav.floating-dock .nav-icon svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.8;
+}
+.nav.floating-dock .nav-label {
+  height: 13px;
+  line-height: 13px;
+  font-size: 9.5px;
+  font-weight: 550;
+  letter-spacing: 0.05px;
+}
+.nav.floating-dock .active .nav-label {
+  font-weight: 700;
+}
+.nav.floating-dock .add-nav .nav-icon {
+  height: 34px;
+  width: 43px;
+  border: 1px solid color-mix(in srgb, white 22%, transparent);
+  background: linear-gradient(155deg, color-mix(in srgb, var(--accent) 82%, white), var(--accent));
+  color: white;
+  box-shadow:
+    0 3px 9px color-mix(in srgb, var(--accent) 24%, transparent),
+    inset 0 1px 0 #ffffff30;
+}
+.nav.floating-dock .add-nav .nav-icon svg {
+  width: 25px;
+  height: 25px;
+  stroke-width: 2;
+}
+.nav.floating-dock .add-nav .nav-label {
+  color: var(--accent-text);
+}
+.nav.floating-dock .dock-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.nav.floating-dock .dock-item:active {
+  transform: scale(0.94);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav.floating-dock .dock-item {
+    transition: none;
+  }
+}
