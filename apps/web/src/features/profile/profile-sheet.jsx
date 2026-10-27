@@ -4,7 +4,7 @@ import { Button } from '@nourish/ui';
 import { ProfileSchema } from '@nourish/core';
 import { SignOutButton } from './sign-out-button';
 import { field, select, formData } from '@/components/form-fields';
-export function ProfileSheet({ notify, setProfile, profile, setSheet }) {
+export function ProfileForm({ notify, setProfile, profile, onSettings }) {
   return (
     <form
       onSubmit={(e) => {
@@ -13,10 +13,10 @@ export function ProfileSheet({ notify, setProfile, profile, setSheet }) {
           return notify('Please enter your age, height and weight');
         if (+d.cal < 1 || +d.p < 1 || +d.c < 1 || +d.f < 1)
           return notify('Goals must be greater than zero');
-        const result = ProfileSchema.safeParse({...profile, ...d});
+        const result = ProfileSchema.safeParse({ ...profile, ...d });
         if (!result.success) return notify('Please check your profile details and goals');
         setProfile(result.data);
-        setSheet(null);
+
         notify('Your goals are saved');
       }}
     >
@@ -48,15 +48,13 @@ export function ProfileSheet({ notify, setProfile, profile, setSheet }) {
       <Button className="primary" variant="unstyled">
         Save profile & goals
       </Button>
-      <Button
-        type="button"
-        variant="unstyled"
-        className="secondary"
-        onClick={() => setSheet('settings')}
-      >
+      <Button type="button" variant="unstyled" className="secondary" onClick={onSettings}>
         Appearance & data
       </Button>
-      <div className="profile-account-row"><span>Your account</span><SignOutButton /></div>
+      <div className="profile-account-row">
+        <span>Your account</span>
+        <SignOutButton />
+      </div>
     </form>
   );
 }

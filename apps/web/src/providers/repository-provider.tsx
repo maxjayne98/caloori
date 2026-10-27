@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
+import type { AssistantRequest } from '@nourish/core';
 import { createClient, type SupabaseClient, type Session } from '@nourish/database';
 import { LocalRepository, SupabaseRepository, type NourishRepository } from '@nourish/database';
 import { FoodCache, SnapshotCache } from '@nourish/database';
@@ -128,6 +129,28 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
       <DataProvider
         key={repository.kind + ':' + accountId}
         repository={repository}
+        onAskAssistant={
+          client
+            ? async (request: AssistantRequest) => {
+                const { data, error } = await client.functions.invoke('nourish-assistant', {
+                  body: request,
+                });
+                if (error) {
+                  let message =
+                    'The assistant is not connected yet. Its secure function and Gemini API key need to be configured.';
+                  try {
+                    const body = await error.context?.json();
+                    if (typeof body?.message === 'string')
+                      message = /jwt/i.test(body.message)
+                        ? 'The assistant sign-in connection still needs setup. Your account data has not changed.'
+                        : body.message;
+                  } catch {}
+                  throw new Error(message);
+                }
+                return data;
+              }
+            : undefined
+        }
         onSignOut={
           client
             ? async () => {

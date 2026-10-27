@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { HeartLoader } from '@/components/heart-loader';
 import { Button, Input } from '@nourish/ui';
 import { barcodeIsValid, barcodeProductToFood } from '@nourish/core';
 import { Icon } from '@/components/icon';
@@ -194,9 +195,15 @@ export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
         )}
         {camera && <div className="scanner-frame" />}
       </div>
-      <p className="scanner-status" role="status">
-        {status === 'ready' ? 'Camera starts only when you tap below.' : status}
-      </p>
+      <div className="scanner-status" role="status">
+        {busy || status === 'Opening camera…' ? (
+          <HeartLoader inline label={status} />
+        ) : status === 'ready' ? (
+          'Camera starts only when you tap below.'
+        ) : (
+          status
+        )}
+      </div>
       <div className="scanner-actions">
         <Button
           className="primary"

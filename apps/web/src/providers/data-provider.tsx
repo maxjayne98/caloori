@@ -8,6 +8,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { HeartLoader } from '@/components/heart-loader';
+import {
+  applyAssistantProposal,
+  type AssistantRequest,
+  type AssistantProposal,
+} from '@nourish/core';
 import { emptyState, validateState, type AppState } from '@nourish/core';
 import type { NourishRepository } from '@nourish/database';
 
@@ -28,15 +34,19 @@ type DataContext = AppState & {
   retry: () => void;
   signOut?: () => Promise<void>;
   refreshFoods?: () => Promise<void>;
+  askAssistant?: (request: AssistantRequest) => Promise<unknown>;
+  applyAssistant: (proposal: AssistantProposal, baseline: string) => Promise<void>;
 };
 const Context = createContext<DataContext | null>(null);
 export function DataProvider({
   repository,
   children,
   onSignOut,
+  onAskAssistant,
 }: {
   repository: NourishRepository;
   onSignOut?: () => Promise<void>;
+  onAskAssistant?: (request: AssistantRequest) => Promise<unknown>;
   children: React.ReactNode;
 }) {
   const [state, setState] = useState<AppState>(emptyState),
@@ -47,7 +57,8 @@ export function DataProvider({
     revision = useRef(0),
     lastSaved = useRef(''),
     queue = useRef(Promise.resolve()),
-    mounted = useRef(true);
+    mounted = useRef(true),
+    assistantSaving = useRef(false);
   useEffect(() => {
     mounted.current = true;
     repository
@@ -102,6 +113,10 @@ export function DataProvider({
     key: K,
     value: AppState[K] | ((previous: AppState[K]) => AppState[K]),
   ) {
+    if (assistantSaving.current) {
+      setError('Please wait for your assistant changes to finish saving.');
+      return;
+    }
     try {
       const next =
         typeof value === 'function'
@@ -125,8 +140,40 @@ export function DataProvider({
     setTemplates: (v: Parameters<Setter<'templates'>>[0]) => update('templates', v),
     setActivities: (v: Parameters<Setter<'activities'>>[0]) => update('activities', v),
     signOut: onSignOut,
+    askAssistant: onAskAssistant,
+    applyAssistant: async (proposal: AssistantProposal, baseline: string) => {
+      if (assistantSaving.current) throw new Error('Your changes are already being saved.');
+      assistantSaving.current = true;
+      try {
+        await persist();
+        await queue.current;
+        if (JSON.stringify(current.current) !== lastSaved.current)
+          throw new Error('Save your pending changes first.');
+        if (JSON.stringify(current.current) !== baseline)
+          throw new Error(
+            'Your diary or goals changed. Please ask again to review an up-to-date suggestion.',
+          );
+        const next = applyAssistantProposal(current.current, proposal);
+        setStatus('saving');
+        const nextRevision = await repository.save(next, revision.current);
+        if (!mounted.current) return;
+        revision.current = nextRevision;
+        current.current = next;
+        lastSaved.current = JSON.stringify(next);
+        setState(next);
+        setError('');
+        setStatus('saved');
+      } catch (e) {
+        if (mounted.current) setStatus('error');
+        throw e;
+      } finally {
+        assistantSaving.current = false;
+      }
+    },
     refreshFoods: repository.refreshFoods
       ? async () => {
+          if (assistantSaving.current)
+            throw new Error('Please wait for your assistant changes to finish saving.');
           await persist();
           await queue.current;
           if (JSON.stringify(current.current) !== lastSaved.current)
@@ -150,6 +197,7 @@ export function DataProvider({
     error,
     retry: persist,
     importBackup: (next: AppState) => {
+      if (assistantSaving.current) return;
       const valid = validateState(next);
       current.current = valid;
       setState(valid);
@@ -161,7 +209,7 @@ export function DataProvider({
         <div className="brand">
           <span>♥</span>nourish
         </div>
-        <p role="status">{error || 'Opening your diary…'}</p>
+        {error ? <p role="alert">{error}</p> : <HeartLoader label="Opening your diary…" />}
         {error && <p>Export your browser data before attempting recovery. Refresh to retry.</p>}
       </main>
     );

@@ -1,4 +1,5 @@
 'use client';
+import { HeartLoader } from '@/components/heart-loader';
 import { useRef, useState } from 'react';
 import { SignOutButton } from '@/features/profile/sign-out-button';
 import { Button, Input } from '@nourish/ui';
@@ -64,13 +65,15 @@ export function SettingsPanel() {
           ? 'Stored on this browser. Cloud storage has not been configured.'
           : 'Stored in your private cloud account.'}
       </p>
-      <p role="status">
-        {data.status === 'saved'
-          ? 'All changes saved.'
-          : data.status === 'saving'
-            ? 'Saving…'
-            : data.error || 'Opening your data…'}
-      </p>
+      <div role="status">
+        {data.status === 'saved' ? (
+          'All changes saved.'
+        ) : data.status === 'saving' ? (
+          <HeartLoader inline label="Saving…" />
+        ) : (
+          data.error || 'Opening your data…'
+        )}
+      </div>
       <Button variant="unstyled" className="primary" onClick={exportData}>
         Export backup
       </Button>
@@ -124,7 +127,7 @@ export function SettingsPanel() {
           </Button>
         </div>
       )}
-      {message && <p role="status">{message}</p>}
+      {message && <div role="status">{message}</div>}
     </div>
   );
 }

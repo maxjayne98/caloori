@@ -3,6 +3,7 @@
 import { Button, Input } from '@nourish/ui';
 import { useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
+import { HeartLoader } from '@/components/heart-loader';
 import { RefreshCw } from 'lucide-react';
 import { foods } from '@nourish/core';
 import { Icon } from '@/components/icon';
@@ -56,8 +57,14 @@ export function FoodPage({
               }
             }}
           >
-            <RefreshCw size={14} aria-hidden="true" />
-            {refreshing ? 'Updating…' : 'Refresh foods'}
+            {refreshing ? (
+              <HeartLoader inline label="Updating…" />
+            ) : (
+              <>
+                <RefreshCw size={14} aria-hidden="true" />
+                Refresh foods
+              </>
+            )}
           </Button>
           <span role="status">{refreshMessage}</span>
         </div>

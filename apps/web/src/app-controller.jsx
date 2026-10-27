@@ -1,7 +1,9 @@
 'use client';
 
 import { AddFoodSheet } from '@/features/foods/add-sheet';
-import { ProfileSheet } from '@/features/profile/profile-sheet';
+import { ProfilePage } from '@/features/profile/profile-page';
+import { AssistantPage } from '@/features/assistant/assistant-page';
+import { Sparkles } from 'lucide-react';
 import { LogWeightSheet } from '@/features/progress/weight-sheet';
 import { MealDetailSheet } from '@/features/diary/diary-sheet';
 import { CopyDaySheet } from '@/features/diary/copy-sheet';
@@ -48,7 +50,7 @@ export function App() {
   } = useNourishData();
   const [tab, setTab] = useState('Today'),
     [day, setDay] = useState(today),
-    [sheet, setSheet] = useState(null),
+    [sheet, setSheetState] = useState(null),
     [meal, setMeal] = useState('Breakfast'),
     [query, setQuery] = useState(''),
     [filter, setFilter] = useState('All foods'),
@@ -58,6 +60,33 @@ export function App() {
     [editing, setEditing] = useState(null),
     [template, setTemplate] = useState(null),
     [activity, setActivity] = useState(null);
+  function navigate(next) {
+    window.location.hash = next.toLowerCase();
+    setTab(next);
+    setSheetState(null);
+    window.scrollTo(0, 0);
+  }
+  function setSheet(next) {
+    if (next === 'profile') navigate('Profile');
+    else setSheetState(next);
+  }
+  useEffect(() => {
+    const readPage = () => {
+      const pages = {
+        today: 'Today',
+        food: 'Food',
+        progress: 'Progress',
+        profile: 'Profile',
+        assistant: 'Assistant',
+      };
+      setTab(pages[window.location.hash.slice(1)] || 'Today');
+      setSheetState(null);
+      window.scrollTo(0, 0);
+    };
+    readPage();
+    window.addEventListener('hashchange', readPage);
+    return () => window.removeEventListener('hashchange', readPage);
+  }, []);
   useEffect(() => {
     if (!toast) return;
     let t = setTimeout(() => setToast(''), 2500);
@@ -220,6 +249,17 @@ export function App() {
         activities={activities}
       />
     );
+  if (tab === 'Profile')
+    body = (
+      <ProfilePage
+        profile={profile}
+        setProfile={setProfile}
+        notify={notify}
+        onBack={() => navigate('Today')}
+        onSettings={() => setSheet('settings')}
+      />
+    );
+  if (tab === 'Assistant') body = <AssistantPage day={day} onBack={() => navigate('Today')} />;
   let content = null;
   if (sheet === 'edit' && editing)
     content = (
@@ -267,10 +307,6 @@ export function App() {
         custom={custom}
         setQty={setQty}
       />
-    );
-  if (sheet === 'profile')
-    content = (
-      <ProfileSheet notify={notify} setProfile={setProfile} profile={profile} setSheet={setSheet} />
     );
   if (['custom', 'quick'].includes(sheet))
     content = (
@@ -504,6 +540,14 @@ export function App() {
           nourish
         </div>
         <div className="header-actions">
+          <Button
+            variant="unstyled"
+            className="assistant-launch"
+            aria-label="Open Nourish assistant"
+            onClick={() => navigate('Assistant')}
+          >
+            <Sparkles size={19} />
+          </Button>
           <LoggingStreak entries={entries} today={today} />
           <Button
             className="avatar"
@@ -515,7 +559,9 @@ export function App() {
           </Button>
         </div>
       </header>
-      {body}
+      <div className="page-transition" key={tab}>
+        {body}
+      </div>
       <nav className="nav" aria-label="Main navigation">
         {['Today', 'Food', 'Add', 'Progress'].map((x) =>
           x === 'Add' ? (
@@ -536,9 +582,8 @@ export function App() {
               key={x}
               className={tab === x ? 'active' : ''}
               onClick={() => {
-                setTab(x);
+                navigate(x);
                 setQuery('');
-                window.scrollTo(0, 0);
               }}
               aria-current={tab === x ? 'page' : undefined}
               variant="unstyled"
