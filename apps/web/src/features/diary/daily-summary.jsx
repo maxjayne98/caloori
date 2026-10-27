@@ -1,4 +1,6 @@
 'use client';
+import { CircleCheck, Clock3 } from 'lucide-react';
+import { ChubbyCat } from '@/components/chubby-cat';
 
 import { useEffect, useState } from 'react';
 import { balanceStatus } from '@nourish/core';
@@ -136,13 +138,31 @@ export function DailySummary({ tot, profile, onEdit, day }) {
       </div>
       {ring}
       {status !== 'neutral' && (
-        <p className="balance-message" role="status">
-          {status === 'over'
-            ? 'Above your logged goal. One day is only part of the picture.'
-            : status === 'low'
-              ? 'Below 80% of your goal this evening. Check for any meals you haven’t logged.'
-              : 'You’ve reached your daily energy goal.'}
-        </p>
+        <div className="balance-message" role="status">
+          {status === 'over' ? (
+            <span className="balance-message-cat">
+              <ChubbyCat />
+            </span>
+          ) : (
+            <span className="balance-message-icon" aria-hidden="true">
+              {status === 'low' ? <Clock3 size={16} /> : <CircleCheck size={16} />}
+            </span>
+          )}
+          <p>
+            {status === 'over' ? (
+              <>
+                <strong>Above your logged goal.</strong> One day is only part of the picture.
+              </>
+            ) : status === 'low' ? (
+              <>
+                <strong>Below 80% of your goal this evening.</strong> Check for any meals you
+                haven’t logged.
+              </>
+            ) : (
+              <strong>You’ve reached your daily energy goal.</strong>
+            )}
+          </p>
+        </div>
       )}
     </section>
   );

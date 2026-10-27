@@ -673,13 +673,48 @@ button.brand {
 
 .balance-message {
   grid-column: 1 / -1;
-  margin: 12px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--balance-color, var(--accent)) 10%, var(--surface));
+  animation: balance-message-in 0.35s ease-out;
+}
+.balance-message p {
+  margin: 0;
   font-size: 12px;
   line-height: 1.5;
   color: var(--neutral-85858b);
 }
+.balance-message strong {
+  color: var(--foreground);
+  font-weight: 650;
+}
+.balance-message-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--balance-color, var(--accent));
+}
+@keyframes balance-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .balance-message {
+    animation: none;
+  }
+}
 .balance-over {
-  --balance-color: #d56b30;
+  --balance-color: #ff6a00;
 }
 .balance-low {
   --balance-color: #6281b5;
@@ -1313,6 +1348,132 @@ button.brand {
 @media (prefers-reduced-motion: reduce) {
   .meal-icon.is-logged,
   .meal-icon.is-logged > svg {
+    animation: none;
+  }
+}
+
+.balance-message-cat {
+  flex: none;
+  margin: -4px 0 -4px -2px;
+  animation: balance-cat-settle 0.6s ease-out;
+  transform-origin: bottom center;
+}
+.balance-message-cat svg {
+  display: block;
+}
+@keyframes balance-cat-settle {
+  0% {
+    transform: translateY(6px) scaleY(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-2px) scaleY(1.04);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .balance-message-cat {
+    animation: none;
+  }
+}
+
+/* Idle "alive" loops for the chubby cat. */
+.chubby-cat {
+  overflow: visible;
+}
+.chubby-cat .cat-body {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: cat-breathe 3.2s ease-in-out infinite;
+}
+.chubby-cat .cat-head {
+  transform-box: view-box;
+  transform-origin: 20px 24px;
+  animation: cat-head-tilt 6s ease-in-out infinite;
+}
+.chubby-cat .cat-tail {
+  transform-box: view-box;
+  transform-origin: 30px 34px;
+  animation: cat-tail-sway 2.4s ease-in-out infinite;
+}
+.chubby-cat .cat-ear {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.chubby-cat .cat-ear-left {
+  animation: cat-ear-twitch 5s ease-in-out 1.2s infinite;
+}
+.chubby-cat .cat-ear-right {
+  animation: cat-ear-twitch 5s ease-in-out 3.4s infinite reverse;
+}
+@keyframes cat-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.04, 1.06);
+  }
+}
+@keyframes cat-head-tilt {
+  0%,
+  35%,
+  100% {
+    transform: rotate(0) translateY(0);
+  }
+  45% {
+    transform: rotate(-7deg) translateY(-0.4px);
+  }
+  60% {
+    transform: rotate(-7deg) translateY(-0.4px);
+  }
+  70% {
+    transform: rotate(0) translateY(0);
+  }
+}
+@keyframes cat-tail-sway {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-16deg);
+  }
+}
+@keyframes cat-ear-twitch {
+  0%,
+  88%,
+  100% {
+    transform: rotate(0);
+  }
+  91% {
+    transform: rotate(-14deg);
+  }
+  94% {
+    transform: rotate(6deg);
+  }
+}
+.chubby-cat .cat-eyes {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: cat-blink 4.5s ease-in-out infinite;
+}
+@keyframes cat-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chubby-cat .cat-eyes,
+  .chubby-cat .cat-body,
+  .chubby-cat .cat-head,
+  .chubby-cat .cat-tail,
+  .chubby-cat .cat-ear {
     animation: none;
   }
 }
