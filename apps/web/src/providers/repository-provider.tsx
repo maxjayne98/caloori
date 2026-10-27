@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createClient, type SupabaseClient, type Session } from '@nourish/database';
 import { LocalRepository, SupabaseRepository, type NourishRepository } from '@nourish/database';
-import { SnapshotCache } from '@nourish/database';
+import { FoodCache, SnapshotCache } from '@nourish/database';
 import { DataProvider } from './data-provider';
 import { LoginScreen } from '@/features/auth/login-screen';
 
@@ -16,6 +16,13 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
   const [accountId, setAccountId] = useState('');
   const owner = useRef<string | null>(null);
   const activeCache = useRef<SnapshotCache | null>(null);
+  function createFoodCache(id: string) {
+    try {
+      return new FoodCache(localStorage, id);
+    } catch {
+      return undefined;
+    }
+  }
   function createSnapshotCache(id: string) {
     try {
       return new SnapshotCache(sessionStorage, id);
@@ -57,7 +64,12 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
       setAccountId(session?.user.id ?? '');
       setRepository(
         session
-          ? new SupabaseRepository(supabase, session.user.id, activeCache.current ?? undefined)
+          ? new SupabaseRepository(
+              supabase,
+              session.user.id,
+              activeCache.current ?? undefined,
+              createFoodCache(session.user.id),
+            )
           : null,
       );
       setBusy(false);

@@ -9,6 +9,8 @@ export interface Snapshot {
 export interface NourishRepository {
   readonly kind: RepositoryKind;
   load(): Promise<Snapshot>;
+  refreshFoods?(): Promise<Snapshot>;
+  acceptSnapshot?(snapshot: Snapshot): void;
   save(state: AppState, expectedRevision: number): Promise<number>;
 }
 export class RevisionConflict extends Error {

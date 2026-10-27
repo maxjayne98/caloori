@@ -1,6 +1,9 @@
 'use client';
 
 import { Button, Input } from '@nourish/ui';
+import { useState } from 'react';
+import { useNourishData } from '@/providers/data-provider';
+import { RefreshCw } from 'lucide-react';
 import { foods } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { MealLibrary } from '@/features/meals/meal-library';
@@ -21,6 +24,9 @@ export function FoodPage({
   entries,
   custom,
 }) {
+  const { refreshFoods } = useNourishData();
+  const [refreshing, setRefreshing] = useState(false),
+    [refreshMessage, setRefreshMessage] = useState('');
   return (
     <>
       <div className="intro">
@@ -28,6 +34,34 @@ export function FoodPage({
         <h1>Your food library.</h1>
         <p>Find a favorite. Make it your own.</p>
       </div>
+      {refreshFoods && (
+        <div className="food-refresh-row">
+          <Button
+            type="button"
+            variant="unstyled"
+            className="link"
+            disabled={refreshing}
+            onClick={async () => {
+              setRefreshing(true);
+              setRefreshMessage('');
+              try {
+                await refreshFoods();
+                setRefreshMessage('Food library updated.');
+              } catch (error) {
+                setRefreshMessage(
+                  error instanceof Error ? error.message : 'Could not update foods. Try again.',
+                );
+              } finally {
+                setRefreshing(false);
+              }
+            }}
+          >
+            <RefreshCw size={14} aria-hidden="true" />
+            {refreshing ? 'Updating…' : 'Refresh foods'}
+          </Button>
+          <span role="status">{refreshMessage}</span>
+        </div>
+      )}
       <div className="pills">
         {['All foods', 'Recent', 'My foods', 'Recipes', 'Saved meals'].map((x) => (
           <Button

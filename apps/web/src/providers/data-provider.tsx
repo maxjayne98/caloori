@@ -27,6 +27,7 @@ type DataContext = AppState & {
   importBackup: (state: AppState) => void;
   retry: () => void;
   signOut?: () => Promise<void>;
+  refreshFoods?: () => Promise<void>;
 };
 const Context = createContext<DataContext | null>(null);
 export function DataProvider({
@@ -124,6 +125,26 @@ export function DataProvider({
     setTemplates: (v: Parameters<Setter<'templates'>>[0]) => update('templates', v),
     setActivities: (v: Parameters<Setter<'activities'>>[0]) => update('activities', v),
     signOut: onSignOut,
+    refreshFoods: repository.refreshFoods
+      ? async () => {
+          await persist();
+          await queue.current;
+          if (JSON.stringify(current.current) !== lastSaved.current)
+            throw new Error('Save your pending changes before refreshing foods.');
+          const before = JSON.stringify(current.current);
+          const snapshot = await repository.refreshFoods!();
+          if (!mounted.current) return;
+          if (JSON.stringify(current.current) !== before)
+            throw new Error('Your data changed while refreshing. Please try again.');
+          repository.acceptSnapshot?.(snapshot);
+          current.current = snapshot.state;
+          revision.current = snapshot.revision;
+          lastSaved.current = JSON.stringify(snapshot.state);
+          setState(snapshot.state);
+          setError('');
+          setStatus('saved');
+        }
+      : undefined,
     repositoryKind: repository.kind,
     status,
     error,

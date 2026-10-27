@@ -6,3 +6,4 @@ export { createClient } from '@supabase/supabase-js';
 export type { SupabaseClient, Session } from '@supabase/supabase-js';
 
 export * from './snapshot-cache';
+export * from './food-cache';

@@ -63,10 +63,12 @@ test('cached reloads skip document reads but still verify the authenticated user
     from: () => ({
       select: () => ({
         eq: () => ({
-          maybeSingle: async () => {
-            reads++;
-            return { data: { data: emptyState(), revision: 1 }, error: null };
-          },
+          returns: () => ({
+            maybeSingle: async () => {
+              reads++;
+              return { data: { data: emptyState(), revision: 1 }, error: null };
+            },
+          }),
         }),
       }),
     }),
