@@ -53,7 +53,7 @@ export const WeightSchema = z.object({
 });
 export const ActivitySchema = z.object({
   key: z.union([z.string(), z.number()]),
-  type: z.enum(['gym', 'bike', 'treadmill', 'elliptical', 'padel']),
+  type: z.enum(['gym', 'bike', 'treadmill', 'elliptical', 'padel', 'running']),
   name: z.string().max(100),
   level: z.enum(['Light', 'Moderate', 'Hard']),
   minutes: positive.max(1440),

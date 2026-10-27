@@ -42,6 +42,8 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
           <Button
             type="button"
             key={a.id}
+            aria-label={a.name}
+            aria-pressed={type === a.id}
             className={type === a.id ? 'selected' : ''}
             onClick={() => {
               setType(a.id);
@@ -50,7 +52,7 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
             variant="unstyled"
           >
             <Icon type={a.icon} />
-            <span>{a.name}</span>
+            <span>{a.id === 'gym' ? 'Gym' : a.name}</span>
           </Button>
         ))}
       </div>
@@ -122,7 +124,6 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
           2024 Compendium of Physical Activities
         </a>
       </details>
-      <p className="activity-footnote">Logged separately from your daily food goal.</p>
       <Button className="primary" disabled={!valid} variant="unstyled">
         {initial ? 'Save activity' : 'Log activity'}
       </Button>

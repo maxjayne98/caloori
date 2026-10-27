@@ -43,6 +43,17 @@ export const activityTypes = [
     source: 'https://pacompendium.com/conditioning-exercise/',
   },
   {
+    id: 'running',
+    name: 'Running',
+    icon: 'Running',
+    levels: [
+      ['Light', 6.5, 'Easy run · 6.4–6.8 km/h'],
+      ['Moderate', 8.5, 'Steady run · 8.0–8.4 km/h'],
+      ['Hard', 10.5, 'Fast run · 10.8 km/h'],
+    ],
+    source: 'https://pacompendium.com/running/',
+  },
+  {
     id: 'padel',
     name: 'Padel',
     icon: 'Padel',
