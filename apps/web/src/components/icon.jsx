@@ -1,52 +1,25 @@
 'use client';
 
-import { Bike, Dumbbell } from 'lucide-react';
+import {
+  IconBarbell,
+  IconBike,
+  IconTreadmill,
+  IconWalk,
+  IconRun,
+  IconPingPong,
+} from '@tabler/icons-react';
 
+const activityIcons = {
+  Strength: IconBarbell,
+  Bike: IconBike,
+  Treadmill: IconTreadmill,
+  Elliptical: IconWalk,
+  Running: IconRun,
+  Padel: IconPingPong,
+};
 export function Icon({ type }) {
-  if (type === 'Strength') return <Dumbbell aria-hidden="true" strokeWidth={1.7} />;
-  if (type === 'Bike') return <Bike aria-hidden="true" strokeWidth={1.7} />;
-  if (type === 'Padel')
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.6}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <g transform="rotate(35 12 12)">
-          <path d="M6.5 7.5C6.5 4 8.5 2 12 2s5.5 2 5.5 5.5V10c0 3-2 5-5.5 5s-5.5-2-5.5-5V7.5Z" />
-          <path d="M10.5 15v6h3v-6m-3 4h3" />
-          {[
-            [10, 6],
-            [14, 6],
-            [10, 9],
-            [14, 9],
-            [12, 12],
-          ].map(([cx, cy]) => (
-            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={0.7} fill="currentColor" stroke="none" />
-          ))}
-        </g>
-      </svg>
-    );
-  if (type === 'Elliptical')
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.6}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="18" cy="17" r="4" />
-        <path d="M2 23h21M4 18h6m-2 3h6M8 15l3-11H9m5 11 4-12h-2" />
-        <path d="m9 18 9-1m-5 4 5-4" />
-      </svg>
-    );
+  const ActivityIcon = activityIcons[type];
+  if (ActivityIcon) return <ActivityIcon size={24} stroke={1.7} aria-hidden="true" />;
   const paths = {
     Running: 'M15 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM12 8l-3 5 5 3-2 6m-3-9-3 5H2m10-10 4 4h5M8 7l4 1',
     Bookmark: 'M6 3h12v18l-6-4-6 4V3Z',
@@ -85,18 +58,6 @@ export function Icon({ type }) {
       aria-hidden={true}
     >
       <path d={paths[type]} />
-      {type === 'Padel' &&
-        [
-          [12, 6],
-          [16, 7],
-          [10, 9],
-          [14, 10],
-          [17, 11],
-          [11, 13],
-          [14, 14],
-        ].map(([cx, cy]) => (
-          <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={0.6} fill="currentColor" stroke="none" />
-        ))}
     </svg>
   );
 }
