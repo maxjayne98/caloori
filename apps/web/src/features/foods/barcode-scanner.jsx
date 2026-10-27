@@ -230,7 +230,6 @@ export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
           />
         </label>
       </div>
-      <div className="scanner-divider">or enter the number</div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -264,9 +263,6 @@ export function BarcodeScanner({ onFound, onCreate, custom = [] }) {
           Create food from label
         </Button>
       )}
-      <p className="scanner-privacy">
-        Camera images stay on your device. Only the barcode number is sent to Open Food Facts.
-      </p>
     </div>
   );
 }
