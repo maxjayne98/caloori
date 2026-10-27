@@ -1,6 +1,7 @@
 'use client';
-import { CircleCheck, Clock3 } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
+import { SkinnyCat } from '@/components/skinny-cat';
 
 import { useEffect, useState } from 'react';
 import { balanceStatus } from '@nourish/core';
@@ -143,9 +144,13 @@ export function DailySummary({ tot, profile, onEdit, day }) {
             <span className="balance-message-cat">
               <ChubbyCat />
             </span>
+          ) : status === 'low' ? (
+            <span className="balance-message-cat">
+              <SkinnyCat />
+            </span>
           ) : (
             <span className="balance-message-icon" aria-hidden="true">
-              {status === 'low' ? <Clock3 size={16} /> : <CircleCheck size={16} />}
+              <CircleCheck size={16} />
             </span>
           )}
           <p>
