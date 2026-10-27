@@ -28,10 +28,10 @@ export const ProfileSchema = z
       .max(150_000)
       .regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/)
       .optional(),
-    // Which avatar to show: the first letter of the name, the photo, or pattern N (identicon variant).
+    // Which avatar to show: the first letter of the name, the photo, identicon N, or pixel character N.
     avatar: z
       .string()
-      .regex(/^(initial|photo|pattern:\d{1,2})$/)
+      .regex(/^(initial|photo|(pattern|pixel):\d{1,2})$/)
       .optional(),
   })
   .passthrough();

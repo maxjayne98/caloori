@@ -5,6 +5,7 @@ import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-prov
 import { useNourishData } from '@/providers/data-provider';
 import {
   PATTERN_COUNT,
+  PIXEL_COUNT,
   ProfileAvatar,
   avatarChoice,
   resizeProfilePhoto,
@@ -14,6 +15,7 @@ export function SettingsPanel() {
   const { profile, setProfile, accountId } = useNourishData();
   const picker = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState('');
+  const [showAll, setShowAll] = useState(false);
   const current = avatarChoice(profile);
   function setAvatar(avatar: string) {
     setProfile((previous) => ({ ...previous, avatar }));
@@ -38,14 +40,42 @@ export function SettingsPanel() {
   }
   const choices = [
     'initial',
+    ...Array.from({ length: PIXEL_COUNT }, (_, i) => `pixel:${i}`),
     ...Array.from({ length: PATTERN_COUNT }, (_, i) => `pattern:${i}`),
-    ...(profile.photo ? ['photo'] : []),
   ];
+  if (profile.photo) choices.splice(1, 0, 'photo');
+  // Collapsed: one row, always including the current choice so the selection stays visible.
+  const COLLAPSED = 7;
+  const visible = showAll
+    ? choices
+    : choices.slice(0, COLLAPSED).includes(current)
+      ? choices.slice(0, COLLAPSED)
+      : [...choices.slice(0, COLLAPSED - 1), current];
   return (
     <div className="settings-panel">
-      <h3>Avatar</h3>
+      <div className="settings-heading">
+        <h3>Avatar</h3>
+        <div className="settings-photo-actions">
+          <Button
+            variant="unstyled"
+            className="settings-photo-choose"
+            onClick={() => picker.current?.click()}
+          >
+            {profile.photo ? 'Change photo' : 'Upload photo'}
+          </Button>
+          {profile.photo && (
+            <Button variant="unstyled" className="settings-photo-remove" onClick={removePhoto}>
+              Remove photo
+            </Button>
+          )}
+          <input ref={picker} type="file" accept="image/*" hidden onChange={choosePhoto} />
+          <Button variant="unstyled" className="link" onClick={() => setShowAll(!showAll)}>
+            {showAll ? 'Show less' : 'View all'}
+          </Button>
+        </div>
+      </div>
       <div className="avatar-choices" role="radiogroup" aria-label="Avatar">
-        {choices.map((choice) => (
+        {visible.map((choice) => (
           <Button
             key={choice}
             variant="unstyled"
@@ -56,7 +86,9 @@ export function SettingsPanel() {
                 ? 'First letter of your name'
                 : choice === 'photo'
                   ? 'Your photo'
-                  : `Pattern ${Number(choice.slice(8)) + 1}`
+                  : choice.startsWith('pixel:')
+                    ? `Pixel character ${Number(choice.slice(6)) + 1}`
+                    : `Pattern ${Number(choice.slice(8)) + 1}`
             }
             className={current === choice ? 'selected' : ''}
             onClick={() => setAvatar(choice)}
@@ -65,24 +97,11 @@ export function SettingsPanel() {
           </Button>
         ))}
       </div>
-      <div className="settings-photo-actions">
-        <Button
-          variant="unstyled"
-          className="settings-photo-choose"
-          onClick={() => picker.current?.click()}
-        >
-          {profile.photo ? 'Change photo' : 'Upload photo'}
-        </Button>
-        {profile.photo && (
-          <Button variant="unstyled" className="settings-photo-remove" onClick={removePhoto}>
-            Remove photo
-          </Button>
-        )}
-        <input ref={picker} type="file" accept="image/*" hidden onChange={choosePhoto} />
-      </div>
       {photoError && <p role="alert">{photoError}</p>}
-      <h3>Appearance</h3>
-      <p>Make Nourish feel like you.</p>
+      <div className="settings-heading">
+        <h3>Appearance</h3>
+        <p>Make Nourish feel like you.</p>
+      </div>
       <label>Theme</label>
       <div className="settings-segments">
         {['light', 'dark', 'system'].map((value) => (

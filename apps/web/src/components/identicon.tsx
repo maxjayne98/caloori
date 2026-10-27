@@ -8,10 +8,16 @@ function hash(seed: string) {
     h ^= seed.charCodeAt(i);
     h = Math.imul(h, 0x01000193);
   }
+  // Final avalanche (murmur3 fmix) so near-identical seeds still get well-spread values.
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13;
+  h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
   return h >>> 0;
 }
 
-/** GitHub-style 5×5 mirrored block avatar drawn in the theme accent. */
+/** GitHub-style 5×5 mirrored block avatar, each seed with its own color. */
 export function Identicon({ seed, size = 24 }: { seed: string; size?: number }) {
   const cells = useMemo(() => {
     const bits = hash(seed || 'nourish');
@@ -25,6 +31,8 @@ export function Identicon({ seed, size = 24 }: { seed: string; size?: number }) 
         }
     return filled.length ? filled : [[2, 2] as [number, number]];
   }, [seed]);
+  // A separate hash for hue so color and shape vary independently, like GitHub identicons.
+  const color = `hsl(${hash(`${seed}#hue`) % 360} 55% 55%)`;
   return (
     <svg
       className="identicon"
@@ -35,7 +43,7 @@ export function Identicon({ seed, size = 24 }: { seed: string; size?: number }) 
       aria-hidden="true"
     >
       {cells.map(([x, y]) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill="currentColor" />
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill={color} />
       ))}
     </svg>
   );

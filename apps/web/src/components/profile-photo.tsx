@@ -1,5 +1,6 @@
 'use client';
 import { Identicon } from './identicon';
+import { PixelAvatar } from './pixel-avatar';
 
 const PHOTO_SIZE = 192;
 
@@ -27,7 +28,8 @@ export async function resizeProfilePhoto(file: File): Promise<string> {
   return canvas.toDataURL('image/jpeg', 0.85);
 }
 
-export const PATTERN_COUNT = 8;
+export const PATTERN_COUNT = 24;
+export const PIXEL_COUNT = 24;
 
 type AvatarProfile = { name?: string; photo?: string; avatar?: string };
 
@@ -61,6 +63,7 @@ export function ProfileAvatar({
         {profile.name?.trim().slice(0, 1).toUpperCase() || 'Y'}
       </span>
     );
+  if (choice.startsWith('pixel:')) return <PixelAvatar seed={`${seed}:pixel:${choice.slice(6)}`} />;
   const pattern = Number(choice.startsWith('pattern:') ? choice.slice(8) : 0);
   return <Identicon seed={patternSeed(seed, pattern)} size={size} />;
 }

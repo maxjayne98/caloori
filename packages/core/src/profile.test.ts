@@ -51,7 +51,7 @@ test('profile photo accepts small image data URLs and rejects anything else', ()
 });
 test('profile avatar choice accepts initial, photo and pattern variants only', () => {
   const base = emptyState();
-  for (const avatar of ['initial', 'photo', 'pattern:0', 'pattern:7'])
+  for (const avatar of ['initial', 'photo', 'pattern:0', 'pattern:7', 'pixel:12'])
     assert.equal(
       validateState({ ...base, profile: { ...base.profile, avatar } }).profile.avatar,
       avatar,
