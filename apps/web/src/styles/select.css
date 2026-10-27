@@ -143,7 +143,7 @@
 .nutrition-track {
   height: 3px;
   border-radius: 4px;
-  background: var(--neutral-f2f2f5);
+  background: var(--progress-track);
   margin: 7px 3px 2px 0;
 }
 .nutrition-track i {
@@ -151,16 +151,6 @@
   height: 100%;
   border-radius: inherit;
   position: relative;
-  background: currentColor;
-}
-.nutrition-track i:after {
-  content: '';
-  position: absolute;
-  right: -2px;
-  top: -1px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
   background: currentColor;
 }
 .protein .nutrition-track {
@@ -178,16 +168,6 @@
 }
 .macro .track i {
   position: relative;
-}
-.macro .track i:after {
-  content: '';
-  position: absolute;
-  top: -1.5px;
-  right: -3px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: inherit;
 }
 @keyframes select-appear {
   from {

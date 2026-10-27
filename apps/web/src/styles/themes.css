@@ -1,4 +1,5 @@
 :root {
+  --progress-track: #ededf2;
   --accent: #ff375f;
   --accent-soft: #fff0f3;
   --accent-tint: #fff0f4;
@@ -110,6 +111,7 @@
   --neutral-999: #999;
 }
 .dark {
+  --progress-track: #51515e;
   --accent: #ff5277;
   --accent-soft: #3b202a;
   --accent-tint: #3b202a;

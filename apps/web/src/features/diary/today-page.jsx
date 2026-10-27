@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useNourishData } from '@/providers/data-provider';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { iso, today } from '@nourish/core';
@@ -26,17 +28,69 @@ export function TodayPage({
   weeklyReport,
   onWeeklyReport,
 }) {
+  const { accountId } = useNourishData();
+  const [reportMessage, setReportMessage] = useState(false);
+  const reportWeek = weeklyReport.days[0].date;
+  useEffect(() => {
+    if (!weeklyReport.ready) return;
+    const key = `nourish:report-seen:${accountId}:${reportWeek}`;
+    try {
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, 'seen');
+    } catch {
+      /* The message can still be shown when storage is unavailable. */
+    }
+    setReportMessage(true);
+  }, [accountId, reportWeek, weeklyReport.ready]);
+  useEffect(() => {
+    if (!reportMessage) return;
+    const timer = setTimeout(() => setReportMessage(false), 5000);
+    return () => clearTimeout(timer);
+  }, [reportMessage]);
   return (
     <>
       <div className="intro today-intro">
-        <Button
-          className="today-shortcut"
-          onClick={() => setDay(today)}
-          aria-label="Return to today"
-          variant="unstyled"
-        >
-          Today
-        </Button>
+        <div className="today-actions">
+          {reportMessage && (
+            <span className="report-first-message" role="status">
+              Your week called. You showed up!
+            </span>
+          )}
+          {weeklyReport.ready && (
+            <Button
+              variant="unstyled"
+              className="weekly-report-shortcut"
+              onClick={onWeeklyReport}
+              aria-label="View last week’s report"
+              title="Last week’s report is ready"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M4 21v-4m5 4v-7m5 7v-5m5 5V11"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M3 13 8 8 12 12 20 3"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle className="report-ready-dot" cx="20" cy="3" r="1.8" fill="currentColor" />
+              </svg>
+            </Button>
+          )}
+          <Button
+            className="today-shortcut"
+            onClick={() => setDay(today)}
+            aria-label="Return to today"
+            variant="unstyled"
+          >
+            Today
+          </Button>
+        </div>
         <div className="eyebrow">A LITTLE MORE MINDFUL</div>
         <h1>{profile.name ? 'Hi, ' + profile.name + '.' : 'Make room for you.'}</h1>
         <p>Small choices. A healthier everyday.</p>
@@ -80,15 +134,6 @@ export function TodayPage({
         </Button>
       </div>
       <DailySummary day={day} tot={tot} profile={profile} onEdit={() => setSheet('profile')} />
-      {weeklyReport.ready && (
-        <Button variant="unstyled" className="weekly-report-link" onClick={onWeeklyReport}>
-          <span>
-            <small>YOUR WEEK IN REVIEW</small>
-            <strong>Last week’s report is ready</strong>
-          </span>
-          <ChevronRight size={20} aria-hidden="true" />
-        </Button>
-      )}
       <div className="section">
         <h2>Your meals</h2>
         <div className="meal-section-actions">

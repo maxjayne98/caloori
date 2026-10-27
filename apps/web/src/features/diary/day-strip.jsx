@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { ModalSheet } from '@/components/modal-sheet';
 import { DateCalendar } from './date-calendar';
-import { iso, today } from '@nourish/core';
+import { iso, today, savedDayGoal } from '@nourish/core';
 export function DayStrip({ day, entries, goal, onSelect }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const selectedDate = new Date(day + 'T12:00:00'),
@@ -50,13 +50,19 @@ export function DayStrip({ day, entries, goal, onSelect }) {
           let d = new Date(base);
           d.setDate(d.getDate() + i - 6);
           let key = iso(d),
-            cal = (entries[key] || []).reduce((v, x) => v + x.cal * x.qty, 0),
-            ratio = goal > 0 ? Math.min(cal / goal, 1) : 0;
+            foods = entries[key] || [],
+            cal = foods.reduce((v, x) => v + x.cal * x.qty, 0),
+            dayGoal = savedDayGoal(foods) ?? (key === today ? goal : null),
+            overGoal = dayGoal > 0 && cal > dayGoal,
+            ratio = dayGoal > 0 ? Math.min(cal / dayGoal, 1) : 0;
           return (
             <Button
               key={key}
               className={
-                'day-button' + (key === day ? ' selected' : '') + (key === today ? ' is-today' : '')
+                'day-button' +
+                (key === day ? ' selected' : '') +
+                (key === today ? ' is-today' : '') +
+                (overGoal ? ' over-goal' : '')
               }
               aria-label={
                 d.toLocaleDateString('en-US', {
@@ -65,7 +71,8 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                 }) +
                 ', ' +
                 Math.round(cal) +
-                ' calories'
+                ' calories' +
+                (overGoal ? ', above recorded goal' : '')
               }
               aria-pressed={key === day}
               aria-current={key === today ? 'date' : undefined}
@@ -87,7 +94,7 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                     cy={24}
                     r={20}
                     fill="none"
-                    stroke="var(--accent)"
+                    stroke={overGoal ? '#d56b30' : 'var(--accent)'}
                     strokeWidth={3}
                     strokeLinecap="round"
                     strokeDasharray={125.66}

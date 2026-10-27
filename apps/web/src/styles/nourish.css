@@ -194,7 +194,7 @@ p {
 }
 .track {
   height: 5px;
-  background: var(--neutral-f2f2f5);
+  background: var(--progress-track);
   border-radius: 5px;
   overflow: hidden;
   margin: 10px 0 7px;

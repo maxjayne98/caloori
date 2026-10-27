@@ -21,6 +21,7 @@ type Setter<K extends keyof AppState> = (
   update: AppState[K] | ((previous: AppState[K]) => AppState[K]),
 ) => void;
 type DataContext = AppState & {
+  accountId: string;
   setEntries: Setter<'entries'>;
   setProfile: Setter<'profile'>;
   setWeights: Setter<'weights'>;
@@ -40,10 +41,12 @@ type DataContext = AppState & {
 const Context = createContext<DataContext | null>(null);
 export function DataProvider({
   repository,
+  accountId = 'local',
   children,
   onSignOut,
   onAskAssistant,
 }: {
+  accountId?: string;
   repository: NourishRepository;
   onSignOut?: () => Promise<void>;
   onAskAssistant?: (request: AssistantRequest) => Promise<unknown>;
@@ -192,6 +195,7 @@ export function DataProvider({
           setStatus('saved');
         }
       : undefined,
+    accountId,
     repositoryKind: repository.kind,
     status,
     error,

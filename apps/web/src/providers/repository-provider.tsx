@@ -129,6 +129,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
       <DataProvider
         key={repository.kind + ':' + accountId}
         repository={repository}
+        accountId={accountId || 'local'}
         onAskAssistant={
           client
             ? async (request: AssistantRequest) => {

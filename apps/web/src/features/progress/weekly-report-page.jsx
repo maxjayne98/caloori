@@ -9,9 +9,6 @@ export function WeeklyReportPage({ report, onBack }) {
   const max = Math.max(1, ...report.days.flatMap((day) => [day.intake, day.goal || 0]));
   return (
     <section className="weekly-report-page">
-      <Button variant="unstyled" className="link" onClick={onBack}>
-        <ArrowLeft size={16} /> Today
-      </Button>
       <div className="intro">
         <div className="eyebrow">YOUR WEEK IN REVIEW</div>
         <h1>A week of you.</h1>
