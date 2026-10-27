@@ -94,7 +94,7 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                     cy={24}
                     r={20}
                     fill="none"
-                    stroke={overGoal ? '#d56b30' : 'var(--accent)'}
+                    stroke={overGoal ? '#ff6a00' : 'var(--accent)'}
                     strokeWidth={3}
                     strokeLinecap="round"
                     strokeDasharray={125.66}
