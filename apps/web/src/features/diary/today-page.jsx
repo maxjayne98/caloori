@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { iso, today } from '@nourish/core';
 import { DayStrip } from '@/features/diary/day-strip';
@@ -49,7 +50,7 @@ export function TodayPage({
           }}
           variant="unstyled"
         >
-          ‹
+          <ChevronLeft size={18} aria-hidden="true" />
         </Button>
         <strong>
           {day === today
@@ -73,7 +74,7 @@ export function TodayPage({
           }}
           variant="unstyled"
         >
-          ›
+          <ChevronRight size={18} aria-hidden="true" />
         </Button>
       </div>
       <DailySummary tot={tot} profile={profile} onEdit={() => setSheet('profile')} />

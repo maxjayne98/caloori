@@ -253,7 +253,7 @@ export function App() {
     );
   if (tab === 'Profile')
     body = <ProfilePage profile={profile} setProfile={setProfile} notify={notify} />;
-  if (tab === 'Assistant') body = <AssistantPage day={day} onBack={() => navigate('Today')} />;
+  if (tab === 'Assistant') body = <AssistantPage day={day} />;
   let content = null;
   if (sheet === 'edit' && editing)
     content = (

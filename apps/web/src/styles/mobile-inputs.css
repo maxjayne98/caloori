@@ -12,3 +12,14 @@ html body :is(.app, .sheet) select:not([aria-hidden='true']) {
 html body :is(.app, .sheet) .amount-unit-row input {
   font-size: 24px;
 }
+
+/* Keep numeric validation and the mobile number keyboard, without browser steppers. */
+html body :is(.app, .sheet) input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+html body :is(.app, .sheet) input[type='number']::-webkit-inner-spin-button,
+html body :is(.app, .sheet) input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

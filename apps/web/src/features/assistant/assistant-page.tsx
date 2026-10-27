@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUp, Check, Sparkles } from 'lucide-react';
+import { ArrowUp, Check } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import {
   foods,
@@ -14,7 +14,7 @@ import {
 import { useNourishData } from '@/providers/data-provider';
 import { HeartLoader } from '@/components/heart-loader';
 import { NourishCompanion } from '@/components/nourish-companion';
-export function AssistantPage({ day, onBack }: { day: string; onBack: () => void }) {
+export function AssistantPage({ day }: { day: string }) {
   const data = useNourishData();
   const [messages, setMessages] = useState<AssistantMessage[]>([]),
     [input, setInput] = useState(''),
@@ -90,14 +90,6 @@ export function AssistantPage({ day, onBack }: { day: string; onBack: () => void
   }
   return (
     <section className="assistant-page" aria-labelledby="assistant-title">
-      <div className="page-toolbar">
-        <Button variant="unstyled" className="back-button" onClick={onBack} aria-label="Back">
-          <ArrowLeft size={18} />
-        </Button>
-        <span>
-          <Sparkles size={14} /> NOURISH ASSISTANT
-        </span>
-      </div>
       <div className="intro">
         <h1 id="assistant-title">A little help.</h1>
         <p>Good food. Goals that feel like you.</p>
