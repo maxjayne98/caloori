@@ -10,30 +10,52 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
     [logged, setLogged] = useState([]),
     ref = React.useRef(null),
     previous = React.useRef(null);
-  // Animate a meal's icon when it gains items on the same day (not when switching days).
-  const countKey = meals.map((m) => list.filter((x) => x.meal === m).length).join(',');
+  // Track all logged-item edits, but do not animate when switching days.
+  const mealSignatures = Object.fromEntries(
+    meals.map((meal) => [
+      meal,
+      list
+        .filter((item) => item.meal === meal)
+        .map((item) =>
+          JSON.stringify({
+            key: item.key,
+            name: item.name,
+            qty: item.qty,
+            cal: item.cal,
+            p: item.p,
+            c: item.c,
+            f: item.f,
+            serving: item.serving,
+            portion: item.portion,
+          }),
+        )
+        .sort()
+        .join('|'),
+    ]),
+  );
+  const signatureKey = JSON.stringify(mealSignatures);
   useEffect(() => {
-    const counts = Object.fromEntries(countKey.split(',').map((n, i) => [meals[i], +n]));
     const before = previous.current;
-    previous.current = { day, counts };
+    previous.current = { day, mealSignatures };
     if (!before || before.day !== day) return;
-    const grown = meals.filter((m) => counts[m] > before.counts[m]);
-    if (!grown.length) return;
+    const changed = meals.filter((meal) => mealSignatures[meal] !== before.mealSignatures[meal]);
+    if (!changed.length) return;
+    setLogged([]);
     // Wait for the add sheet (and its scroll lock) to close, bring the meal into view,
     // then celebrate so the animation is actually seen.
     const timers = [];
     timers.push(
       setTimeout(() => {
-        const section = document.querySelector(`[data-meal="${grown[0]}"]`);
+        const section = document.querySelector(`[data-meal="${changed[0]}"]`);
         const box = section?.getBoundingClientRect();
         const hidden = !!box && (box.top < 70 || box.bottom > innerHeight - 100);
         if (hidden) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        timers.push(setTimeout(() => setLogged(grown), hidden ? 450 : 0));
+        timers.push(setTimeout(() => setLogged(changed), hidden ? 450 : 0));
         timers.push(setTimeout(() => setLogged([]), (hidden ? 450 : 0) + 1300));
       }, 120),
     );
     return () => timers.forEach(clearTimeout);
-  }, [day, countKey]);
+  }, [day, signatureKey]);
   function finish() {
     const d = ref.current;
     if (d && d.target) onMove(d.key, d.target);
@@ -80,6 +102,7 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
           let items = list.filter((x) => x.meal === m);
           const target = mealCalorieTarget(profile?.cal, m, profile?.mealCalories);
           const consumed = Math.round(items.reduce((sum, item) => sum + item.cal * item.qty, 0));
+          const goalPercent = target > 0 ? Math.round((consumed / target) * 100) : null;
           return (
             <section
               key={m}
@@ -87,14 +110,44 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
               className={'meal-group' + (over === m ? ' drop-over' : '')}
             >
               <div className="meal-heading">
-                <div className={'meal-icon' + (logged.includes(m) ? ' is-logged' : '')}>
+                <div
+                  className={
+                    'meal-icon' +
+                    (logged.includes(m) ? ' is-logged' : '') +
+                    (goalPercent !== null ? ' has-goal-progress' : '')
+                  }
+                >
                   <Icon type={['Sun', 'Lunch', 'Moon', 'Snack'][i]} />
+                  {goalPercent !== null && (
+                    <>
+                      <svg
+                        className="meal-icon-progress"
+                        viewBox="0 0 48 48"
+                        role="progressbar"
+                        aria-label={`${m}: ${goalPercent}% of meal calorie target`}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.min(goalPercent, 100)}
+                      >
+                        <circle className="meal-icon-progress-track" cx="24" cy="24" r="21" />
+                        <circle
+                          className="meal-icon-progress-value"
+                          cx="24"
+                          cy="24"
+                          r="21"
+                          strokeDasharray={131.95}
+                          strokeDashoffset={131.95 * (1 - Math.min(goalPercent, 100) / 100)}
+                        />
+                      </svg>
+                      <span className="meal-icon-percent">{goalPercent}%</span>
+                    </>
+                  )}
                 </div>
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
                   <b>{m}</b>
                   <small>
                     {items.length
-                      ? `${items.length} item${items.length === 1 ? '' : 's'} · ${consumed} / ${target !== null ? `~${target}` : '—'} kcal`
+                      ? `${consumed} / ${target !== null ? `~${target}` : '—'} kcal`
                       : target !== null
                         ? `About ${target} kcal · Nothing logged yet`
                         : 'Nothing logged yet'}

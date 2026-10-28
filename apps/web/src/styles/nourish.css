@@ -249,6 +249,7 @@ p {
   place-items: center;
   background: #fff4e6;
   border-radius: 14px;
+  color: #dd9d39;
   font-size: 21px;
 }
 .meal:nth-child(2) .meal-icon {
@@ -278,6 +279,53 @@ p {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 220px;
+}
+.meal-icon.has-goal-progress {
+  position: relative;
+  flex: 0 0 43px;
+  overflow: visible;
+  border-radius: 50%;
+}
+.meal-icon .meal-icon-progress {
+  position: absolute;
+  inset: 0;
+  width: 43px;
+  height: 43px;
+  overflow: visible;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.meal-icon.has-goal-progress > svg:first-child {
+  position: relative;
+  z-index: 1;
+}
+.meal-icon-progress circle {
+  fill: none;
+  stroke-width: 2.5;
+}
+.meal-icon-progress-track {
+  stroke: var(--accent-soft);
+}
+.meal-icon-progress-value {
+  stroke: currentColor;
+  stroke-linecap: round;
+}
+.meal-icon-percent {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  z-index: 2;
+  min-width: 24px;
+  padding: 2px 3px;
+  border: 1px solid var(--surface);
+  border-radius: 99px;
+  background: var(--surface);
+  color: inherit;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
 }
 .meal-kcal {
   font-size: 12px;
@@ -656,12 +704,15 @@ label {
 }
 .meal-group:nth-child(2) .meal-icon {
   background: var(--neutral-edf8ef);
+  color: #69a17b;
 }
 .meal-group:nth-child(3) .meal-icon {
   background: var(--neutral-eff1ff);
+  color: #8d85c6;
 }
 .meal-group:nth-child(4) .meal-icon {
   background: var(--accent-tint);
+  color: #d38399;
 }
 .meal-group.drop-over {
   background: var(--neutral-fff3f6);
@@ -1221,16 +1272,7 @@ label {
 .meal-icon svg {
   width: 22px;
   height: 22px;
-  color: #dd9d39;
-}
-.meal-group:nth-child(2) .meal-icon svg {
-  color: #69a17b;
-}
-.meal-group:nth-child(3) .meal-icon svg {
-  color: #8d85c6;
-}
-.meal-group:nth-child(4) .meal-icon svg {
-  color: #d38399;
+  color: inherit;
 }
 .food-row .plus {
   flex-shrink: 0;

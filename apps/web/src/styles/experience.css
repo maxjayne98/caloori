@@ -1257,20 +1257,20 @@ button.brand {
 .meal-group[data-meal='Snacks'] .meal-icon.is-logged {
   --meal-glow: #f06a92;
 }
-.meal-icon.is-logged > svg {
+.meal-icon.is-logged > svg:first-child {
   animation-duration: 1.1s;
   animation-timing-function: ease-in-out;
 }
-.meal-group[data-meal='Breakfast'] .meal-icon.is-logged > svg {
+.meal-group[data-meal='Breakfast'] .meal-icon.is-logged > svg:first-child {
   animation-name: meal-sun-spin;
 }
-.meal-group[data-meal='Lunch'] .meal-icon.is-logged > svg {
+.meal-group[data-meal='Lunch'] .meal-icon.is-logged > svg:first-child {
   animation-name: meal-bowl-hop;
 }
-.meal-group[data-meal='Dinner'] .meal-icon.is-logged > svg {
+.meal-group[data-meal='Dinner'] .meal-icon.is-logged > svg:first-child {
   animation-name: meal-moon-swing;
 }
-.meal-group[data-meal='Snacks'] .meal-icon.is-logged > svg {
+.meal-group[data-meal='Snacks'] .meal-icon.is-logged > svg:first-child {
   animation-name: meal-bag-wiggle;
 }
 @keyframes meal-icon-pop {
@@ -1353,7 +1353,7 @@ button.brand {
 }
 @media (prefers-reduced-motion: reduce) {
   .meal-icon.is-logged,
-  .meal-icon.is-logged > svg {
+  .meal-icon.is-logged > svg:first-child {
     animation: none;
   }
 }
