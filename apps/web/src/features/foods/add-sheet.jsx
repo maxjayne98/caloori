@@ -4,6 +4,7 @@ import { Button, Input } from '@nourish/ui';
 import { foods, meals, appendDiaryEntries } from '@nourish/core';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
 import { FoodRows } from '@/features/foods/food-rows';
+import { useI18n } from '@/providers/i18n-provider';
 export function AddFoodSheet({
   chosen,
   meal,
@@ -19,6 +20,7 @@ export function AddFoodSheet({
   custom,
   setQty,
 }) {
+  const { t, tMeal } = useI18n();
   return chosen ? (
     <FoodPortionEditor
       key={'add' + chosen.id}
@@ -46,7 +48,7 @@ export function AddFoodSheet({
         );
         setChosen(null);
         setSheet(null);
-        notify('Added to ' + data.meal);
+        notify(t('toast.addedTo', { meal: tMeal(data.meal) }));
       }}
       onBack={() => setChosen(null)}
     />
@@ -60,33 +62,33 @@ export function AddFoodSheet({
             onClick={() => setMeal(m)}
             variant="unstyled"
           >
-            {m}
+            {tMeal(m)}
           </Button>
         ))}
       </div>
       <Input
         className="search"
-        placeholder="Search for a food"
+        placeholder={t('food.searchPlaceholder')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        aria-label="Search for food"
+        aria-label={t('food.searchAria')}
         unstyled
       />
       <div className="pills">
         <Button onClick={() => setSheet('meals')} variant="unstyled">
-          My meals
+          {t('food.savedMeals')}
         </Button>
         <Button onClick={() => setSheet('quick')} variant="unstyled">
-          Quick add
+          {t('food.quickAdd')}
         </Button>
         <Button onClick={() => setSheet('barcode')} variant="unstyled">
-          ▥ Barcode
+          ▥ {t('food.barcode')}
         </Button>
         <Button onClick={() => setSheet('photo')} variant="unstyled">
-          ◎ Meal scan
+          ◎ {t('food.mealScan')}
         </Button>
       </div>
-      <div className="eyebrow">{query ? 'SEARCH RESULTS' : 'EVERYDAY FAVORITES'}</div>
+      <div className="eyebrow">{query ? t('food.searchResults') : t('food.everydayFavorites')}</div>
       {
         <FoodRows
           items={[...foods, ...custom].filter((x) =>
@@ -98,10 +100,10 @@ export function AddFoodSheet({
         />
       }
       {![...foods, ...custom].some((x) => x.name.toLowerCase().includes(query.toLowerCase())) && (
-        <div className="empty">No matching foods. Create your own below.</div>
+        <div className="empty">{t('food.noMatch')}</div>
       )}
       <Button className="secondary" onClick={() => setSheet('custom')} variant="unstyled">
-        + Create a food
+        + {t('food.createFood')}
       </Button>
     </>
   );

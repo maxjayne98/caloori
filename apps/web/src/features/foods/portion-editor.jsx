@@ -12,6 +12,7 @@ import {
   portionUnitLabel,
 } from '@nourish/core';
 import { FoodNutrition } from '@/components/food-nutrition';
+import { useI18n } from '@/providers/i18n-provider';
 export function FoodPortionEditor({
   food,
   initialMeal,
@@ -21,6 +22,7 @@ export function FoodPortionEditor({
   hideMeal = false,
   saveLabel,
 }) {
+  const { t, tMeal } = useI18n();
   const units = getFoodUnits(food),
     saved = food.portion;
   const initialUnit =

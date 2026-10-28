@@ -6,9 +6,8 @@ import { WeightSummary } from '@/features/progress/weight-summary';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { ReportIcon } from '@/components/report-icon';
+import { useI18n } from '@/providers/i18n-provider';
 
-const dateLabel = (date) =>
-  new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 export function ProgressPage({
   weights,
   profile,
@@ -18,12 +17,14 @@ export function ProgressPage({
   weeklyReport,
   onWeeklyReport,
 }) {
+  const { t, formatDate } = useI18n();
+  const dateLabel = (date) => formatDate(date, { month: 'short', day: 'numeric' });
   return (
     <>
       <div className="intro">
-        <div className="eyebrow">THE BIGGER PICTURE</div>
-        <h1>Every step counts.</h1>
-        <p>Your journey, at your own pace.</p>
+        <div className="eyebrow">{t('progress.eyebrow')}</div>
+        <h1>{t('progress.title')}</h1>
+        <p>{t('progress.subtitle')}</p>
       </div>
       {weeklyReport.ready && (
         <Button variant="unstyled" className="card weekly-report-link" onClick={onWeeklyReport}>
@@ -31,7 +32,7 @@ export function ProgressPage({
             <ReportIcon animated />
           </span>
           <span className="weekly-report-link-text">
-            <strong>Weekly report</strong>
+            <strong>{t('progress.weeklyReport')}</strong>
             <small>
               {dateLabel(weeklyReport.days[0].date)} – {dateLabel(weeklyReport.days[6].date)}
             </small>

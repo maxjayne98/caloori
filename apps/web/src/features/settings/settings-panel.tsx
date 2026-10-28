@@ -1,8 +1,10 @@
 'use client';
 import { Button } from '@nourish/ui';
 import { useRef, useState, type ChangeEvent } from 'react';
+import { APP_VERSION, SUPPORTED_LOCALES, LOCALE_METADATA } from '@nourish/core';
 import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-provider';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 import {
   PATTERN_COUNT,
   PIXEL_COUNT,
@@ -13,6 +15,7 @@ import {
 export function SettingsPanel() {
   const { theme, setTheme, accent, setAccent } = useAppearance();
   const { profile, setProfile, accountId } = useNourishData();
+  const { locale, setLocale, t } = useI18n();
   const picker = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState('');
   const [showAll, setShowAll] = useState(false);
@@ -54,27 +57,27 @@ export function SettingsPanel() {
   return (
     <div className="settings-panel">
       <div className="settings-heading">
-        <h3>Avatar</h3>
+        <h3>{t('settings.avatar')}</h3>
         <div className="settings-photo-actions">
           <Button
             variant="unstyled"
             className="settings-photo-choose"
             onClick={() => picker.current?.click()}
           >
-            {profile.photo ? 'Change photo' : 'Upload photo'}
+            {profile.photo ? t('settings.changePhoto') : t('settings.uploadPhoto')}
           </Button>
           {profile.photo && (
             <Button variant="unstyled" className="settings-photo-remove" onClick={removePhoto}>
-              Remove photo
+              {t('settings.removePhoto')}
             </Button>
           )}
           <input ref={picker} type="file" accept="image/*" hidden onChange={choosePhoto} />
           <Button variant="unstyled" className="link" onClick={() => setShowAll(!showAll)}>
-            {showAll ? 'Show less' : 'View all'}
+            {showAll ? t('settings.showLess') : t('settings.viewAll')}
           </Button>
         </div>
       </div>
-      <div className="avatar-choices" role="radiogroup" aria-label="Avatar">
+      <div className="avatar-choices" role="radiogroup" aria-label={t('settings.avatar')}>
         {visible.map((choice) => (
           <Button
             key={choice}
@@ -83,12 +86,12 @@ export function SettingsPanel() {
             aria-checked={current === choice}
             aria-label={
               choice === 'initial'
-                ? 'First letter of your name'
+                ? t('settings.avatarInitial')
                 : choice === 'photo'
-                  ? 'Your photo'
+                  ? t('settings.avatarPhoto')
                   : choice.startsWith('pixel:')
-                    ? `Pixel character ${Number(choice.slice(6)) + 1}`
-                    : `Pattern ${Number(choice.slice(8)) + 1}`
+                    ? t('settings.avatarPixel', { n: Number(choice.slice(6)) + 1 })
+                    : t('settings.avatarPattern', { n: Number(choice.slice(8)) + 1 })
             }
             className={current === choice ? 'selected' : ''}
             onClick={() => setAvatar(choice)}
@@ -99,12 +102,12 @@ export function SettingsPanel() {
       </div>
       {photoError && <p role="alert">{photoError}</p>}
       <div className="settings-heading">
-        <h3>Appearance</h3>
-        <p>Make Nourish feel like you.</p>
+        <h3>{t('settings.appearance')}</h3>
+        <p>{t('settings.appearanceDesc')}</p>
       </div>
-      <label>Theme</label>
+      <label>{t('settings.theme')}</label>
       <div className="settings-segments">
-        {['light', 'dark', 'system'].map((value) => (
+        {(['light', 'dark', 'system'] as const).map((value) => (
           <Button
             key={value}
             variant="unstyled"
@@ -112,11 +115,15 @@ export function SettingsPanel() {
             className={theme === value ? 'selected' : ''}
             onClick={() => setTheme(value)}
           >
-            {value[0].toUpperCase() + value.slice(1)}
+            {value === 'light'
+              ? t('settings.themeLight')
+              : value === 'dark'
+                ? t('settings.themeDark')
+                : t('settings.themeSystem')}
           </Button>
         ))}
       </div>
-      <label>Accent color</label>
+      <label>{t('settings.accentColor')}</label>
       <div className="accent-swatches">
         {Object.entries(ACCENTS).map(([name, color]) => (
           <Button
@@ -131,6 +138,27 @@ export function SettingsPanel() {
             {accent === name ? '✓' : ''}
           </Button>
         ))}
+      </div>
+      <label>{t('settings.language')}</label>
+      <div className="settings-segments">
+        {SUPPORTED_LOCALES.map((code) => (
+          <Button
+            key={code}
+            variant="unstyled"
+            aria-pressed={locale === code}
+            className={locale === code ? 'selected' : ''}
+            onClick={() => setLocale(code)}
+          >
+            {LOCALE_METADATA[code].label}
+          </Button>
+        ))}
+      </div>
+      <div className="settings-heading settings-about">
+        <h3>{t('settings.about')}</h3>
+      </div>
+      <div className="settings-version">
+        <span>{t('settings.version')}</span>
+        <span className="settings-version-number">{APP_VERSION}</span>
       </div>
     </div>
   );

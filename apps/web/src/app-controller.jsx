@@ -38,7 +38,9 @@ import { FoodPage } from '@/features/foods/food-page';
 import { ProgressPage } from '@/features/progress/progress-page';
 import { field, formData } from '@/components/form-fields';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 export function App() {
+  const { t, tMeal } = useI18n();
   const {
     entries,
     profile,
@@ -146,7 +148,7 @@ export function App() {
     );
     setChosen(null);
     setQty(1);
-    notify('Added to ' + meal);
+    notify(t('toast.addedTo', { meal: tMeal(meal) }));
   }
   function editItem(x) {
     setEditing(x);
@@ -159,7 +161,7 @@ export function App() {
       ...entries,
       [day]: list.filter((y) => y.key !== x.key),
     });
-    notify(x.name + ' removed');
+    notify(t('toast.removed', { name: x.name }));
   }
   function moveItem(key, target) {
     setEntries((prev) => ({
@@ -173,12 +175,12 @@ export function App() {
           : x,
       ),
     }));
-    notify('Moved to ' + target);
+    notify(t('toast.movedTo', { target: tMeal(target) }));
   }
-  function saveTemplate(t) {
-    setTemplates((prev) => [...prev.filter((x) => x.id !== t.id), t]);
+  function saveTemplate(tObj) {
+    setTemplates((prev) => [...prev.filter((x) => x.id !== tObj.id), tObj]);
     setSheet('meals');
-    notify('Meal saved');
+    notify(t('toast.mealSaved'));
   }
   function createTemplate(items = [], name = '') {
     setTemplate({
@@ -205,9 +207,9 @@ export function App() {
       });
       setSheet('mealBuilder');
     },
-    onDelete: (t) => {
-      setTemplates((prev) => prev.filter((x) => x.id !== t.id));
-      notify('Saved meal deleted');
+    onDelete: (tObj) => {
+      setTemplates((prev) => prev.filter((x) => x.id !== tObj.id));
+      notify(t('toast.savedMealDeleted'));
     },
   };
   const weeklyReport = buildWeeklyReport(entries, activities, weights);
@@ -293,7 +295,7 @@ export function App() {
             ),
           });
           setSheet(null);
-          notify('Food updated');
+          notify(t('toast.foodUpdated'));
         }}
         onDelete={() => {
           deleteItem(editing);
@@ -338,7 +340,11 @@ export function App() {
           if (sheet === 'custom') setCustom([...custom, f]);
           else add(f, 1);
           setSheet(null);
-          notify(sheet === 'custom' ? 'Food saved to your library' : 'Added to ' + meal);
+          notify(
+            sheet === 'custom'
+              ? t('toast.foodSavedLibrary')
+              : t('toast.addedTo', { meal: tMeal(meal) }),
+          );
         }}
       >
         {sheet === 'custom' && (
@@ -348,11 +354,11 @@ export function App() {
             onOpenChange={setNutritionLabelOpen}
           />
         )}
-        {field('Food name', 'name', query || '', 'text')}
-        {sheet === 'custom' && field('Serving size', 'serving', '1 serving', 'text')}
+        {field(t('food.searchPlaceholder'), 'name', query || '', 'text')}
+        {sheet === 'custom' && field(t('portion.servingSize'), 'serving', '1 serving', 'text')}
         {sheet === 'custom' && (
           <div>
-            <label htmlFor="food-grams">Grams per serving (optional)</label>
+            <label htmlFor="food-grams">{t('portion.gramsPerServing')}</label>
             <Input
               id="food-grams"
               name="grams"
@@ -365,14 +371,16 @@ export function App() {
             />
           </div>
         )}
-        {field('Calories (kcal)', 'cal', '')}
+        {field(`${t('summary.dailyEnergy')} (${t('common.kcal')})`, 'cal', '')}
         <div className="grid2">
-          {field('Protein (g)', 'p', 0)}
-          {field('Carbs (g)', 'c', 0)}
+          {field(`${t('summary.protein')} (${t('common.grams')})`, 'p', 0)}
+          {field(`${t('summary.carbs')} (${t('common.grams')})`, 'c', 0)}
         </div>
-        {field('Fat (g)', 'f', 0)}
+        {field(`${t('summary.fat')} (${t('common.grams')})`, 'f', 0)}
         <Button className="primary" variant="unstyled">
-          {sheet === 'custom' ? 'Save food' : 'Add to ' + meal}
+          {sheet === 'custom'
+            ? t('portion.saveFood')
+            : t('meals.addToMeal', { meal: tMeal(meal) })}
         </Button>
       </form>
     );
@@ -468,7 +476,7 @@ export function App() {
             [day]: [...(prev[day] || []).filter((y) => y.key !== x.key), x],
           }));
           setSheet(null);
-          notify('Activity saved');
+          notify(t('toast.activitySaved'));
         }}
         onDelete={
           activity
@@ -478,7 +486,7 @@ export function App() {
                   [day]: (prev[day] || []).filter((x) => x.key !== activity.key),
                 }));
                 setSheet(null);
-                notify('Activity removed');
+                notify(t('toast.activityRemoved'));
               }
             : undefined
         }
@@ -491,7 +499,7 @@ export function App() {
         save={(f) => {
           setCustom([...custom, f]);
           setSheet(null);
-          notify('Recipe saved');
+          notify(t('toast.recipeSaved'));
         }}
       />
     );
@@ -532,23 +540,23 @@ export function App() {
     );
   if (sheet === 'settings') content = <SettingsPanel />;
   const titles = {
-    settings: 'Settings',
-    meals: 'My meals',
-    mealBuilder: template?.id ? 'Edit meal' : 'Create meal',
-    useMeal: 'Log saved meal',
-    activity: activity ? 'Edit activity' : 'Log activity',
-    edit: 'Edit food',
-    add: chosen ? 'Food details' : 'Add food',
-    profile: 'Made for you',
-    weight: 'A little check-in',
-    custom: 'Create a food',
-    quick: 'Quick add',
-    diary: meal,
-    copy: 'Copy a day',
-    recipe: 'Create a recipe',
-    saveMeal: 'Save a meal',
-    photo: 'Meal scan',
-    barcode: 'Scan a barcode',
+    settings: t('sheet.settings'),
+    meals: t('sheet.meals'),
+    mealBuilder: template?.id ? t('meals.editMeal') : t('meals.createMeal'),
+    useMeal: t('sheet.useMeal'),
+    activity: activity ? t('activity.editButton') : t('activity.logButton'),
+    edit: t('sheet.edit'),
+    add: chosen ? t('sheet.add') : t('sheet.addFood'),
+    profile: t('sheet.profile'),
+    weight: t('sheet.weight'),
+    custom: t('sheet.custom'),
+    quick: t('sheet.quick'),
+    diary: tMeal(meal),
+    copy: t('sheet.copy'),
+    recipe: t('sheet.recipe'),
+    saveMeal: t('sheet.saveMeal'),
+    photo: t('sheet.photo'),
+    barcode: t('sheet.barcode'),
   };
   return (
     <main className="app">
@@ -556,7 +564,7 @@ export function App() {
         <Button
           variant="unstyled"
           className="brand"
-          aria-label="Nourish — go to Today"
+          aria-label={t('nav.brandAria')}
           onClick={() => navigate('Today')}
         >
           <span className="brand-heart">♥</span>
@@ -583,8 +591,8 @@ export function App() {
           <LoggingStreak entries={entries} today={today} />
           <Button
             className={tab === 'Profile' ? 'avatar profile-settings' : 'avatar'}
-            aria-label={tab === 'Profile' ? 'Appearance & data' : 'Your profile'}
-            title={tab === 'Profile' ? 'Appearance & data' : 'Your profile'}
+            aria-label={tab === 'Profile' ? t('nav.settingsAria') : t('nav.profileAria')}
+            title={tab === 'Profile' ? t('nav.settingsAria') : t('nav.profileAria')}
             onClick={() => setSheet(tab === 'Profile' ? 'settings' : 'profile')}
             variant="unstyled"
           >

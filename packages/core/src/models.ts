@@ -172,9 +172,45 @@ export function emptyState(): AppState {
     activities: {},
   };
 }
+
+function normalizeUniqueKeys<T extends { key?: string | number }>(items: T[], prefix: string): T[] {
+  const seen = new Set<string>();
+  return items.map((item, index) => {
+    const existing = item.key == null ? '' : String(item.key);
+    if (existing && !seen.has(existing)) {
+      seen.add(existing);
+      return item;
+    }
+    let key = `${prefix}-${index}`;
+    let suffix = 1;
+    while (seen.has(key)) key = `${prefix}-${index}-${suffix++}`;
+    seen.add(key);
+    return { ...item, key };
+  });
+}
+
 export function validateState(value: unknown): AppState {
   const state = AppStateSchema.parse(value);
-  return { ...state, profile: normalizeProfile(state.profile) };
+  return {
+    ...state,
+    profile: normalizeProfile(state.profile),
+    entries: Object.fromEntries(
+      Object.entries(state.entries).map(([day, items]) => [
+        day,
+        normalizeUniqueKeys(items, `entry-${day}`),
+      ]),
+    ),
+    activities: Object.fromEntries(
+      Object.entries(state.activities).map(([day, items]) => [
+        day,
+        normalizeUniqueKeys(items, `activity-${day}`),
+      ]),
+    ),
+    templates: state.templates.map((template) => ({
+      ...template,
+      items: normalizeUniqueKeys(template.items, `template-${template.id}`),
+    })),
+  };
 }
 
 /** Import old six-key backups without ever reading/writing the original project's browser storage. */

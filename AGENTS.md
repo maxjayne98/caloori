@@ -20,6 +20,9 @@ Run `pnpm typecheck` and `pnpm test` before finishing.
 - Domain logic goes in `packages/core` (pure, tested). UI accesses data only through `useNourishData()` and `NourishRepository`.
 - Use color tokens (`--accent`, …), never hard-coded colors. Give every animation a reduced-motion fallback.
 - Keep commits small, and include only the files that belong to the change.
+- **TypeScript & Tailwind**: write all new files as `.ts`/`.tsx`. Use Tailwind utility classes for new styling instead of new CSS class definitions.
+- **i18n**: wrap every user-visible string with `t('key')` from `useI18n()`. Add the key to both `en` and `fa` in `packages/core/src/i18n.ts`.
+- **Version bump**: after any meaningful change (feature, fix, i18n, or refactor) update `APP_VERSION` in `packages/core/src/version.ts` (semver: `patch` for fixes/copy, `minor` for features) **and** update the matching `assert.equal` in `packages/core/src/i18n.test.ts`.
 
 ## Read when relevant
 

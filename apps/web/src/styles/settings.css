@@ -42,6 +42,24 @@
   outline: 2px solid var(--foreground);
   outline-offset: 2px;
 }
+.settings-about {
+  margin-top: 18px;
+}
+.settings-version {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--neutral-e9e9ee);
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--neutral-85858b);
+}
+.settings-version-number {
+  font-weight: 650;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
 .import-review {
   padding: 15px;
   background: var(--surface);

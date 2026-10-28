@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 
 export function SignOutButton() {
   const { signOut, status } = useNourishData();
+  const { t } = useI18n();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   if (!signOut) return null;
@@ -18,7 +20,7 @@ export function SignOutButton() {
         catch { setError('Could not sign out. Please try again.'); setBusy(false); }
       }}>
       <LogOut size={16} aria-hidden="true" />
-      {busy ? 'Signing out…' : 'Sign out'}
+      {busy ? t('profile.signingOut') : t('profile.signOut')}
     </Button>
     {error && <p role="alert" className="portion-error">{error}</p>}
   </div>;

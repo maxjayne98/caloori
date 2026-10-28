@@ -6,7 +6,9 @@ import React from 'react';
 import { Button } from '@nourish/ui';
 import { portionNumber, activityTypes, buildProgressDays } from '@nourish/core';
 import { HistoryBars } from '@/features/progress/history-bars';
+import { useI18n } from '@/providers/i18n-provider';
 export function ProgressCharts({ entries, activities, today }) {
+  const { t, formatDate } = useI18n();
   const [range, setRange] = React.useState(7),
     [end, setEnd] = React.useState(today),
     [metric, setMetric] = React.useState('minutes'),
@@ -31,7 +33,7 @@ export function ProgressCharts({ entries, activities, today }) {
     setActivityDay(next);
   }
   function dayName(date) {
-    return new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
+    return formatDate(date, {
       month: 'short',
       day: 'numeric',
     });
@@ -78,7 +80,7 @@ export function ProgressCharts({ entries, activities, today }) {
               onClick={() => setRange(n)}
               variant="unstyled"
             >
-              {n + ' days'}
+              {n === 7 ? t('progress.sevenDays') : t('progress.thirtyDays')}
             </Button>
           ))}
         </div>

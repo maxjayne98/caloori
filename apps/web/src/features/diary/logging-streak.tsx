@@ -3,11 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { getLoggingStreak, type Diary } from '@nourish/core';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 import { RollingNumber } from '@/components/rolling-number';
 
 export function LoggingStreak({ entries, today }: { entries: Diary; today: string }) {
   const streak = getLoggingStreak(entries, today);
   const { accountId } = useNourishData();
+  const { t } = useI18n();
   const previous = useRef<number | null>(null);
   const [celebration, setCelebration] = useState(0);
   const [celebrating, setCelebrating] = useState(false);
@@ -39,8 +41,8 @@ export function LoggingStreak({ entries, today }: { entries: Diary; today: strin
     <div
       className={`logging-streak${streak ? ' is-active' : ''}${celebrating ? ' is-celebrating' : ''}`}
       role="status"
-      aria-label={`${streak}-day food logging streak${celebrating ? '. Your streak grew. Keep it going!' : ''}`}
-      title="Consecutive days of food logging"
+      aria-label={`${t('streak.label', { count: streak })}${celebrating ? t('streak.celebrateAppend') : ''}`}
+      title={t('streak.title')}
     >
       <Flame key={celebration} aria-hidden="true" size={19} strokeWidth={1.8} />
       <RollingNumber value={streak} />
@@ -79,7 +81,7 @@ export function LoggingStreak({ entries, today }: { entries: Diary; today: strin
               />
             </svg>
           </div>
-          <span className="streak-cheer">{streak} days. Keep glowing!</span>
+          <span className="streak-cheer">{t('streak.cheer', { count: streak })}</span>
         </div>
       )}
     </div>

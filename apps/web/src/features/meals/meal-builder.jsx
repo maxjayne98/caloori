@@ -6,7 +6,9 @@ import { portionNumber, formatPortion, freshKey, sumMealItems } from '@nourish/c
 import { Icon } from '@/components/icon';
 import { FoodNutrition } from '@/components/food-nutrition';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
+import { useI18n } from '@/providers/i18n-provider';
 export function MealBuilder({ initial, foods, onSave, onCancel }) {
+  const { t } = useI18n();
   const [name, setName] = React.useState(initial?.name || ''),
     [items, setItems] = React.useState(initial?.items || []),
     [query, setQuery] = React.useState(''),
@@ -40,18 +42,18 @@ export function MealBuilder({ initial, foods, onSave, onCancel }) {
     );
   return (
     <div className="meal-builder">
-      <label htmlFor="template-name">Meal name</label>
+      <label htmlFor="template-name">{t('meals.mealName')}</label>
       <Input
         id="template-name"
-        placeholder="e.g. Eggs & toast"
+        placeholder={t('meals.mealNamePlaceholder')}
         value={name}
         onChange={(e) => setName(e.target.value)}
         maxLength={80}
         unstyled
       />
       <div className="section small-section">
-        <h3>Ingredients</h3>
-        <span className="sub">{items.length + ' item' + (items.length === 1 ? '' : 's')}</span>
+        <h3>{t('meals.itemsInMeal')}</h3>
+        <span className="sub">{items.length + ' ' + (items.length === 1 ? 'item' : 'items')}</span>
       </div>
       {items.map((x, i) => (
         <div className="builder-ingredient" key={x.key || i}>
@@ -147,10 +149,10 @@ export function MealBuilder({ initial, foods, onSave, onCancel }) {
         }}
         variant="unstyled"
       >
-        Save meal
+        {t('meals.saveTemplate')}
       </Button>
       <Button className="secondary" onClick={onCancel} variant="unstyled">
-        Back to my meals
+        {t('common.back')}
       </Button>
     </div>
   );

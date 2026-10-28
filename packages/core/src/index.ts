@@ -11,3 +11,5 @@ export * from './nutrition-label';
 
 export * from './assistant';
 export * from './weekly-report';
+export * from './version';
+export * from './i18n';

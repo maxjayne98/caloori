@@ -31,7 +31,11 @@ export function select(label, name, opts, value) {
         name={name}
         id={name}
         defaultValue={value ?? ''}
-        options={opts.map((option) => ({ value: option, label: option }))}
+        options={opts.map((option) =>
+          typeof option === 'string'
+            ? { value: option, label: option }
+            : { value: option.value, label: option.label },
+        )}
       />
     </div>
   );

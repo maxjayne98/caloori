@@ -59,3 +59,66 @@ test('profile avatar choice accepts initial, photo and pattern variants only', (
   for (const bad of ['pattern:', 'pattern:123', 'emoji'])
     assert.throws(() => validateState({ ...base, profile: { ...base.profile, avatar: bad } }));
 });
+
+test('validation repairs duplicate and missing keys in logged, activity and saved-meal items', () => {
+  const base = emptyState();
+  const food = {
+    id: 'food',
+    name: 'Food',
+    serving: '1 serving',
+    cal: 10,
+    p: 1,
+    c: 1,
+    f: 1,
+  };
+  const state = validateState({
+    ...base,
+    entries: {
+      '2026-10-28': [{ ...food, key: 1 }, { ...food, key: '1' }, food],
+    },
+    activities: {
+      '2026-10-28': [
+        {
+          key: 1,
+          type: 'running',
+          name: 'Run',
+          level: 'Moderate',
+          minutes: 30,
+          weight: 70,
+          met: 8,
+          cal: 200,
+        },
+        {
+          key: 1,
+          type: 'running',
+          name: 'Run',
+          level: 'Moderate',
+          minutes: 30,
+          weight: 70,
+          met: 8,
+          cal: 200,
+        },
+      ],
+    },
+    templates: [
+      {
+        id: 'meal',
+        name: 'Saved meal',
+        items: [
+          { ...food, key: 1 },
+          { ...food, key: 1 },
+        ],
+      },
+    ],
+  });
+
+  const keysByList = [
+    state.entries['2026-10-28'].map((item) => String(item.key)),
+    state.activities['2026-10-28'].map((item) => String(item.key)),
+    state.templates[0].items.map((item) => String(item.key)),
+  ];
+  for (const keys of keysByList) assert.equal(new Set(keys).size, keys.length);
+  assert.equal(state.entries['2026-10-28'][0].key, 1);
+  assert.equal(state.entries['2026-10-28'][1].key, 'entry-2026-10-28-1');
+  assert.equal(state.entries['2026-10-28'][2].key, 'entry-2026-10-28-2');
+});

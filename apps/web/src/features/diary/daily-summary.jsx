@@ -7,7 +7,9 @@ import { useEffect, useState } from 'react';
 import { balanceStatus } from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
+import { useI18n } from '@/providers/i18n-provider';
 export function DailySummary({ tot, profile, weight, onEdit, day }) {
+  const { t } = useI18n();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -15,63 +17,68 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
   }, []);
   const status = balanceStatus(tot.cal, profile.cal, day, now);
   const labels = {
-    neutral: 'YOUR BALANCE',
-    over: 'ABOVE GOAL',
-    low: 'EVENING CHECK-IN',
-    reached: 'GOAL REACHED',
+    neutral: t('summary.balanceNeutral'),
+    over: t('summary.balanceOver'),
+    low: t('summary.balanceLow'),
+    reached: t('summary.balanceReached'),
   };
   if (!profile.cal)
     return (
       <section className="card profile-setup-card">
-        <span className="tag">MADE FOR YOU</span>
-        <h2>Complete your profile</h2>
-        <p>Add your details and nutrition goals to see your daily balance.</p>
+        <span className="tag">{t('summary.setupTag')}</span>
+        <h2>{t('summary.setupTitle')}</h2>
+        <p>{t('summary.setupDesc')}</p>
         <Button variant="unstyled" className="primary" onClick={onEdit}>
-          Set up my profile
+          {t('summary.setupButton')}
         </Button>
         <div className="setup-intake">
           <span>
-            Consumed{' '}
+            {t('summary.consumed')}{' '}
             <b>
-              <RollingNumber value={Math.round(tot.cal)} /> kcal
+              <RollingNumber value={Math.round(tot.cal)} /> {t('common.kcal')}
             </b>
           </span>
           <span>
-            Protein{' '}
+            {t('summary.protein')}{' '}
             <b>
-              <RollingNumber value={tot.p} decimals={2} /> g
+              <RollingNumber value={tot.p} decimals={2} /> {t('common.grams')}
             </b>
           </span>
           <span>
-            Carbs{' '}
+            {t('summary.carbs')}{' '}
             <b>
-              <RollingNumber value={tot.c} decimals={2} /> g
+              <RollingNumber value={tot.c} decimals={2} /> {t('common.grams')}
             </b>
           </span>
           <span>
-            Fat{' '}
+            {t('summary.fat')}{' '}
             <b>
-              <RollingNumber value={tot.f} decimals={2} /> g
+              <RollingNumber value={tot.f} decimals={2} /> {t('common.grams')}
             </b>
           </span>
         </div>
       </section>
     );
   const macroItems = [
-    ['Protein', 'p', 'var(--macro-protein)'],
-    ['Carbs', 'c', 'var(--macro-carbs)'],
-    ['Fat', 'f', 'var(--macro-fat)'],
+    [t('summary.protein'), 'p', 'var(--macro-protein)'],
+    [t('summary.carbs'), 'c', 'var(--macro-carbs)'],
+    [t('summary.fat'), 'f', 'var(--macro-fat)'],
   ].map(([name, k, color]) => (
     <div className="macro" key={k}>
       <small>
         {name}
         {weight > 0 && (
-          <em className="macro-per-kg"> · {((tot[k] || 0) / weight).toFixed(1)} g/kg</em>
+          <em className="macro-per-kg">
+            {' · '}
+            {/* LTR isolation: keep numeric ratio readable in RTL */}
+            <span dir="ltr">{((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg</span>
+          </em>
         )}
       </small>
-      <b>
+      {/* LTR isolation: keep "18.6g / 130g" order correct in RTL */}
+      <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>
         <RollingNumber value={tot[k]} decimals={2} />
-        <em>g / {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}g</em>
+        <em>{t('common.grams')} / {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}{t('common.grams')}</em>
       </b>
       <div className="track">
         <i
@@ -103,14 +110,15 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
         <b>
           <RollingNumber value={Math.round(Math.abs(profile.cal - tot.cal))} />
         </b>
-        <span>{tot.cal > profile.cal ? 'kcal over goal' : 'kcal remaining'}</span>
+        <span>{tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}</span>
       </div>
     </div>
   );
   const energy = (
     <div className="cal-footer">
-      <small>Consumed / Daily goal</small>
-      <div className="energy-amounts">
+      <small>{t('summary.consumedDailyGoal')}</small>
+      {/* LTR isolation: keep "823 / 2,000 kcal" order correct in RTL */}
+      <div className="energy-amounts" dir="ltr" style={{ unicodeBidi: 'isolate' }}>
         <b className="consumed-value">
           <RollingNumber value={Math.round(tot.cal)} />
         </b>
@@ -126,14 +134,14 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
             <RollingNumber value={Number(profile.cal)} decimals={2} />
           </b>
         </Button>
-        <em>kcal</em>
+        <em>{t('common.kcal')}</em>
       </div>
     </div>
   );
   return (
     <section className={`card energy-card daily-summary balance-${status}`}>
       <div className="card-top">
-        <span>Daily energy</span>
+        <span>{t('summary.dailyEnergy')}</span>
         <span className="tag">{labels[status]}</span>
       </div>
       <div className="energy-details">
@@ -161,15 +169,14 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
           <p>
             {status === 'over' ? (
               <>
-                <strong>Above your logged goal.</strong> One day is only part of the picture.
+                <strong>{t('summary.msgOverStrong')}</strong> {t('summary.msgOverText')}
               </>
             ) : status === 'low' ? (
               <>
-                <strong>Below 80% of your goal this evening.</strong> Check for any meals you
-                haven’t logged.
+                <strong>{t('summary.msgLowStrong')}</strong> {t('summary.msgLowText')}
               </>
             ) : (
-              <strong>You’ve reached your daily energy goal.</strong>
+              <strong>{t('summary.msgReached')}</strong>
             )}
           </p>
         </div>

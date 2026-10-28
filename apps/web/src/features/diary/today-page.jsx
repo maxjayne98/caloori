@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { iso, today } from '@nourish/core';
@@ -31,6 +32,7 @@ export function TodayPage({
   onWeeklyReport,
 }) {
   const { accountId } = useNourishData();
+  const { t, formatDate, locale } = useI18n();
   const [reportMessage, setReportMessage] = useState(false);
   const reportWeek = weeklyReport.days[0].date;
   const openedKey = `nourish:report-opened:${accountId}:${reportWeek}`;
@@ -76,15 +78,15 @@ export function TodayPage({
             <span className="weekly-report-anchor">
               {reportMessage && (
                 <span className="report-first-message" role="status">
-                  Your week called. You showed up!
+                  {t('today.weeklyReportNudge')}
                 </span>
               )}
               <Button
                 variant="unstyled"
                 className="weekly-report-shortcut"
                 onClick={openWeeklyReport}
-                aria-label="View last week’s report"
-                title="Last week’s report is ready"
+                aria-label={t('today.viewWeeklyReport')}
+                title={t('today.lastWeekReady')}
               >
                 <ReportIcon animated />
               </Button>
@@ -93,20 +95,24 @@ export function TodayPage({
           <Button
             className="today-shortcut"
             onClick={() => setDay(today)}
-            aria-label="Return to today"
+            aria-label={t('today.today')}
             variant="unstyled"
           >
-            Today
+            {t('today.today')}
           </Button>
         </div>
-        <div className="eyebrow">A LITTLE MORE MINDFUL</div>
-        <h1>{profile.name ? 'Hi, ' + profile.name + '.' : 'Make room for you.'}</h1>
-        <p>Small choices. A healthier everyday.</p>
+        <div className="eyebrow">{t('brand.eyebrow')}</div>
+        <h1>
+          {profile.name
+            ? t('today.greeting', { name: profile.name })
+            : t('today.greetingFallback')}
+        </h1>
+        <p>{t('today.subtitle')}</p>
       </div>
       <DayStrip day={day} entries={entries} goal={profile.cal} onSelect={setDay} />
       <div className="date">
         <Button
-          aria-label="Previous day"
+          aria-label={t('today.prevDay')}
           onClick={() => {
             let d = new Date(day + 'T12:00:00');
             d.setDate(d.getDate() - 1);
@@ -118,19 +124,19 @@ export function TodayPage({
         </Button>
         <strong>
           {day === today
-            ? 'Today, ' +
-              new Date(day + 'T12:00:00').toLocaleDateString('en-US', {
+            ? (locale === 'fa' ? t('today.today') + '، ' : t('today.today') + ', ') +
+              formatDate(day, {
                 month: 'short',
                 day: 'numeric',
               })
-            : new Date(day + 'T12:00:00').toLocaleDateString('en-US', {
+            : formatDate(day, {
                 weekday: 'short',
                 month: 'short',
                 day: 'numeric',
               })}
         </strong>
         <Button
-          aria-label="Next day"
+          aria-label={t('today.nextDay')}
           onClick={() => {
             let d = new Date(day + 'T12:00:00');
             d.setDate(d.getDate() + 1);
@@ -149,13 +155,13 @@ export function TodayPage({
         onEdit={() => setSheet('profile')}
       />
       <div className="section">
-        <h2>Your meals</h2>
+        <h2>{t('today.yourMeals')}</h2>
         <div className="meal-section-actions">
           <Button className="link" onClick={() => setSheet('meals')} variant="unstyled">
-            My meals
+            {t('today.myMeals')}
           </Button>
           <Button className="link" onClick={() => setSheet('copy')} variant="unstyled">
-            Copy day
+            {t('today.copyDay')}
           </Button>
         </div>
       </div>
@@ -189,7 +195,7 @@ export function TodayPage({
           setSheet('activity');
         }}
       />
-      <p className="note">A little progress, every day.</p>
+      <p className="note">{t('today.note')}</p>
     </>
   );
 }

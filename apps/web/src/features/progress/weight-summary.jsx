@@ -2,7 +2,9 @@
 
 import { Button } from '@nourish/ui';
 import { portionNumber } from '@nourish/core';
+import { useI18n } from '@/providers/i18n-provider';
 export function WeightSummary({ weights, profile, onLog }) {
+  const { t, formatDate } = useI18n();
   const points = weights
       .slice()
       .sort((a, b) => a.date.localeCompare(b.date))
@@ -77,7 +79,7 @@ export function WeightSummary({ weights, profile, onLog }) {
   return (
     <section className="card weight-summary">
       <div className="card-top">
-        Body weight
+        {t('progress.bodyWeight')}
         <span className="tag">KG</span>
       </div>
       <div className="weight-header">
@@ -86,30 +88,32 @@ export function WeightSummary({ weights, profile, onLog }) {
           <small>{' kg'}</small>
         </div>
         <Button className="link" onClick={onLog} variant="unstyled">
-          + Log weight
+          {t('progress.logWeight')}
         </Button>
       </div>
       {graph}
       {points.length ? (
         <div className="chart-labels">
-          <span>{points[0].date}</span>
-          {points.length > 1 && <span>{points.at(-1).date}</span>}
+          <span>{formatDate(points[0].date, { month: 'short', day: 'numeric' })}</span>
+          {points.length > 1 && (
+            <span>{formatDate(points.at(-1).date, { month: 'short', day: 'numeric' })}</span>
+          )}
         </div>
       ) : (
-        <p className="chart-footnote">Log your first check-in to start your weight chart.</p>
+        <p className="chart-footnote">{t('progress.firstCheckIn')}</p>
       )}
       {points.length === 1 && (
-        <p className="chart-footnote">Your first check-in. Future entries will build your trend.</p>
+        <p className="chart-footnote">{t('progress.trendNote')}</p>
       )}
       {weights.length > 0 && (
         <details className="weight-checkins">
-          <summary>{'Your check-ins · ' + weights.length}</summary>
+          <summary>{t('progress.checkIns') + ' · ' + weights.length}</summary>
           {weights
             .slice()
             .sort((a, b) => b.date.localeCompare(a.date))
             .map((w) => (
               <div className="stat-line" key={w.date}>
-                <span>{w.date}</span>
+                <span>{formatDate(w.date, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 <b>{w.weight + ' kg'}</b>
               </div>
             ))}

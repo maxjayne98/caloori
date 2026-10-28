@@ -3,37 +3,40 @@
 import { Button } from '@nourish/ui';
 import { portionNumber, formatPortion, sumMealItems, reusableItems } from '@nourish/core';
 import { Icon } from '@/components/icon';
+import { useI18n } from '@/providers/i18n-provider';
 export function MealLibrary({ templates, onUse, onCreate, onEdit, onDelete }) {
+  const { t } = useI18n();
   return (
     <div className="saved-meal-library">
       <div className="library-heading">
-        <p>Your regulars, ready in one tap.</p>
+        <p>{t('meals.libraryIntro')}</p>
         <Button className="link" onClick={onCreate} variant="unstyled">
-          + Create meal
+          + {t('meals.createMeal')}
         </Button>
       </div>
       {templates.length ? (
-        templates.map((t) => {
-          let items = reusableItems(t),
+        templates.map((tItem) => {
+          let items = reusableItems(tItem),
             tot = sumMealItems(items);
           return (
-            <article className="template-card" key={t.id}>
+            <article className="template-card" key={tItem.id}>
               <div className="template-title">
                 <div>
-                  <h3>{t.name}</h3>
+                  <h3>{tItem.name}</h3>
                   <span className="template-meta">
                     {items.length +
-                      ' item' +
-                      (items.length === 1 ? '' : 's') +
+                      ' ' +
+                      (items.length === 1 ? 'item' : 'items') +
                       ' · ' +
                       portionNumber(tot.cal) +
-                      ' kcal'}
+                      ' ' +
+                      t('common.kcal')}
                   </span>
                 </div>
                 <Button
                   className="item-action"
-                  aria-label={'Edit meal ' + t.name}
-                  onClick={() => onEdit(t)}
+                  aria-label={t('common.edit') + ' ' + tItem.name}
+                  onClick={() => onEdit(tItem)}
                   variant="unstyled"
                 >
                   <Icon type="Edit" />
@@ -52,18 +55,18 @@ export function MealLibrary({ templates, onUse, onCreate, onEdit, onDelete }) {
                     portionNumber(tot.f) +
                     'g'}
                 </span>
-                <Button className="use-meal" onClick={() => onUse(t)} variant="unstyled">
-                  Use meal
+                <Button className="use-meal" onClick={() => onUse(tItem)} variant="unstyled">
+                  {t('meals.logMealButton')}
                 </Button>
               </div>
               {onDelete && (
                 <Button
                   className="template-delete"
-                  aria-label={'Delete meal ' + t.name}
-                  onClick={() => onDelete(t)}
+                  aria-label={t('common.delete') + ' ' + tItem.name}
+                  onClick={() => onDelete(tItem)}
                   variant="unstyled"
                 >
-                  Delete
+                  {t('common.delete')}
                 </Button>
               )}
             </article>
@@ -72,12 +75,12 @@ export function MealLibrary({ templates, onUse, onCreate, onEdit, onDelete }) {
       ) : (
         <div className="empty meal-library-empty">
           <Icon type="Bookmark" />
-          <h3>Make your go-to meal</h3>
+          <h3>{t('meals.createMeal')}</h3>
           <p>
-            Save eggs, toast and everything else together. Next time, log the whole meal at once.
+            Save foods together. Next time, log the whole meal at once.
           </p>
           <Button className="primary" onClick={onCreate} variant="unstyled">
-            Create your first meal
+            + {t('meals.createMeal')}
           </Button>
         </div>
       )}

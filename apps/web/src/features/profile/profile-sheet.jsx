@@ -4,7 +4,20 @@ import { Button } from '@nourish/ui';
 import { DEFAULT_MEAL_CALORIES, ProfileSchema, validMealCalorieShares } from '@nourish/core';
 import { SignOutButton } from './sign-out-button';
 import { field, select, formData } from '@/components/form-fields';
+import { useI18n } from '@/providers/i18n-provider';
 export function ProfileForm({ notify, setProfile, profile }) {
+  const { t, tMeal } = useI18n();
+  const goalOptions = [
+    { value: 'Lose weight', label: t('profile.goalLose') },
+    { value: 'Maintain weight', label: t('profile.goalMaintain') },
+    { value: 'Gain weight', label: t('profile.goalGain') },
+  ];
+  const activityOptions = [
+    { value: 'Not very active', label: t('profile.actNotVery') },
+    { value: 'Lightly active', label: t('profile.actLightly') },
+    { value: 'Active', label: t('profile.actActive') },
+    { value: 'Very active', label: t('profile.actVery') },
+  ];
   return (
     <form
       className="profile-form"
@@ -17,48 +30,48 @@ export function ProfileForm({ notify, setProfile, profile }) {
           ]),
         );
         if (![d.age, d.height, d.weight].every((value) => Number.isFinite(+value) && +value > 0))
-          return notify('Please enter your age, height and weight');
+          return notify(t('toast.fillProfileFields'));
         if (+d.cal < 1 || +d.p < 1 || +d.c < 1 || +d.f < 1)
-          return notify('Goals must be greater than zero');
+          return notify(t('toast.goalsPositive'));
         if (!validMealCalorieShares(mealCalories))
-          return notify('Meal calorie shares must add up to 100%');
+          return notify(t('toast.mealCalories100'));
         const result = ProfileSchema.safeParse({ ...profile, ...d, mealCalories });
-        if (!result.success) return notify('Please check your profile details and goals');
+        if (!result.success) return notify(t('toast.checkProfileDetails'));
         setProfile(result.data);
 
-        notify('Your goals are saved');
+        notify(t('toast.goalsSaved'));
       }}
     >
       {!profile.cal && (
         <p className="profile-setup-copy">
-          Complete your profile to set your personal goals. All fields start empty.
+          {t('profile.setupCopy')}
         </p>
       )}
-      {field('Your name', 'name', profile.name, 'text')}
+      {field(t('profile.yourName'), 'name', profile.name, 'text')}
       <div className="grid2">
-        {field('Age', 'age', profile.age)}
-        {field('Height (cm)', 'height', profile.height)}
+        {field(t('profile.age'), 'age', profile.age)}
+        {field(t('profile.height'), 'height', profile.height)}
       </div>
-      {field('Weight (kg)', 'weight', profile.weight)}
-      {select('Your goal', 'goal', ['Lose weight', 'Maintain weight', 'Gain weight'], profile.goal)}
+      {field(t('profile.weight'), 'weight', profile.weight)}
+      {select(t('profile.yourGoal'), 'goal', goalOptions, profile.goal)}
       {select(
-        'Activity level',
+        t('profile.activityLevel'),
         'activity',
-        ['Not very active', 'Lightly active', 'Active', 'Very active'],
+        activityOptions,
         profile.activity,
       )}
-      <p>Set your own daily nutrition goals.</p>
-      {field('Daily energy (kcal)', 'cal', profile.cal)}
+      <p>{t('profile.nutritionGoals')}</p>
+      {field(t('profile.dailyEnergy'), 'cal', profile.cal)}
       <div className="grid2">
-        {field('Protein (g)', 'p', profile.p)}
-        {field('Carbs (g)', 'c', profile.c)}
+        {field(t('profile.protein'), 'p', profile.p)}
+        {field(t('profile.carbs'), 'c', profile.c)}
       </div>
-      {field('Fat (g)', 'f', profile.f)}
-      <p>Choose roughly how to split your daily calories between meals. Total: 100%.</p>
+      {field(t('profile.fat'), 'f', profile.f)}
+      <p>{t('profile.mealSplit')}</p>
       <div className="grid2 meal-calorie-fields">
         {Object.entries(DEFAULT_MEAL_CALORIES).map(([meal, defaultShare]) =>
           field(
-            `${meal} (%)`,
+            `${tMeal(meal)} (%)`,
             'meal' + meal,
             profile.mealCalories?.[meal] ?? defaultShare,
             'number',
@@ -67,10 +80,10 @@ export function ProfileForm({ notify, setProfile, profile }) {
         )}
       </div>
       <Button className="primary" variant="unstyled">
-        Save profile & goals
+        {t('profile.saveGoals')}
       </Button>
       <div className="profile-account-row">
-        <span>Your account</span>
+        <span>{t('nav.profileAria')}</span>
         <SignOutButton />
       </div>
     </form>

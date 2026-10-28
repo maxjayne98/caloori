@@ -2,7 +2,9 @@
 
 import { Button } from '@nourish/ui';
 import { portionNumber, formatPortion } from '@nourish/core';
+import { useI18n } from '@/providers/i18n-provider';
 export function MealDetailSheet({ list, meal, setEntries, entries, day, openAdd, setSheet }) {
+  const { t } = useI18n();
   return (
     <>
       {list
@@ -11,7 +13,7 @@ export function MealDetailSheet({ list, meal, setEntries, entries, day, openAdd,
           <div className="food-row" key={x.key}>
             <div className="info">
               <b>{x.name}</b>
-              <small>{formatPortion(x) + ' · ' + portionNumber(x.cal * x.qty) + ' kcal'}</small>
+              <small>{formatPortion(x) + ' · ' + portionNumber(x.cal * x.qty) + ' ' + t('common.kcal')}</small>
             </div>
             <Button
               className="delete"
@@ -23,19 +25,19 @@ export function MealDetailSheet({ list, meal, setEntries, entries, day, openAdd,
               }
               variant="unstyled"
             >
-              Remove
+              {t('common.remove')}
             </Button>
           </div>
         ))}
       {!list.some((x) => x.meal === meal) && (
-        <div className="empty">Nothing logged yet. Let’s start here.</div>
+        <div className="empty">{t('meals.emptyMealStart')}</div>
       )}
       <Button className="primary" onClick={() => openAdd(meal)} variant="unstyled">
-        + Add food
+        {t('meals.addFood')}
       </Button>
       {list.some((x) => x.meal === meal) && (
         <Button className="secondary" onClick={() => setSheet('saveMeal')} variant="unstyled">
-          Save this meal
+          {t('meals.saveThisMeal')}
         </Button>
       )}
     </>

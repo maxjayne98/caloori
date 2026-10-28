@@ -3,8 +3,11 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button, Input } from '@nourish/ui';
 import { monthCells, shiftMonth, hasFoodLog, type Diary } from '@nourish/core';
+import { useI18n } from '@/providers/i18n-provider';
 
-const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const weekdaysEn = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const weekdaysFa = ['د', 'س', 'چ', 'پ', 'ج', 'ش', 'ی'];
+
 export function DateCalendar({
   day,
   today,
@@ -16,17 +19,19 @@ export function DateCalendar({
   entries: Diary;
   onSelect: (date: string) => void;
 }) {
+  const { t, formatDate, locale } = useI18n();
   const [month, setMonth] = useState(day.slice(0, 7));
-  const label = new Date(`${month}-01T12:00:00`).toLocaleDateString('en-US', {
+  const label = formatDate(`${month}-01`, {
     month: 'long',
     year: 'numeric',
   });
+  const weekdays = locale === 'fa' ? weekdaysFa : weekdaysEn;
   return (
     <div className="date-calendar">
       <div className="calendar-navigation">
         <Button
           variant="unstyled"
-          aria-label="Previous month"
+          aria-label={t('calendar.prevMonth')}
           onClick={() => setMonth(shiftMonth(month, -1))}
         >
           <ChevronLeft size={19} aria-hidden="true" />
@@ -48,15 +53,15 @@ export function DateCalendar({
         </div>
         <Button
           variant="unstyled"
-          aria-label="Next month"
+          aria-label={t('calendar.nextMonth')}
           onClick={() => setMonth(shiftMonth(month, 1))}
         >
           <ChevronRight size={19} aria-hidden="true" />
         </Button>
       </div>
       <div className="calendar-weekdays" aria-hidden="true">
-        {weekdays.map((weekday) => (
-          <span key={weekday}>{weekday}</span>
+        {weekdays.map((weekday, i) => (
+          <span key={i}>{weekday}</span>
         ))}
       </div>
       <div className="calendar-grid" role="group" aria-label={label}>
@@ -66,7 +71,7 @@ export function DateCalendar({
               key={date}
               variant="unstyled"
               className={`calendar-day${date === day ? ' is-selected' : ''}${date === today ? ' is-today' : ''}${hasFoodLog(entries, date) ? ' has-log' : ''}`}
-              aria-label={new Date(`${date}T12:00:00`).toLocaleDateString('en-US', {
+              aria-label={formatDate(date, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -87,10 +92,10 @@ export function DateCalendar({
       <div className="calendar-footer">
         <span>
           <i aria-hidden="true" />
-          Food logged
+          {t('calendar.foodLogged')}
         </span>
         <Button variant="unstyled" className="link" onClick={() => onSelect(today)}>
-          Go to today
+          {t('calendar.goToToday')}
         </Button>
       </div>
     </div>

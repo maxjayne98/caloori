@@ -1,0 +1,681 @@
+export const SUPPORTED_LOCALES = ['en', 'fa'] as const;
+export type Locale = (typeof SUPPORTED_LOCALES)[number];
+export type Direction = 'ltr' | 'rtl';
+
+export const DEFAULT_LOCALE: Locale = 'en';
+
+export interface LocaleMetadata {
+  code: Locale;
+  label: string;
+  englishName: string;
+  dir: Direction;
+}
+
+export const LOCALE_METADATA: Record<Locale, LocaleMetadata> = {
+  en: {
+    code: 'en',
+    label: 'English',
+    englishName: 'English',
+    dir: 'ltr',
+  },
+  fa: {
+    code: 'fa',
+    label: 'فارسی',
+    englishName: 'Persian',
+    dir: 'rtl',
+  },
+};
+
+export const translations = {
+  en: {
+    // Navigation
+    'nav.today': 'Today',
+    'nav.food': 'Food',
+    'nav.add': 'Add',
+    'nav.activity': 'Activity',
+    'nav.progress': 'Progress',
+    'nav.assistant': 'Assistant',
+    'nav.profile': 'Profile',
+    'nav.weekly': 'Weekly',
+    'nav.brandAria': 'Nourish — go to Today',
+    'nav.profileAria': 'Your profile',
+    'nav.settingsAria': 'Appearance & settings',
+
+    // Brand
+    'brand.eyebrow': 'A LITTLE MORE MINDFUL',
+    'brand.tagline': 'Your simple daily nutrition companion.',
+
+    // Today Page
+    'today.greeting': 'Hi, {name}.',
+    'today.greetingFallback': 'Make room for you.',
+    'today.subtitle': 'Small choices. A healthier everyday.',
+    'today.today': 'Today',
+    'today.prevDay': 'Previous day',
+    'today.nextDay': 'Next day',
+    'today.yourMeals': 'Your meals',
+    'today.myMeals': 'My meals',
+    'today.copyDay': 'Copy day',
+    'today.note': 'A little progress, every day.',
+    'today.weeklyReportNudge': 'Your week called. You showed up!',
+    'today.viewWeeklyReport': 'View last week’s report',
+    'today.lastWeekReady': 'Last week’s report is ready',
+
+    // Streak
+    'streak.label': '{count}-day food logging streak',
+    'streak.celebrateAppend': '. Your streak grew. Keep it going!',
+    'streak.cheer': '{count} days. Keep glowing!',
+    'streak.title': 'Consecutive days of food logging',
+
+    // Summary Card
+    'summary.dailyEnergy': 'Daily energy',
+    'summary.consumedDailyGoal': 'Consumed / Daily goal',
+    'summary.kcalRemaining': 'kcal remaining',
+    'summary.kcalOverGoal': 'kcal over goal',
+    'summary.setupTag': 'MADE FOR YOU',
+    'summary.setupTitle': 'Complete your profile',
+    'summary.setupDesc': 'Add your details and nutrition goals to see your daily balance.',
+    'summary.setupButton': 'Set up my profile',
+    'summary.consumed': 'Consumed',
+    'summary.protein': 'Protein',
+    'summary.carbs': 'Carbs',
+    'summary.fat': 'Fat',
+    'summary.balanceNeutral': 'YOUR BALANCE',
+    'summary.balanceOver': 'ABOVE GOAL',
+    'summary.balanceLow': 'EVENING CHECK-IN',
+    'summary.balanceReached': 'GOAL REACHED',
+    'summary.msgOverStrong': 'Above your logged goal.',
+    'summary.msgOverText': 'One day is only part of the picture.',
+    'summary.msgLowStrong': 'Below 80% of your goal this evening.',
+    'summary.msgLowText': 'Check for any meals you haven’t logged.',
+    'summary.msgReached': 'You’ve reached your daily energy goal.',
+
+    // Meals
+    'meals.breakfast': 'Breakfast',
+    'meals.lunch': 'Lunch',
+    'meals.dinner': 'Dinner',
+    'meals.snacks': 'Snacks',
+    'meals.nothingLogged': 'Nothing logged yet',
+    'meals.aboutTargetNothing': 'About {target} kcal · Nothing logged yet',
+    'meals.consumedOfTarget': '{consumed} / {target} kcal',
+    'meals.saveAsMeal': 'Save {meal} as meal',
+    'meals.addToMeal': 'Add to {meal}',
+    'meals.dragToOther': 'Drag {name} to another meal',
+    'meals.emptyMealStart': 'Nothing logged yet. Let’s start here.',
+    'meals.addFood': '+ Add food',
+    'meals.saveThisMeal': 'Save this meal',
+    'meals.createMeal': 'Create meal',
+    'meals.editMeal': 'Edit meal',
+    'meals.saveMeal': 'Save a meal',
+    'meals.mealName': 'Meal name',
+    'meals.mealNamePlaceholder': 'e.g. Eggs & toast',
+    'meals.saveTemplate': 'Save meal',
+    'meals.itemsInMeal': 'Items in this meal',
+    'meals.addIngredients': 'Add foods',
+    'meals.logSavedMeal': 'Log saved meal',
+    'meals.logTo': 'Log to',
+    'meals.portions': 'Meal portions',
+    'meals.logMealButton': 'Log meal',
+    'meals.libraryIntro': 'Your regulars, ready in one tap.',
+
+    // Activities
+    'activity.title': 'Activity',
+    'activity.logButton': '+ Log activity',
+    'activity.editButton': 'Edit activity',
+    'activity.burned': 'Estimated energy burned',
+    'activity.emptyTitle': 'A little movement goes a long way',
+    'activity.emptySubtitle': 'Log a workout, ride or padel session',
+    'activity.intensity': 'Intensity',
+    'activity.duration': 'Duration (minutes)',
+    'activity.weight': 'Body weight (kg)',
+    'activity.save': 'Save activity',
+    'activity.remove': 'Remove activity',
+    'activity.gym': 'Gym',
+    'activity.bike': 'Bike',
+    'activity.treadmill': 'Treadmill',
+    'activity.elliptical': 'Elliptical',
+    'activity.padel': 'Padel',
+    'activity.running': 'Running',
+    'activity.light': 'Light',
+    'activity.moderate': 'Moderate',
+    'activity.hard': 'Hard',
+
+    // Food Library
+    'food.eyebrow': 'GOOD FOOD, LESS EFFORT',
+    'food.title': 'Your food library.',
+    'food.subtitle': 'Find a favorite. Make it your own.',
+    'food.allFoods': 'All foods',
+    'food.savedMeals': 'Saved meals',
+    'food.myFoods': 'My foods',
+    'food.recent': 'Recent',
+    'food.recipes': 'Recipes',
+    'food.searchPlaceholder': 'Search foods or ingredients',
+    'food.searchAria': 'Search food library',
+    'food.quickAdd': 'Quick add',
+    'food.barcode': 'Barcode',
+    'food.mealScan': 'Meal scan',
+    'food.createFood': 'Create a food',
+    'food.createRecipe': 'Create a recipe',
+    'food.searchResults': 'SEARCH RESULTS',
+    'food.everydayFavorites': 'EVERYDAY FAVORITES',
+    'food.noMatch': 'No matching foods found',
+    'food.refreshFoods': 'Refresh foods',
+
+    // Progress
+    'progress.eyebrow': 'THE BIGGER PICTURE',
+    'progress.title': 'Every step counts.',
+    'progress.subtitle': 'Your journey, at your own pace.',
+    'progress.weeklyReport': 'Weekly report',
+    'progress.bodyWeight': 'Body weight',
+    'progress.logWeight': '+ Log weight',
+    'progress.checkIns': 'Your check-ins',
+    'progress.firstCheckIn': 'Log your first check-in to start your weight chart.',
+    'progress.trendNote': 'Your first check-in. Future entries will build your trend.',
+    'progress.sevenDays': '7 days',
+    'progress.thirtyDays': '30 days',
+    'progress.foodIntake': 'Food intake',
+    'progress.dailyAverage': 'Daily average',
+    'progress.noFoodLogged': 'No food logged',
+    'progress.noActivityLogged': 'No activity logged',
+    'progress.tapDayFood': 'Tap a day to see its intake.',
+    'progress.tapDayActivity': 'Tap a day to see its activity.',
+
+    // Profile
+    'profile.title': 'Made for you.',
+    'profile.subtitle': 'Your details. Your goals. Your own pace.',
+    'profile.setupCopy': 'Complete your profile to set your personal goals. All fields start empty.',
+    'profile.yourName': 'Your name',
+    'profile.age': 'Age',
+    'profile.height': 'Height (cm)',
+    'profile.weight': 'Weight (kg)',
+    'profile.yourGoal': 'Your goal',
+    'profile.goalLose': 'Lose weight',
+    'profile.goalMaintain': 'Maintain weight',
+    'profile.goalGain': 'Gain weight',
+    'profile.activityLevel': 'Activity level',
+    'profile.actNotVery': 'Not very active',
+    'profile.actLightly': 'Lightly active',
+    'profile.actActive': 'Active',
+    'profile.actVery': 'Very active',
+    'profile.nutritionGoals': 'Set your own daily nutrition goals.',
+    'profile.dailyEnergy': 'Daily energy (kcal)',
+    'profile.protein': 'Protein (g)',
+    'profile.carbs': 'Carbs (g)',
+    'profile.fat': 'Fat (g)',
+    'profile.mealSplit': 'Choose roughly how to split your daily calories between meals. Total: 100%.',
+    'profile.saveGoals': 'Save goals',
+    'profile.signOut': 'Sign out',
+    'profile.signingOut': 'Signing out…',
+
+    // Settings
+    'settings.title': 'Settings',
+    'settings.avatar': 'Avatar',
+    'settings.changePhoto': 'Change photo',
+    'settings.uploadPhoto': 'Upload photo',
+    'settings.removePhoto': 'Remove photo',
+    'settings.showLess': 'Show less',
+    'settings.viewAll': 'View all',
+    'settings.appearance': 'Appearance',
+    'settings.appearanceDesc': 'Make Nourish feel like you.',
+    'settings.theme': 'Theme',
+    'settings.themeLight': 'Light',
+    'settings.themeDark': 'Dark',
+    'settings.themeSystem': 'System',
+    'settings.accentColor': 'Accent color',
+    'settings.language': 'Language',
+    'settings.about': 'About',
+    'settings.version': 'Version',
+    'settings.avatarInitial': 'First letter of your name',
+    'settings.avatarPhoto': 'Your photo',
+    'settings.avatarPixel': 'Pixel character {n}',
+    'settings.avatarPattern': 'Pattern {n}',
+
+    // Sheet titles
+    'sheet.settings': 'Settings',
+    'sheet.meals': 'My meals',
+    'sheet.mealBuilder': 'Meal builder',
+    'sheet.useMeal': 'Log saved meal',
+    'sheet.activity': 'Activity',
+    'sheet.edit': 'Edit food',
+    'sheet.add': 'Food details',
+    'sheet.addFood': 'Add food',
+    'sheet.profile': 'Made for you',
+    'sheet.weight': 'A little check-in',
+    'sheet.custom': 'Create a food',
+    'sheet.quick': 'Quick add',
+    'sheet.copy': 'Copy a day',
+    'sheet.recipe': 'Create a recipe',
+    'sheet.saveMeal': 'Save a meal',
+    'sheet.photo': 'Meal scan',
+    'sheet.barcode': 'Scan a barcode',
+
+    // Common
+    'common.close': 'Close',
+    'common.save': 'Save',
+    'common.cancel': 'Cancel',
+    'common.delete': 'Delete',
+    'common.remove': 'Remove',
+    'common.edit': 'Edit',
+    'common.back': 'Back',
+    'common.date': 'Date',
+    'common.kcal': 'kcal',
+    'common.grams': 'g',
+
+    // Calendar
+    'calendar.chooseDay': 'Choose a day',
+    'calendar.foodLogged': 'Food logged',
+    'calendar.goToToday': 'Go to today',
+    'calendar.prevMonth': 'Previous month',
+    'calendar.nextMonth': 'Next month',
+
+    // Portion Editor
+    'portion.format': 'Amount format',
+    'portion.decimal': 'Decimal',
+    'portion.fraction': 'Fraction',
+    'portion.servingSize': 'Serving size',
+    'portion.gramsPerServing': 'Grams per serving (optional)',
+    'portion.portionAmount': 'Amount',
+    'portion.saveFood': 'Save food',
+    'portion.updateFood': 'Update food',
+    'portion.deleteFromDiary': 'Remove from diary',
+    'portion.enterPositive': 'Enter an amount greater than zero.',
+
+    // Copy Day
+    'copy.title': 'Copy a day',
+    'copy.desc': 'Add all meals from another day to the selected day.',
+    'copy.from': 'Copy from',
+    'copy.button': 'Copy meals',
+
+    // Recipes
+    'recipe.title': 'Create a recipe',
+    'recipe.name': 'Recipe name',
+    'recipe.namePlaceholder': 'e.g. My breakfast bowl',
+    'recipe.servings': 'Number of servings',
+    'recipe.addIngredients': 'Add ingredients',
+    'recipe.chooseIngredient': 'Choose an ingredient',
+    'recipe.save': 'Save recipe',
+
+    // Weekly Report
+    'weekly.reviewEyebrow': 'YOUR WEEK IN REVIEW',
+    'weekly.reviewTitle': 'A week of you.',
+    'weekly.noReport': 'No report yet',
+    'weekly.noReportDesc':
+      'Your report appears here once the previous week has food, activity or weight records.',
+    'weekly.foodEnergy': 'Food energy',
+    'weekly.daysLogged': 'DAYS LOGGED',
+    'weekly.movement': 'Movement',
+    'weekly.sessions': 'Sessions',
+    'weekly.minutes': 'Minutes',
+    'weekly.estKcal': 'Estimated kcal',
+    'weekly.bodyWeight': 'Body weight',
+    'weekly.latestThisWeek': 'latest this week',
+    'weekly.noWeight': 'No weight check-ins this week.',
+
+    // Toasts
+    'toast.addedTo': 'Added to {meal}',
+    'toast.foodUpdated': 'Food updated',
+    'toast.removed': '{name} removed',
+    'toast.movedTo': 'Moved to {target}',
+    'toast.mealSaved': 'Meal saved',
+    'toast.savedMealDeleted': 'Saved meal deleted',
+    'toast.foodSavedLibrary': 'Food saved to your library',
+    'toast.foodSavedMyFoods': 'Food saved to My foods',
+    'toast.activitySaved': 'Activity saved',
+    'toast.activityRemoved': 'Activity removed',
+    'toast.recipeSaved': 'Recipe saved',
+    'toast.mealsCopied': 'Meals copied',
+    'toast.goalsSaved': 'Your goals are saved',
+    'toast.noMealsCopied': 'No meals logged on that day',
+    'toast.fillProfileFields': 'Please enter your age, height and weight',
+    'toast.goalsPositive': 'Goals must be greater than zero',
+    'toast.mealCalories100': 'Meal calorie shares must add up to 100%',
+    'toast.checkProfileDetails': 'Please check your profile details and goals',
+  },
+  fa: {
+    // Navigation
+    'nav.today': 'امروز',
+    'nav.food': 'غذاها',
+    'nav.add': 'افزودن',
+    'nav.activity': 'فعالیت',
+    'nav.progress': 'پیشرفت',
+    'nav.assistant': 'دستیار',
+    'nav.profile': 'پروفایل',
+    'nav.weekly': 'هفتگی',
+    'nav.brandAria': 'نوریش — رفتن به امروز',
+    'nav.profileAria': 'پروفایل شما',
+    'nav.settingsAria': 'ظاهر و تنظیمات',
+
+    // Brand
+    'brand.eyebrow': 'کمی آگاهانه‌تر',
+    'brand.tagline': 'همراه روزانه و ساده تغذیه شما.',
+
+    // Today Page
+    'today.greeting': 'سلام، {name}.',
+    'today.greetingFallback': 'زمانی برای خودت بساز.',
+    'today.subtitle': 'انتخاب‌های کوچک، روزمره‌ای سالم‌تر.',
+    'today.today': 'امروز',
+    'today.prevDay': 'روز قبل',
+    'today.nextDay': 'روز بعد',
+    'today.yourMeals': 'وعده‌های غذایی',
+    'today.myMeals': 'وعده‌های من',
+    'today.copyDay': 'کپی روز',
+    'today.note': 'کمی پیشرفت، هر روز.',
+    'today.weeklyReportNudge': 'هفته گذشته شما ثبت شد!',
+    'today.viewWeeklyReport': 'مشاهده گزارش هفته گذشته',
+    'today.lastWeekReady': 'گزارش هفته گذشته آماده است',
+
+    // Streak
+    'streak.label': '{count} روز پیاپی ثبت غذا',
+    'streak.celebrateAppend': '. رکورد شما افزایش یافت. همینطور ادامه دهید!',
+    'streak.cheer': '{count} روز پیاپی. همینطور پرانرژی ادامه بده!',
+    'streak.title': 'روزهای متوالی ثبت غذا',
+
+    // Summary Card
+    'summary.dailyEnergy': 'انرژی روزانه',
+    'summary.consumedDailyGoal': 'مصرفی / هدف روزانه',
+    'summary.kcalRemaining': 'کالری باقی‌مانده',
+    'summary.kcalOverGoal': 'کالری بیش از هدف',
+    'summary.setupTag': 'برای شما',
+    'summary.setupTitle': 'پروفایلت رو تکمیل کن',
+    'summary.setupDesc': 'اطلاعات و اهداف تغذیه‌ای خود را وارد کنید تا تعادل روزانه را ببینید.',
+    'summary.setupButton': 'تنظیم پروفایل',
+    'summary.consumed': 'مصرف‌شده',
+    'summary.protein': 'پروتئین',
+    'summary.carbs': 'کربوهیدرات',
+    'summary.fat': 'چربی',
+    'summary.balanceNeutral': 'تعادل شما',
+    'summary.balanceOver': 'فراتر از هدف',
+    'summary.balanceLow': 'بررسی عصرگاهی',
+    'summary.balanceReached': 'هدف محقق شد',
+    'summary.msgOverStrong': 'فراتر از هدف ثبت‌شده.',
+    'summary.msgOverText': 'یک روز فقط بخشی از مسیر است.',
+    'summary.msgLowStrong': 'امروز عصر کمتر از ۸۰٪ هدف هستید.',
+    'summary.msgLowText': 'وعده‌های ثبت‌نشده را بررسی کنید.',
+    'summary.msgReached': 'به هدف انرژی روزانه خود رسیدید.',
+
+    // Meals
+    'meals.breakfast': 'صبحانه',
+    'meals.lunch': 'ناهار',
+    'meals.dinner': 'شام',
+    'meals.snacks': 'میان‌وعده',
+    'meals.nothingLogged': 'هنوز چیزی ثبت نشده',
+    'meals.aboutTargetNothing': 'حدود {target} کالری · هنوز چیزی ثبت نشده',
+    'meals.consumedOfTarget': '{consumed} از {target} کالری',
+    'meals.saveAsMeal': 'ذخیره {meal} به عنوان وعده',
+    'meals.addToMeal': 'افزودن به {meal}',
+    'meals.dragToOther': 'انتقال {name} به وعده دیگر',
+    'meals.emptyMealStart': 'هنوز چیزی ثبت نشده. از اینجا شروع کنیم.',
+    'meals.addFood': '+ افزودن غذا',
+    'meals.saveThisMeal': 'ذخیره این وعده',
+    'meals.createMeal': 'ایجاد وعده',
+    'meals.editMeal': 'ویرایش وعده',
+    'meals.saveMeal': 'ذخیره یک وعده',
+    'meals.mealName': 'نام وعده',
+    'meals.mealNamePlaceholder': 'مثلاً تخم‌مرغ و تست',
+    'meals.saveTemplate': 'ذخیره وعده',
+    'meals.itemsInMeal': 'آیتم‌های این وعده',
+    'meals.addIngredients': 'افزودن غذاها',
+    'meals.logSavedMeal': 'ثبت وعده ذخیره‌شده',
+    'meals.logTo': 'ثبت در',
+    'meals.portions': 'سهم‌های وعده',
+    'meals.logMealButton': 'ثبت وعده',
+    'meals.libraryIntro': 'وعده‌های همیشگی شما، آماده با یک لمس.',
+
+    // Activities
+    'activity.title': 'فعالیت',
+    'activity.logButton': '+ ثبت فعالیت',
+    'activity.editButton': 'ویرایش فعالیت',
+    'activity.burned': 'انرژی تخمینی سوزانده‌شده',
+    'activity.emptyTitle': 'کمی تحرک تأثیر بزرگی دارد',
+    'activity.emptySubtitle': 'یک تمرین، دوچرخه‌سواری یا پدل ثبت کنید',
+    'activity.intensity': 'شدت',
+    'activity.duration': 'مدت زمان (دقیقه)',
+    'activity.weight': 'وزن بدن (کیلوگرم)',
+    'activity.save': 'ذخیره فعالیت',
+    'activity.remove': 'حذف فعالیت',
+    'activity.gym': 'باشگاه',
+    'activity.bike': 'دوچرخه',
+    'activity.treadmill': 'تردمیل',
+    'activity.elliptical': 'الپتیکال',
+    'activity.padel': 'پدل',
+    'activity.running': 'دویدن',
+    'activity.light': 'سبک',
+    'activity.moderate': 'متوسط',
+    'activity.hard': 'سنگین',
+
+    // Food Library
+    'food.eyebrow': 'غذای خوب، زحمت کمتر',
+    'food.title': 'کتابخانه غذایی شما.',
+    'food.subtitle': 'غذای دلخواهت رو پیدا کن و برای خودت بسازش.',
+    'food.allFoods': 'همه غذاها',
+    'food.savedMeals': 'وعده‌های ذخیره‌شده',
+    'food.myFoods': 'غذاهای من',
+    'food.recent': 'اخیر',
+    'food.recipes': 'دستورپخت‌ها',
+    'food.searchPlaceholder': 'جستجوی غذاها یا ترکیبات',
+    'food.searchAria': 'جستجوی کتابخانه غذاها',
+    'food.quickAdd': 'افزودن سریع',
+    'food.barcode': 'بارکد',
+    'food.mealScan': 'اسکن وعده',
+    'food.createFood': 'ایجاد غذا',
+    'food.createRecipe': 'ایجاد دستورپخت',
+    'food.searchResults': 'نتایج جستجو',
+    'food.everydayFavorites': 'محبوب‌های روزانه',
+    'food.noMatch': 'غذایی یافت نشد',
+    'food.refreshFoods': 'به‌روزرسانی غذاها',
+
+    // Progress
+    'progress.eyebrow': 'تصویر کلی',
+    'progress.title': 'هر قدم ارزش دارد.',
+    'progress.subtitle': 'مسیر شما، با آهنگ خودتان.',
+    'progress.weeklyReport': 'گزارش هفتگی',
+    'progress.bodyWeight': 'وزن بدن',
+    'progress.logWeight': '+ ثبت وزن',
+    'progress.checkIns': 'بررسی‌های شما',
+    'progress.firstCheckIn': 'اولین بررسی وزن خود را برای شروع نمودار ثبت کنید.',
+    'progress.trendNote': 'اولین بررسی شما. ثبت‌های بعدی روند شما را شکل می‌دهند.',
+    'progress.sevenDays': '۷ روز',
+    'progress.thirtyDays': '۳۰ روز',
+    'progress.foodIntake': 'دریافت غذا',
+    'progress.dailyAverage': 'میانگین روزانه',
+    'progress.noFoodLogged': 'غذایی ثبت نشده',
+    'progress.noActivityLogged': 'فعالیتی ثبت نشده',
+    'progress.tapDayFood': 'یک روز را لمس کنید تا کالری دریافتی آن را ببینید.',
+    'progress.tapDayActivity': 'یک روز را لمس کنید تا فعالیت‌های آن را ببینید.',
+
+    // Profile
+    'profile.title': 'برای شما.',
+    'profile.subtitle': 'اطلاعات شما. اهداف شما. با سرعت خودتان.',
+    'profile.setupCopy':
+      'پروفایل خود را برای تعیین اهداف فردی تکمیل کنید. همه فیلدها در ابتدا خالی هستند.',
+    'profile.yourName': 'نام شما',
+    'profile.age': 'سن',
+    'profile.height': 'قد (سانتی‌متر)',
+    'profile.weight': 'وزن (کیلوگرم)',
+    'profile.yourGoal': 'هدف شما',
+    'profile.goalLose': 'کاهش وزن',
+    'profile.goalMaintain': 'تثبیت وزن',
+    'profile.goalGain': 'افزایش وزن',
+    'profile.activityLevel': 'سطح فعالیت',
+    'profile.actNotVery': 'کم‌تحرک',
+    'profile.actLightly': 'کمی فعال',
+    'profile.actActive': 'فعال',
+    'profile.actVery': 'بسیار فعال',
+    'profile.nutritionGoals': 'اهداف تغذیه روزانه خود را تعیین کنید.',
+    'profile.dailyEnergy': 'انرژی روزانه (کالری)',
+    'profile.protein': 'پروتئین (گرم)',
+    'profile.carbs': 'کربوهیدرات (گرم)',
+    'profile.fat': 'چربی (گرم)',
+    'profile.mealSplit': 'تقسیم تقریبی کالری روزانه بین وعده‌ها (مجموع: ۱۰۰٪):',
+    'profile.saveGoals': 'ذخیره اهداف',
+    'profile.signOut': 'خروج از حساب',
+    'profile.signingOut': 'در حال خروج…',
+
+    // Settings
+    'settings.title': 'تنظیمات',
+    'settings.avatar': 'آواتار',
+    'settings.changePhoto': 'تغییر تصویر',
+    'settings.uploadPhoto': 'بارگذاری تصویر',
+    'settings.removePhoto': 'حذف تصویر',
+    'settings.showLess': 'نمایش کمتر',
+    'settings.viewAll': 'مشاهده همه',
+    'settings.appearance': 'ظاهر',
+    'settings.appearanceDesc': 'نوریش را به سلیقه خود بسازید.',
+    'settings.theme': 'پوسته',
+    'settings.themeLight': 'روشن',
+    'settings.themeDark': 'تاریک',
+    'settings.themeSystem': 'سیستم',
+    'settings.accentColor': 'رنگ تأکیدی',
+    'settings.language': 'زبان',
+    'settings.about': 'درباره',
+    'settings.version': 'نسخه',
+    'settings.avatarInitial': 'حرف اول نام شما',
+    'settings.avatarPhoto': 'تصویر شما',
+    'settings.avatarPixel': 'شخصیت پیکسلی {n}',
+    'settings.avatarPattern': 'طرح {n}',
+
+    // Sheet titles
+    'sheet.settings': 'تنظیمات',
+    'sheet.meals': 'وعده‌های من',
+    'sheet.mealBuilder': 'ساخت وعده',
+    'sheet.useMeal': 'ثبت وعده ذخیره‌شده',
+    'sheet.activity': 'فعالیت',
+    'sheet.edit': 'ویرایش غذا',
+    'sheet.add': 'جزئیات غذا',
+    'sheet.addFood': 'افزودن غذا',
+    'sheet.profile': 'برای شما',
+    'sheet.weight': 'ثبت وزن',
+    'sheet.custom': 'ایجاد غذا',
+    'sheet.quick': 'افزودن سریع',
+    'sheet.copy': 'کپی یک روز',
+    'sheet.recipe': 'ایجاد دستورپخت',
+    'sheet.saveMeal': 'ذخیره یک وعده',
+    'sheet.photo': 'اسکن وعده',
+    'sheet.barcode': 'اسکن بارکد',
+
+    // Common
+    'common.close': 'بستن',
+    'common.save': 'ذخیره',
+    'common.cancel': 'انصراف',
+    'common.delete': 'حذف',
+    'common.remove': 'حذف',
+    'common.edit': 'ویرایش',
+    'common.back': 'بازگشت',
+    'common.date': 'تاریخ',
+    'common.kcal': 'کالری',
+    'common.grams': 'گرم',
+
+    // Calendar
+    'calendar.chooseDay': 'انتخاب روز',
+    'calendar.foodLogged': 'غذای ثبت‌شده',
+    'calendar.goToToday': 'رفتن به امروز',
+    'calendar.prevMonth': 'ماه قبل',
+    'calendar.nextMonth': 'ماه بعد',
+
+    // Portion Editor
+    'portion.format': 'قالب مقدار',
+    'portion.decimal': 'اعشاری',
+    'portion.fraction': 'کسری',
+    'portion.servingSize': 'اندازه هر سهم',
+    'portion.gramsPerServing': 'گرم در هر سهم (اختیاری)',
+    'portion.portionAmount': 'مقدار',
+    'portion.saveFood': 'ذخیره غذا',
+    'portion.updateFood': 'به‌روزرسانی غذا',
+    'portion.deleteFromDiary': 'حذف از یادداشت',
+    'portion.enterPositive': 'مقداری بیشتر از صفر وارد کنید.',
+
+    // Copy Day
+    'copy.title': 'کپی یک روز',
+    'copy.desc': 'افزودن همه وعده‌های یک روز دیگر به روز انتخابی.',
+    'copy.from': 'کپی از تاریخ',
+    'copy.button': 'کپی وعده‌ها',
+
+    // Recipes
+    'recipe.title': 'ایجاد دستورپخت',
+    'recipe.name': 'نام دستورپخت',
+    'recipe.namePlaceholder': 'مثلاً کاسه صبحانه من',
+    'recipe.servings': 'تعداد سهم‌ها',
+    'recipe.addIngredients': 'افزودن مواد',
+    'recipe.chooseIngredient': 'یک ماده اولیه انتخاب کنید',
+    'recipe.save': 'ذخیره دستورپخت',
+
+    // Weekly Report
+    'weekly.reviewEyebrow': 'مرور هفته شما',
+    'weekly.reviewTitle': 'یک هفته با شما.',
+    'weekly.noReport': 'هنوز گزارشی موجود نیست',
+    'weekly.noReportDesc':
+      'پس از ثبت غذا، فعالیت یا وزن در هفته گذشته، گزارش شما اینجا نمایش داده می‌شود.',
+    'weekly.foodEnergy': 'انرژی غذا',
+    'weekly.daysLogged': 'روز ثبت‌شده',
+    'weekly.movement': 'تحرک',
+    'weekly.sessions': 'جلسات',
+    'weekly.minutes': 'دقیقه',
+    'weekly.estKcal': 'کالری تخمینی',
+    'weekly.bodyWeight': 'وزن بدن',
+    'weekly.latestThisWeek': 'آخرین مقدار این هفته',
+    'weekly.noWeight': 'بررسی وزنی در این هفته ثبت نشده است.',
+
+    // Toasts
+    'toast.addedTo': 'به {meal} اضافه شد',
+    'toast.foodUpdated': 'غذا به‌روزرسانی شد',
+    'toast.removed': '{name} حذف شد',
+    'toast.movedTo': 'به {target} منتقل شد',
+    'toast.mealSaved': 'وعده ذخیره شد',
+    'toast.savedMealDeleted': 'وعده ذخیره‌شده حذف شد',
+    'toast.foodSavedLibrary': 'غذا در کتابخانه شما ذخیره شد',
+    'toast.foodSavedMyFoods': 'غذا در غذاهای من ذخیره شد',
+    'toast.activitySaved': 'فعالیت ذخیره شد',
+    'toast.activityRemoved': 'فعالیت حذف شد',
+    'toast.recipeSaved': 'دستورپخت ذخیره شد',
+    'toast.mealsCopied': 'وعده‌ها کپی شدند',
+    'toast.goalsSaved': 'اهداف شما ذخیره شدند',
+    'toast.noMealsCopied': 'هیچ وعده‌ای در آن روز ثبت نشده است',
+    'toast.fillProfileFields': 'لطفاً سن، قد و وزن خود را وارد کنید',
+    'toast.goalsPositive': 'اهداف باید بیشتر از صفر باشند',
+    'toast.mealCalories100': 'مجموع سهم کالری وعده‌ها باید ۱۰۰٪ باشد',
+    'toast.checkProfileDetails': 'لطفاً مشخصات و اهداف پروفایل خود را بررسی کنید',
+  },
+} as const;
+
+export type TranslationKey = keyof (typeof translations)['en'];
+
+export function t(
+  locale: Locale,
+  key: TranslationKey,
+  params?: Record<string, string | number>,
+): string {
+  const dictionary = translations[locale] || translations[DEFAULT_LOCALE];
+  let text: string = dictionary[key] ?? translations[DEFAULT_LOCALE][key] ?? (key as string);
+  if (params) {
+    for (const [paramKey, paramValue] of Object.entries(params)) {
+      text = text.replaceAll(`{${paramKey}}`, String(paramValue));
+    }
+  }
+  return text;
+}
+
+export function translateMealName(meal: string, locale: Locale): string {
+  const normalized = meal.toLowerCase();
+  if (normalized === 'breakfast') return t(locale, 'meals.breakfast');
+  if (normalized === 'lunch') return t(locale, 'meals.lunch');
+  if (normalized === 'dinner') return t(locale, 'meals.dinner');
+  if (normalized === 'snacks' || normalized === 'snack') return t(locale, 'meals.snacks');
+  return meal;
+}
+
+export function getLocaleDirection(locale: Locale): Direction {
+  return LOCALE_METADATA[locale]?.dir || 'ltr';
+}
+
+export function isRtl(locale: Locale): boolean {
+  return getLocaleDirection(locale) === 'rtl';
+}
+
+export function formatDate(
+  date: string | Date,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  const d = typeof date === 'string' ? new Date(date.includes('T') ? date : `${date}T12:00:00`) : date;
+  const intlLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
+  return d.toLocaleDateString(intlLocale, options);
+}

@@ -3,6 +3,7 @@
 import { Button, Input } from '@nourish/ui';
 import { useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
+import { useI18n } from '@/providers/i18n-provider';
 import { HeartLoader } from '@/components/heart-loader';
 import { RefreshCw } from 'lucide-react';
 import { foods } from '@nourish/core';
@@ -26,22 +27,30 @@ export function FoodPage({
   custom,
 }) {
   const { refreshFoods } = useNourishData();
+  const { t } = useI18n();
   const [refreshing, setRefreshing] = useState(false),
     [refreshMessage, setRefreshMessage] = useState('');
+  const filters = [
+    { id: 'All foods', label: t('food.allFoods') },
+    { id: 'Saved meals', label: t('food.savedMeals') },
+    { id: 'My foods', label: t('food.myFoods') },
+    { id: 'Recent', label: t('food.recent') },
+    { id: 'Recipes', label: t('food.recipes') },
+  ];
   return (
     <>
       <div className="intro food-intro">
-        <div className="eyebrow">GOOD FOOD, LESS EFFORT</div>
-        <h1>Your food library.</h1>
-        <p>Find a favorite. Make it your own.</p>
+        <div className="eyebrow">{t('food.eyebrow')}</div>
+        <h1>{t('food.title')}</h1>
+        <p>{t('food.subtitle')}</p>
         {refreshFoods && (
           <div className="food-refresh-row">
             <Button
               type="button"
               variant="unstyled"
               className="link"
-              aria-label="Refresh foods"
-              title="Refresh foods"
+              aria-label={t('food.refreshFoods')}
+              title={t('food.refreshFoods')}
               disabled={refreshing}
               onClick={async () => {
                 setRefreshing(true);
@@ -75,14 +84,14 @@ export function FoodPage({
         )}
       </div>
       <div className="pills">
-        {['All foods', 'Saved meals', 'My foods', 'Recent', 'Recipes'].map((x) => (
+        {filters.map((f) => (
           <Button
-            className={filter === x ? 'selected' : ''}
-            onClick={() => setFilter(x)}
-            key={x}
+            className={filter === f.id ? 'selected' : ''}
+            onClick={() => setFilter(f.id)}
+            key={f.id}
             variant="unstyled"
           >
-            {x}
+            {f.label}
           </Button>
         ))}
       </div>
@@ -92,10 +101,10 @@ export function FoodPage({
         <>
           <Input
             className="search"
-            placeholder="Search foods or ingredients"
+            placeholder={t('food.searchPlaceholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search food library"
+            aria-label={t('food.searchAria')}
             unstyled
           />
           <div className="food-library-actions">
@@ -104,11 +113,11 @@ export function FoodPage({
               onClick={() => setSheet(filter === 'Recipes' ? 'recipe' : 'custom')}
               variant="unstyled"
             >
-              {filter === 'Recipes' ? '+ Create a recipe' : '+ Create a food'}
+              {filter === 'Recipes' ? '+ ' + t('sheet.recipe') : '+ ' + t('sheet.custom')}
             </Button>
             <Button className="link" onClick={() => setSheet('barcode')} variant="unstyled">
               <Icon type="Barcode" />
-              Scan barcode
+              {t('sheet.barcode')}
             </Button>
           </div>
           {

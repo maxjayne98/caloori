@@ -1,0 +1,173 @@
+/*
+ * RTL (right-to-left) layout overrides for Persian (and future RTL locales).
+ * Applied when <html dir="rtl"> is set by the i18n provider.
+ * Uses [dir="rtl"] selectors so no JS is needed after the locale is loaded.
+ */
+
+/* Brand dot — mirror margin from right to left */
+[dir='rtl'] .brand span {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+/* These are data and utility layouts, not flowing Persian copy. Keep their
+   visual order consistent with English so the logo, energy ring and charts
+   stay in their familiar positions. */
+[dir='rtl'] .top,
+[dir='rtl'] .daily-summary.energy-card,
+[dir='rtl'] .weekly-report-page {
+  direction: ltr;
+}
+
+/* Meal body text alignment */
+[dir='rtl'] .meal-body {
+  text-align: right;
+}
+
+/* Diary item details */
+[dir='rtl'] .item-details {
+  text-align: right;
+}
+
+/* Cal-footer separator — flip border side */
+[dir='rtl'] .cal-footer div + div {
+  border-left: 0;
+  border-right: 1px solid var(--neutral-eee);
+}
+
+/* Energy card left-aligned text blocks */
+[dir='rtl'] .energy-card > .cal-footer {
+  text-align: right;
+}
+[dir='rtl'] .energy-card .cal-footer button {
+  text-align: right;
+}
+
+/* Today intro shortcut button — flip to left side */
+[dir='rtl'] .today-intro {
+  padding-right: 0;
+  padding-left: 65px;
+}
+[dir='rtl'] .today-intro .today-shortcut {
+  right: auto;
+  left: 0;
+}
+
+/* Portion toolbar — flip absolute position */
+[dir='rtl'] .portion-toolbar {
+  left: auto;
+  right: 22px;
+  justify-content: flex-end;
+}
+[dir='rtl'] .sheet:has(.portion-editor) .sheet-head .close {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Meal icon percent badge — flip corner */
+[dir='rtl'] .meal-icon-percent {
+  right: auto;
+  left: -6px;
+}
+
+/* Nutrition label panel — already uses left/right 22px so stays symmetric */
+
+/* Comparison line label — flip to left */
+[dir='rtl'] .comparison-line > span {
+  right: auto;
+  left: 0;
+  padding-left: 0;
+  padding-right: 5px;
+}
+
+/* Chart scale (numbers) — flip to right side in RTL */
+[dir='rtl'] .chart-scale {
+  text-align: left;
+}
+
+/* Activity history summary separator */
+[dir='rtl'] .activity-history-summary > div + div {
+  border-left: 0;
+  border-right: 1px solid var(--neutral-f0f0f5);
+}
+
+/* Meal shortcut card text */
+[dir='rtl'] .meal-shortcut {
+  text-align: right;
+}
+[dir='rtl'] .empty-meal-shortcut {
+  text-align: right;
+}
+
+/* Historical goal label alignment */
+[dir='rtl'] .historical-goal-label {
+  text-align: left;
+}
+
+/* Food row info text */
+[dir='rtl'] .food-row .info {
+  text-align: right;
+}
+
+/* Settings photo actions — keep end-aligned in both directions */
+[dir='rtl'] .settings-photo-actions {
+  justify-content: flex-start;
+}
+
+/* Portion toolbar small-screen override */
+@media (max-width: 350px) {
+  [dir='rtl'] .portion-toolbar {
+    left: auto;
+    right: 22px;
+  }
+}
+
+/* Padding overrides for small screens */
+@media (max-width: 350px) {
+  [dir='rtl'] .app {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+/* ─── Numbers: always left-to-right regardless of page direction ─── */
+/*
+ * In an RTL context the Unicode bidi algorithm treats ASCII digits as "weak"
+ * characters and reverses them when surrounded by RTL text (e.g. "2,000"
+ * renders as "000,2"). Giving every rolling-number and any plain numeric
+ * element direction:ltr + unicode-bidi:isolate prevents that reordering
+ * while leaving surrounding RTL text unaffected.
+ */
+[dir='rtl'] .rolling-number,
+[dir='rtl'] .rolling-number .number-digits {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Macro "consumed / goal g" unit row — keep as one LTR phrase */
+[dir='rtl'] .macro b {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Energy amounts (consumed / goal kcal) */
+[dir='rtl'] .energy-amounts {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Day-ring date numbers in the day strip */
+[dir='rtl'] .day-ring b {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ─── Today page header: flip absolute action tray to left side in RTL ─── */
+[dir='rtl'] .today-intro {
+  padding-right: 0;
+  padding-left: 112px;
+}
+[dir='rtl'] .today-actions {
+  right: auto;
+  left: 0;
+}

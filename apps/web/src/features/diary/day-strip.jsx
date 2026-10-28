@@ -6,8 +6,12 @@ import { CalendarDays } from 'lucide-react';
 import { ModalSheet } from '@/components/modal-sheet';
 import { DateCalendar } from './date-calendar';
 import { iso, today, savedDayGoal } from '@nourish/core';
+import { useI18n } from '@/providers/i18n-provider';
 export function DayStrip({ day, entries, goal, onSelect }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const { t, locale } = useI18n();
+  // fa-IR gives Persian weekday names; en-US gives English.
+  const dateLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
   const selectedDate = new Date(day + 'T12:00:00'),
     nowDate = new Date(today + 'T12:00:00'),
     diff = Math.round((nowDate - selectedDate) / 86400000),
@@ -17,7 +21,7 @@ export function DayStrip({ day, entries, goal, onSelect }) {
       <Button
         variant="unstyled"
         className="day-button calendar-trigger"
-        aria-label="Open calendar"
+        aria-label={t('calendar.chooseDay')}
         aria-haspopup="dialog"
         aria-expanded={calendarOpen}
         onClick={() => setCalendarOpen(true)}
@@ -26,11 +30,11 @@ export function DayStrip({ day, entries, goal, onSelect }) {
           <CalendarDays aria-hidden="true" size={19} />
         </span>
         <span className="day-weekday" aria-hidden="true">
-          Date
+          {t('common.date')}
         </span>
       </Button>
       {calendarOpen && (
-        <ModalSheet title="Choose a day" onClose={() => setCalendarOpen(false)}>
+        <ModalSheet title={t('calendar.chooseDay')} onClose={() => setCalendarOpen(false)}>
           <DateCalendar
             day={day}
             today={today}
@@ -68,15 +72,16 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                 (lowGoal ? ' low-goal' : '')
               }
               aria-label={
-                d.toLocaleDateString('en-US', {
+                d.toLocaleDateString(dateLocale, {
                   month: 'long',
                   day: 'numeric',
                 }) +
                 ', ' +
                 Math.round(cal) +
-                ' calories' +
-                (overGoal ? ', above recorded goal' : '') +
-                (lowGoal ? ', well below recorded goal' : '')
+                ' ' +
+                t('common.kcal') +
+                (overGoal ? ', ' + t('summary.balanceOver') : '') +
+                (lowGoal ? ', ' + t('progress.noFoodLogged') : '')
               }
               aria-pressed={key === day}
               aria-current={key === today ? 'date' : undefined}
@@ -105,10 +110,11 @@ export function DayStrip({ day, entries, goal, onSelect }) {
                     strokeDashoffset={125.66 * (1 - ratio)}
                   />
                 </svg>
-                <b>{d.getDate()}</b>
+                {/* Day number: always LTR so Persian calendar digits don't reverse */}
+                <b dir="ltr">{d.toLocaleDateString(dateLocale, { day: 'numeric' })}</b>
               </span>
               <span className="day-weekday" aria-hidden="true">
-                {d.toLocaleDateString('en-US', { weekday: 'short' })}
+                {d.toLocaleDateString(dateLocale, { weekday: 'short' })}
               </span>
             </Button>
           );

@@ -4,7 +4,9 @@ import React from 'react';
 import { Button, Input } from '@nourish/ui';
 import { activityTypes, estimateActivity, freshKey } from '@nourish/core';
 import { Icon } from '@/components/icon';
+import { useI18n } from '@/providers/i18n-provider';
 export function ActivityEditor({ initial, weight, onSave, onDelete }) {
+  const { t } = useI18n();
   const [type, setType] = React.useState(initial?.type || 'gym'),
     [level, setLevel] = React.useState(initial?.level || 'Moderate'),
     [duration, setDuration] = React.useState(String(initial?.minutes || 30)),
@@ -42,7 +44,7 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
           <Button
             type="button"
             key={a.id}
-            aria-label={a.name}
+            aria-label={t(('activity.' + a.id)) || a.name}
             aria-pressed={type === a.id}
             className={type === a.id ? 'selected' : ''}
             onClick={() => {
@@ -52,12 +54,12 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
             variant="unstyled"
           >
             <Icon type={a.icon} />
-            <span>{a.id === 'gym' ? 'Gym' : a.name}</span>
+            <span>{t(('activity.' + a.id)) || a.name}</span>
           </Button>
         ))}
       </div>
-      <label>Intensity</label>
-      <div className="intensity-options" role="group" aria-label="Activity intensity">
+      <label>{t('activity.intensity')}</label>
+      <div className="intensity-options" role="group" aria-label={t('activity.intensity')}>
         {activity.levels.map(([name]) => (
           <Button
             type="button"
@@ -67,14 +69,18 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
             onClick={() => setLevel(name)}
             variant="unstyled"
           >
-            {name}
+            {name === 'Light'
+              ? t('activity.light')
+              : name === 'Moderate'
+                ? t('activity.moderate')
+                : t('activity.hard')}
           </Button>
         ))}
       </div>
       <p className="intensity-description">{selected[2]}</p>
       <div className="grid2">
         <div>
-          <label htmlFor="activity-minutes">Duration (minutes)</label>
+          <label htmlFor="activity-minutes">{t('activity.duration')}</label>
           <Input
             id="activity-minutes"
             type="number"
@@ -89,7 +95,7 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
           />
         </div>
         <div>
-          <label htmlFor="activity-weight">Body weight (kg)</label>
+          <label htmlFor="activity-weight">{t('activity.weight')}</label>
           <Input
             id="activity-weight"
             type="number"
@@ -106,10 +112,10 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
       </div>
       <div className="activity-estimate" aria-live="polite">
         <div>
-          <span>Estimated energy</span>
+          <span>{t('activity.burned')}</span>
           <b>
             {valid ? '≈ ' + cal : '—'}
-            <small>{valid ? ' kcal' : ' Enter duration and weight'}</small>
+            <small>{valid ? ' ' + t('common.kcal') : ''}</small>
           </b>
         </div>
         <Icon type="Activity" />
@@ -125,11 +131,11 @@ export function ActivityEditor({ initial, weight, onSave, onDelete }) {
         </a>
       </details>
       <Button className="primary" disabled={!valid} variant="unstyled">
-        {initial ? 'Save activity' : 'Log activity'}
+        {initial ? t('activity.save') : t('activity.logButton')}
       </Button>
       {onDelete && (
         <Button className="secondary" type="button" onClick={onDelete} variant="unstyled">
-          Delete activity
+          {t('activity.remove')}
         </Button>
       )}
     </form>

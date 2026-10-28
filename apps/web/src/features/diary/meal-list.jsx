@@ -4,7 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@nourish/ui';
 import { meals, portionNumber, formatPortion, mealCalorieTarget } from '@nourish/core';
 import { Icon } from '@/components/icon';
+import { useI18n } from '@/providers/i18n-provider';
 export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
+  const { t, tMeal } = useI18n();
   const [drag, setDrag] = useState(null),
     [over, setOver] = useState(null),
     [logged, setLogged] = useState([]),
@@ -144,20 +146,20 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                   )}
                 </div>
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
-                  <b>{m}</b>
+                  <b>{tMeal(m)}</b>
                   <small>
                     {items.length
-                      ? `${consumed} / ${target !== null ? `~${target}` : '—'} kcal`
+                      ? `${consumed} / ${target !== null ? `~${target}` : '—'} ${t('common.kcal')}`
                       : target !== null
-                        ? `About ${target} kcal · Nothing logged yet`
-                        : 'Nothing logged yet'}
+                        ? t('meals.aboutTargetNothing', { target })
+                        : t('meals.nothingLogged')}
                   </small>
                 </Button>
                 <div className="meal-header-actions">
                   {items.length > 0 && (
                     <Button
                       className="save-meal-action"
-                      aria-label={'Save ' + m + ' as meal'}
+                      aria-label={t('meals.saveAsMeal', { meal: tMeal(m) })}
                       onClick={() => onSave(m)}
                       variant="unstyled"
                     >
@@ -166,7 +168,7 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                   )}
                   <Button
                     className="plus"
-                    aria-label={'Add to ' + m}
+                    aria-label={t('meals.addToMeal', { meal: tMeal(m) })}
                     onClick={() => onAdd(m)}
                     variant="unstyled"
                   >
@@ -181,7 +183,7 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                 >
                   <Button
                     className="drag-handle"
-                    aria-label={'Drag ' + x.name + ' to another meal'}
+                    aria-label={t('meals.dragToOther', { name: x.name })}
                     onPointerDown={(e) => {
                       if (e.button !== 0) return;
                       e.preventDefault();

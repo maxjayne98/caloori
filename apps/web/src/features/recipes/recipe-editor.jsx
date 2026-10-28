@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { Button, Input, Select } from '@nourish/ui';
+import { useI18n } from '@/providers/i18n-provider';
 export function Recipe({ foods, save }) {
+  const { t } = useI18n();
   const [parts, setParts] = useState([]);
   return (
     <form
@@ -35,15 +37,15 @@ export function Recipe({ foods, save }) {
         });
       }}
     >
-      <label>Recipe name</label>
-      <Input name="name" required={true} placeholder="e.g. My breakfast bowl" unstyled />
-      <label>Number of servings</label>
+      <label>{t('recipe.name')}</label>
+      <Input name="name" required={true} placeholder={t('recipe.namePlaceholder')} unstyled />
+      <label>{t('recipe.servings')}</label>
       <Input name="servings" type="number" min={1} defaultValue={1} required={true} unstyled />
-      <label>Add ingredients</label>
+      <label>{t('recipe.addIngredients')}</label>
       <Select
-        aria-label="Add ingredients"
+        aria-label={t('recipe.addIngredients')}
         value=""
-        placeholder="Choose an ingredient"
+        placeholder={t('recipe.chooseIngredient')}
         onValueChange={(value) => {
           const ingredient = foods.find((food) => food.id === value);
           if (ingredient) setParts([...parts, ingredient]);
@@ -59,12 +61,12 @@ export function Recipe({ foods, save }) {
             onClick={() => setParts(parts.filter((_, j) => i !== j))}
             variant="unstyled"
           >
-            Remove
+            {t('common.remove')}
           </Button>
         </div>
       ))}
       <Button className="primary" disabled={!parts.length} variant="unstyled">
-        Save recipe
+        {t('recipe.save')}
       </Button>
     </form>
   );

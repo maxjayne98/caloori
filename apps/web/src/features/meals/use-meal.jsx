@@ -10,7 +10,9 @@ import {
   reusableItems,
 } from '@nourish/core';
 import { FoodNutrition } from '@/components/food-nutrition';
+import { useI18n } from '@/providers/i18n-provider';
 export function UseMealTemplate({ template, initialMeal, onLog, onEdit }) {
+  const { t, tMeal } = useI18n();
   const [factor, setFactor] = React.useState('1'),
     [meal, setMeal] = React.useState(initialMeal),
     base = reusableItems(template),
@@ -28,7 +30,7 @@ export function UseMealTemplate({ template, initialMeal, onLog, onEdit }) {
       <p className="sub">All foods are logged separately, so you can edit each one later.</p>
       <div className="grid2">
         <div>
-          <label htmlFor="template-count">Meal portions</label>
+          <label htmlFor="template-count">{t('meals.portions')}</label>
           <Input
             id="template-count"
             type="number"
@@ -42,14 +44,14 @@ export function UseMealTemplate({ template, initialMeal, onLog, onEdit }) {
           />
         </div>
         <div>
-          <label htmlFor="template-meal">Log to</label>
+          <label htmlFor="template-meal">{t('meals.logTo')}</label>
           <Select
             id="template-meal"
             value={meal}
             onValueChange={setMeal}
             options={['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map((m) => ({
               value: m,
-              label: m,
+              label: tMeal(m),
             }))}
           />
         </div>
@@ -67,7 +69,7 @@ export function UseMealTemplate({ template, initialMeal, onLog, onEdit }) {
       </div>
       <FoodNutrition values={sumMealItems(items)} />
       <Button className="primary" disabled={!valid} variant="unstyled">
-        {'Add ' + items.length + ' foods to ' + meal}
+        {t('meals.logMealButton') + ' · ' + tMeal(meal)}
       </Button>
       <Button
         type="button"
@@ -75,7 +77,7 @@ export function UseMealTemplate({ template, initialMeal, onLog, onEdit }) {
         onClick={() => onEdit(template)}
         variant="unstyled"
       >
-        Edit saved meal
+        {t('meals.editMeal')}
       </Button>
     </form>
   );
