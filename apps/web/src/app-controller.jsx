@@ -5,7 +5,7 @@ import { WeeklyReportPage } from '@/features/progress/weekly-report-page';
 import { AddFoodSheet } from '@/features/foods/add-sheet';
 import { ProfilePage } from '@/features/profile/profile-page';
 import { AssistantPage } from '@/features/assistant/assistant-page';
-import { Sparkles, Settings } from 'lucide-react';
+import { ClipboardPaste, Sparkles, Settings } from 'lucide-react';
 import { LogWeightSheet } from '@/features/progress/weight-sheet';
 import { MealDetailSheet } from '@/features/diary/diary-sheet';
 import { CopyDaySheet } from '@/features/diary/copy-sheet';
@@ -32,6 +32,7 @@ import { MealBuilder } from '@/features/meals/meal-builder';
 import { UseMealTemplate } from '@/features/meals/use-meal';
 import { ActivityEditor } from '@/features/activities/activity-editor';
 import { BarcodeScanner } from '@/features/foods/barcode-scanner';
+import { NutritionLabelImport } from '@/features/foods/nutrition-label-import';
 import { TodayPage } from '@/features/diary/today-page';
 import { FoodPage } from '@/features/foods/food-page';
 import { ProgressPage } from '@/features/progress/progress-page';
@@ -64,14 +65,17 @@ export function App() {
     [toast, setToast] = useState(''),
     [editing, setEditing] = useState(null),
     [template, setTemplate] = useState(null),
-    [activity, setActivity] = useState(null);
+    [activity, setActivity] = useState(null),
+    [nutritionLabelOpen, setNutritionLabelOpen] = useState(false);
   function navigate(next) {
     window.location.hash = next.toLowerCase();
     setTab(next);
     setSheetState(null);
+    setNutritionLabelOpen(false);
     window.scrollTo(0, 0);
   }
   function setSheet(next) {
+    setNutritionLabelOpen(false);
     if (next === 'profile') navigate('Profile');
     else setSheetState(next);
   }
@@ -337,6 +341,13 @@ export function App() {
           notify(sheet === 'custom' ? 'Food saved to your library' : 'Added to ' + meal);
         }}
       >
+        {sheet === 'custom' && (
+          <NutritionLabelImport
+            notify={notify}
+            open={nutritionLabelOpen}
+            onOpenChange={setNutritionLabelOpen}
+          />
+        )}
         {field('Food name', 'name', query || '', 'text')}
         {sheet === 'custom' && field('Serving size', 'serving', '1 serving', 'text')}
         {sheet === 'custom' && (
@@ -602,7 +613,26 @@ export function App() {
         }}
       />
       {sheet && (
-        <ModalSheet title={titles[sheet]} onClose={() => setSheet(null)}>
+        <ModalSheet
+          title={titles[sheet]}
+          headerAction={
+            sheet === 'custom' ? (
+              <Button
+                type="button"
+                variant="unstyled"
+                className="nutrition-label-header-action"
+                aria-label="Import from nutrition label"
+                title="Import from nutrition label"
+                aria-expanded={nutritionLabelOpen}
+                aria-controls={nutritionLabelOpen ? 'nutrition-label-panel' : undefined}
+                onClick={() => setNutritionLabelOpen((open) => !open)}
+              >
+                <ClipboardPaste size={18} aria-hidden="true" />
+              </Button>
+            ) : null
+          }
+          onClose={() => setSheet(null)}
+        >
           {content}
         </ModalSheet>
       )}

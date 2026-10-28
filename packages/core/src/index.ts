@@ -7,6 +7,7 @@ export * from './barcode';
 export * from './progress';
 export * from './calendar';
 export * from './meal-calories';
+export * from './nutrition-label';
 
 export * from './assistant';
 export * from './weekly-report';

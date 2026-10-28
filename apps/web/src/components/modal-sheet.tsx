@@ -10,10 +10,12 @@ import {
 import { useRef, type ReactNode } from 'react';
 export function ModalSheet({
   title,
+  headerAction,
   onClose,
   children,
 }: {
   title: string;
+  headerAction?: ReactNode;
   onClose: () => void;
   children: ReactNode;
 }) {
@@ -46,9 +48,12 @@ export function ModalSheet({
             <section ref={sheet} tabIndex={-1} className="sheet">
               <div className="handle" />
               <div className="sheet-head">
-                <DialogTitle asChild>
-                  <h2>{title}</h2>
-                </DialogTitle>
+                <div className="sheet-title-group">
+                  <DialogTitle asChild>
+                    <h2>{title}</h2>
+                  </DialogTitle>
+                  {headerAction}
+                </div>
                 <Button variant="unstyled" className="close" aria-label="Close" onClick={onClose}>
                   ×
                 </Button>
