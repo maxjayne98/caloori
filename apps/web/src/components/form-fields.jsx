@@ -1,7 +1,7 @@
 'use client';
 import { Select } from '@nourish/ui';
 
-export function field(label, name, value, type = 'number') {
+export function field(label, name, value, type = 'number', options = {}) {
   return (
     <div>
       <label htmlFor={name}>{label}</label>
@@ -11,8 +11,9 @@ export function field(label, name, value, type = 'number') {
         defaultValue={value ?? ''}
         type={type}
         required={true}
-        min={type === 'number' ? 0 : undefined}
-        step={type === 'number' ? 'any' : undefined}
+        min={options.min ?? (type === 'number' ? 0 : undefined)}
+        max={options.max}
+        step={options.step ?? (type === 'number' ? 'any' : undefined)}
       />
     </div>
   );

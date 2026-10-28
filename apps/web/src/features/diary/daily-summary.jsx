@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { balanceStatus } from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
-export function DailySummary({ tot, profile, onEdit, day }) {
+export function DailySummary({ tot, profile, weight, onEdit, day }) {
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -63,7 +63,12 @@ export function DailySummary({ tot, profile, onEdit, day }) {
     ['Fat', 'f', 'var(--macro-fat)'],
   ].map(([name, k, color]) => (
     <div className="macro" key={k}>
-      <small>{name}</small>
+      <small>
+        {name}
+        {weight > 0 && (
+          <em className="macro-per-kg"> · {((tot[k] || 0) / weight).toFixed(1)} g/kg</em>
+        )}
+      </small>
       <b>
         <RollingNumber value={tot[k]} decimals={2} />
         <em>g / {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}g</em>

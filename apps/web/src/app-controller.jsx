@@ -217,6 +217,7 @@ export function App() {
         onWeeklyReport={() => navigate('Weekly')}
         setDay={setDay}
         profile={profile}
+        weight={[...weights].reverse().find((x) => x.date <= day)?.weight || profile.weight}
         day={day}
         entries={entries}
         tot={tot}

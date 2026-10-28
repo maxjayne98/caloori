@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@nourish/ui';
-import { meals, portionNumber, formatPortion } from '@nourish/core';
+import { meals, portionNumber, formatPortion, mealCalorieTarget } from '@nourish/core';
 import { Icon } from '@/components/icon';
-export function MealList({ day, list, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
+export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
   const [drag, setDrag] = useState(null),
     [over, setOver] = useState(null),
     [logged, setLogged] = useState([]),
@@ -78,6 +78,8 @@ export function MealList({ day, list, onAdd, onEdit, onDelete, onMove, onView, o
       <div className="meal-groups">
         {meals.map((m, i) => {
           let items = list.filter((x) => x.meal === m);
+          const target = mealCalorieTarget(profile?.cal, m, profile?.mealCalories);
+          const consumed = Math.round(items.reduce((sum, item) => sum + item.cal * item.qty, 0));
           return (
             <section
               key={m}
@@ -92,13 +94,10 @@ export function MealList({ day, list, onAdd, onEdit, onDelete, onMove, onView, o
                   <b>{m}</b>
                   <small>
                     {items.length
-                      ? items.length +
-                        ' item' +
-                        (items.length === 1 ? '' : 's') +
-                        ' · ' +
-                        Math.round(items.reduce((s, x) => s + x.cal * x.qty, 0)) +
-                        ' kcal'
-                      : 'Nothing logged yet'}
+                      ? `${items.length} item${items.length === 1 ? '' : 's'} · ${consumed} / ${target !== null ? `~${target}` : '—'} kcal`
+                      : target !== null
+                        ? `About ${target} kcal · Nothing logged yet`
+                        : 'Nothing logged yet'}
                   </small>
                 </Button>
                 <div className="meal-header-actions">

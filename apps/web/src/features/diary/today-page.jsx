@@ -13,6 +13,7 @@ import { ReportIcon } from '@/components/report-icon';
 export function TodayPage({
   setDay,
   profile,
+  weight,
   day,
   entries,
   tot,
@@ -140,7 +141,13 @@ export function TodayPage({
           <ChevronRight size={18} aria-hidden="true" />
         </Button>
       </div>
-      <DailySummary day={day} tot={tot} profile={profile} onEdit={() => setSheet('profile')} />
+      <DailySummary
+        day={day}
+        tot={tot}
+        profile={profile}
+        weight={weight}
+        onEdit={() => setSheet('profile')}
+      />
       <div className="section">
         <h2>Your meals</h2>
         <div className="meal-section-actions">
@@ -155,6 +162,7 @@ export function TodayPage({
       <MealList
         day={day}
         list={list}
+        profile={profile}
         onAdd={openAdd}
         onEdit={editItem}
         onDelete={deleteItem}

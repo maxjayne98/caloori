@@ -378,6 +378,12 @@ button.brand {
   max-width: 152px;
   align-self: center;
 }
+.daily-summary .macro .macro-per-kg {
+  color: var(--neutral-85858b);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 450;
+}
 .daily-summary .cal-footer {
   display: block;
   border: 0;

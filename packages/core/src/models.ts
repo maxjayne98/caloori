@@ -22,6 +22,14 @@ export const ProfileSchema = z
     weight: positive.max(700).nullable(),
     goal: z.enum(['Lose weight', 'Maintain weight', 'Gain weight']).nullable(),
     activity: z.enum(['Not very active', 'Lightly active', 'Active', 'Very active']).nullable(),
+    mealCalories: z
+      .object({
+        Breakfast: z.coerce.number().int().min(0).max(100),
+        Lunch: z.coerce.number().int().min(0).max(100),
+        Dinner: z.coerce.number().int().min(0).max(100),
+        Snacks: z.coerce.number().int().min(0).max(100),
+      })
+      .optional(),
     // Small square image resized on-device; stored inline so it syncs with the rest of the profile.
     photo: z
       .string()
@@ -89,10 +97,17 @@ export const AppStateSchema = z.object({
 });
 export type AppState = z.infer<typeof AppStateSchema>;
 export type Profile = z.infer<typeof ProfileSchema>;
+export type MealName = z.infer<typeof MealNameSchema>;
 export type Food = z.infer<typeof FoodSchema>;
 export type Nutrients = z.infer<typeof NutrientsSchema>;
 export type Activity = z.infer<typeof ActivitySchema>;
 export type MealTemplate = z.infer<typeof MealTemplateSchema>;
+export const DEFAULT_MEAL_CALORIES: Record<MealName, number> = {
+  Breakfast: 25,
+  Lunch: 30,
+  Dinner: 30,
+  Snacks: 15,
+};
 export type Diary = AppState['entries'];
 export type Activities = AppState['activities'];
 export interface FoodUnit {
@@ -126,6 +141,7 @@ export const DEFAULT_PROFILE: Profile = {
   weight: null,
   goal: null,
   activity: null,
+  mealCalories: { ...DEFAULT_MEAL_CALORIES },
 };
 const LEGACY_PLACEHOLDER = {
   name: '',
