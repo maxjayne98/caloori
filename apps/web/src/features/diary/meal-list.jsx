@@ -13,7 +13,18 @@ import {
 } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { useI18n } from '@/providers/i18n-provider';
-export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
+export function MealList({
+  day,
+  list,
+  profile,
+  onAdd,
+  onEdit,
+  onDelete,
+  onMove,
+  onView,
+  onSave,
+  onScore,
+}) {
   const { t, tMeal } = useI18n();
   const [drag, setDrag] = useState(null),
     [over, setOver] = useState(null),
@@ -157,7 +168,26 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
                   <b className="inline-flex items-center gap-1.5">
                     {tMeal(m)}
-                    {mealScore && <GradeMark {...mealScore} />}
+                    {mealScore && (
+                      // Lives inside the meal button, so it is a span that stops the meal click.
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        aria-label={t('insights.mealTitle', { meal: tMeal(m) })}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onScore?.(m);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key !== 'Enter' && e.key !== ' ') return;
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onScore?.(m);
+                        }}
+                      >
+                        <GradeMark {...mealScore} />
+                      </span>
+                    )}
                   </b>
                   <small>
                     {items.length
@@ -215,9 +245,7 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                     <Icon type="Grip" />
                   </Button>
                   <Button className="item-details" onClick={() => onEdit(x)} variant="unstyled">
-                    <b>
-                      {x.name}
-                    </b>
+                    <b>{x.name}</b>
                     <small>
                       {formatPortion(x) + ' · ' + portionNumber(x.cal * x.qty) + ' kcal'}
                       <GradeDot score={scoreFood(x)} />

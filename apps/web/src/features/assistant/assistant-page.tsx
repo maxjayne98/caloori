@@ -14,10 +14,16 @@ import {
 import { useNourishData } from '@/providers/data-provider';
 import { HeartLoader } from '@/components/heart-loader';
 import { NourishCompanion } from '@/components/nourish-companion';
-export function AssistantPage({ day }: { day: string }) {
+export function AssistantPage({
+  day,
+  initialPrompt = '',
+}: {
+  day: string;
+  initialPrompt?: string;
+}) {
   const data = useNourishData();
   const [messages, setMessages] = useState<AssistantMessage[]>([]),
-    [input, setInput] = useState(''),
+    [input, setInput] = useState(initialPrompt),
     [busy, setBusy] = useState(false),
     [saving, setSaving] = useState(false),
     [error, setError] = useState(''),

@@ -10,7 +10,7 @@ import { balanceStatus } from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
 import { useI18n } from '@/providers/i18n-provider';
-export function DailySummary({ tot, profile, weight, onEdit, day }) {
+export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
   const { t } = useI18n();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -154,7 +154,14 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
         <span className="inline-flex items-center gap-2">
           {t('summary.dailyEnergy')}
           {tot.dayScore && (
-            <GradeMark {...tot.dayScore} label={t('score.day', { score: tot.dayScore.score })} />
+            <Button
+              variant="unstyled"
+              className="grid"
+              onClick={onScore}
+              aria-label={t('insights.dayTitle')}
+            >
+              <GradeMark {...tot.dayScore} label={t('score.day', { score: tot.dayScore.score })} />
+            </Button>
           )}
         </span>
         <span className="tag">{labels[status]}</span>

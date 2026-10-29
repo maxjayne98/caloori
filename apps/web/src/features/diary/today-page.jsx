@@ -39,6 +39,8 @@ export function TodayPage({
   onWeeklyReport,
   editing,
   setEditing,
+  onDayScore,
+  onMealScore,
 }) {
   const { accountId, setProfile } = useNourishData();
   const layout = normalizeTodayLayout(profile.todayLayout);
@@ -198,6 +200,7 @@ export function TodayPage({
           profile={profile}
           weight={weight}
           onEdit={() => setSheet('profile')}
+          onScore={onDayScore}
         />
       </>
     ),
@@ -215,6 +218,7 @@ export function TodayPage({
           </div>
         </div>
         <MealList
+          onScore={onMealScore}
           day={day}
           list={list}
           profile={profile}

@@ -106,6 +106,42 @@ export const FRUIT_VEG_IDS = new Set([
   'mazafati-dates',
 ]);
 
+/** Cooking ingredients: fine to log, but not something to suggest eating on its own. */
+export const INGREDIENT_IDS = new Set([
+  'lamb-shoulder-raw',
+  'ground-beef-lamb-mix-raw',
+  'beef-shank-raw',
+  'chicken-breast-raw',
+  'chicken-thigh-raw',
+  'whitefish-trout-raw',
+  'egg-whole-raw',
+  'ghee-clarified-butter',
+  'vegetable-sunflower-oil',
+  'unsalted-butter',
+  'kashk-liquid-whey',
+  'basmati-rice-dry',
+  'reshteh-soup-noodle-dry',
+  'potato-raw',
+  'yellow-split-peas-dry',
+  'red-kidney-beans-dry',
+  'pinto-beans-dry',
+  'brown-lentils-dry',
+  'chickpeas-dry',
+  'mung-beans-dry',
+  'yellow-onion-raw',
+  'eggplant-raw',
+  'green-beans-raw',
+  'tomato-paste',
+  'garlic-raw',
+  'pumpkin-raw',
+  'barberries-zereshk-dried',
+  'pomegranate-paste-molasses',
+  'granulated-sugar',
+  'grape-molasses-sireh-angoor',
+  'date-molasses-sireh-khorma',
+  'f13',
+]);
+
 /** Serving weights for original foods that have no `gramsPerServing`. */
 export const ORIGINAL_SERVING_GRAMS: Record<string, number> = {
   f0: 170,
@@ -129,8 +165,9 @@ export const ORIGINAL_SERVING_GRAMS: Record<string, number> = {
 export function catalogExtras(
   id: string,
   gramsPerServing?: number | null,
-): ExtraNutrients & { fruitVeg?: number; referenceGrams?: number } {
+): ExtraNutrients & { fruitVeg?: number; referenceGrams?: number; ingredient?: boolean } {
   const fruitVeg = {
+    ...(INGREDIENT_IDS.has(id) ? { ingredient: true } : {}),
     ...(FRUIT_VEG_IDS.has(id) ? { fruitVeg: 100 } : {}),
     ...(!gramsPerServing && ORIGINAL_SERVING_GRAMS[id]
       ? { referenceGrams: ORIGINAL_SERVING_GRAMS[id] }

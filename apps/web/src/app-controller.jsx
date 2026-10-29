@@ -27,9 +27,14 @@ import {
   saveFoodEdit,
   resetFoodEdit,
   isCatalogFood,
+  scoreMeal,
+  suggestFoods,
+  suggestionPrompt,
   extraNutrientsFromInput,
 } from '@nourish/core';
+import { LayoutGrid } from 'lucide-react';
 import { ExtraNutrientFields } from '@/components/extra-nutrients';
+import { ScoreInsights } from '@/components/score-insights';
 import { Icon } from '@/components/icon';
 import { ProfileAvatar } from '@/components/profile-photo';
 import { BottomNavigation } from '@/components/bottom-navigation';
@@ -81,7 +86,9 @@ export function App() {
     // Today's layout edit mode; started from the Profile page.
     [todayEditing, setTodayEditing] = useState(false),
     // Food being edited in the Food library (built-in or the user's own).
-    [editingFood, setEditingFood] = useState(null);
+    [editingFood, setEditingFood] = useState(null),
+    // Prefilled message when the score insights hand off to the assistant.
+    [assistantDraft, setAssistantDraft] = useState('');
   function navigate(next) {
     if (next !== 'Today') setTodayEditing(false);
     window.location.hash = next.toLowerCase();
@@ -237,6 +244,14 @@ export function App() {
   if (tab === 'Today')
     body = (
       <TodayPage
+        onDayScore={() => {
+          setMeal(mealForTime(new Date()));
+          setSheet('dayInsights');
+        }}
+        onMealScore={(m) => {
+          setMeal(m);
+          setSheet('mealInsights');
+        }}
         editing={todayEditing}
         setEditing={setTodayEditing}
         weeklyReport={weeklyReport}
@@ -306,7 +321,8 @@ export function App() {
         }}
       />
     );
-  if (tab === 'Assistant') body = <AssistantPage day={day} />;
+  if (tab === 'Assistant')
+    body = <AssistantPage key={assistantDraft} day={day} initialPrompt={assistantDraft} />;
   let content = null;
   if (sheet === 'edit' && editing)
     content = (
@@ -611,7 +627,47 @@ export function App() {
       />
     );
   if (sheet === 'settings') content = <SettingsPanel />;
+  if (sheet === 'dayInsights' || sheet === 'mealInsights') {
+    // Day insights suggest for the meal that fits now; meal insights for the tapped meal.
+    const insight =
+      sheet === 'dayInsights' ? tot.dayScore : scoreMeal(list.filter((x) => x.meal === meal));
+    const recentIds = [
+      ...new Set(
+        Object.values(entries)
+          .flat()
+          .map((x) => x.id),
+      ),
+    ];
+    const suggestions = suggestFoods(list, foodLibrary(foods, custom), profile, { recentIds });
+    if (insight)
+      content = (
+        <ScoreInsights
+          insight={insight}
+          suggestions={suggestions}
+          onLog={(suggestion) => {
+            add(suggestion.food, suggestion.qty);
+            setSheet(null);
+            notify(t('toast.addedTo', { meal: tMeal(meal) }));
+          }}
+          onAsk={() => {
+            setAssistantDraft(
+              suggestionPrompt({
+                score: tot.dayScore?.score ?? insight.score,
+                reasons: (tot.dayScore?.reasons ?? insight.reasons).map((r) =>
+                  t(`score.reason.${r}`),
+                ),
+                remaining: (profile.cal || 2000) - tot.cal,
+                eatenNames: list.map((x) => x.name),
+              }),
+            );
+            navigate('Assistant');
+          }}
+        />
+      );
+  }
   const titles = {
+    dayInsights: t('insights.dayTitle'),
+    mealInsights: t('insights.mealTitle', { meal: tMeal(meal) }),
     editFood: t('sheet.editFood'),
     settings: t('sheet.settings'),
     meals: t('sheet.meals'),
@@ -662,6 +718,20 @@ export function App() {
             <Sparkles size={19} stroke="url(#assistant-gradient)" aria-hidden="true" />
           </Button>
           <LoggingStreak entries={entries} today={today} />
+          {tab === 'Profile' ? (
+            <Button
+              variant="unstyled"
+              className="avatar profile-settings"
+              onEditTodayLayout={() => {
+                navigate('Today');
+                setTodayEditing(true);
+              }}
+            >
+              <span>
+                <LayoutGrid size={18} aria-hidden="true" />
+              </span>
+            </Button>
+          ) : null}
           <Button
             className={tab === 'Profile' ? 'avatar profile-settings' : 'avatar'}
             aria-label={tab === 'Profile' ? t('nav.settingsAria') : t('nav.profileAria')}
@@ -670,7 +740,7 @@ export function App() {
             variant="unstyled"
           >
             {tab === 'Profile' ? (
-              <Settings size={20} aria-hidden="true" />
+                <Settings size={20} aria-hidden="true" />
             ) : (
               <ProfileAvatar profile={profile} seed={accountId} />
             )}

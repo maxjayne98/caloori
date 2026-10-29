@@ -5,6 +5,7 @@ export * from './meal-score';
 export * from './portion-score';
 export * from './today-layout';
 export * from './food-library';
+export * from './suggestions';
 export * from './food-data';
 export * from './portions';
 export * from './activities';
