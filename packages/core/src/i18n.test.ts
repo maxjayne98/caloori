@@ -72,7 +72,7 @@ test('formatDate outputs localized date strings', () => {
 
 test('app version is defined and matches semantic versioning format', () => {
   assert.ok(/^\d+\.\d+\.\d+$/.test(APP_VERSION));
-  assert.equal(APP_VERSION, '0.9.13');
+  assert.equal(APP_VERSION, '0.11.0');
 });
 
 test('formatCompact shortens only numbers of a thousand or more, per locale', () => {

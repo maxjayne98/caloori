@@ -33,11 +33,9 @@ export function ScoreInsights({
   return (
     <div className="grid gap-5">
       <div className="flex items-center gap-3">
-        <b className="text-4xl font-bold tabular-nums leading-none">{insight.score}</b>
         <GradeMark
-          grade={insight.grade}
-          reasons={insight.reasons}
-          confidence={insight.confidence}
+          {...insight}
+          size="4xl"
         />
       </div>
       {reasons.length > 0 && (

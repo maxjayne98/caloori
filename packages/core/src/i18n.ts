@@ -88,6 +88,8 @@ export const translations = {
     'summary.msgLowStrong': 'Below 80% of your goal this evening.',
     'summary.msgLowText': 'Check for any meals you haven’t logged.',
     'summary.msgReached': 'You’ve reached your daily energy goal.',
+    'summary.showExtraNutrients': 'Show sodium and cholesterol',
+    'summary.hideExtraNutrients': 'Hide sodium and cholesterol',
 
     // Meals
     'meals.breakfast': 'Breakfast',
@@ -246,7 +248,8 @@ export const translations = {
     'insights.mealTitle': 'Improve {meal}',
     'insights.tryAdding': 'Try adding',
     'insights.log': 'Log {name}',
-    'insights.noRoom': 'Your calories are covered for today. Small swaps tomorrow will lift the score.',
+    'insights.noRoom':
+      'Your calories are covered for today. Small swaps tomorrow will lift the score.',
     'insights.askAssistant': 'Ask the assistant',
     'sheet.editFood': 'Edit food',
     'food.editFood': 'Edit {name}',
@@ -463,6 +466,8 @@ export const translations = {
     'summary.msgLowStrong': 'امروز عصر کمتر از ۸۰٪ هدف هستید.',
     'summary.msgLowText': 'وعده‌های ثبت‌نشده را بررسی کنید.',
     'summary.msgReached': 'به هدف انرژی روزانه خود رسیدید.',
+    'summary.showExtraNutrients': 'نمایش سدیم و کلسترول',
+    'summary.hideExtraNutrients': 'پنهان‌کردن سدیم و کلسترول',
 
     // Meals
     'meals.breakfast': 'صبحانه',

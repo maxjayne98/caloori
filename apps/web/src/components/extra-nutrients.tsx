@@ -64,19 +64,27 @@ export function ExtraNutrientList({ values }: { values: ExtraNutrients }) {
  */
 export function ExtraNutrientSummary({
   totals,
+  visible,
 }: {
   totals: Record<ExtraNutrientKey, ExtraNutrientTotal>;
+  visible: boolean;
 }) {
   const { t } = useI18n();
   const format = useFormat();
   const shown = (['sodium', 'cholesterol'] as const).filter((key) => totals[key].known > 0);
   if (!shown.length) return null;
   return (
-    <p className="pointer-events-none absolute bottom-2 end-[22px] m-0 flex w-[152px] max-w-[40%] justify-center gap-2 whitespace-nowrap text-[10px] leading-none text-[var(--neutral-85858b)] max-[360px]:end-4">
+    <p
+      id="daily-extra-nutrients"
+      aria-hidden={!visible}
+      className={`pointer-events-none absolute bottom-2 end-[22px] m-0 flex w-[152px] max-w-[40%] justify-center gap-2 whitespace-nowrap text-[10px] leading-none text-[var(--neutral-aaaab2)] transition-opacity duration-150 ease-in-out motion-reduce:transition-none max-[360px]:end-4 ${
+        visible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       {shown.map((key) => (
         <span key={key}>
           {t(SHORT_LABEL_KEYS[key])}{' '}
-          <b className="font-semibold tabular-nums text-[var(--foreground)]">
+          <b className="font-semibold tabular-nums text-[var(--neutral-919197)]">
             {format(key, totals[key].amount)}
           </b>
         </span>

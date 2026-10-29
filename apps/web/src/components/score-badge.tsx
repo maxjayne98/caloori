@@ -19,6 +19,25 @@ const GRADE_COLOR: Record<Grade, string> = {
   E: 'var(--grade-e)',
 };
 
+type GradeMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+
+const GRADE_MARK_SIZE_STYLES: Record<
+  GradeMarkSize,
+  { text: string; scorePadding: string; grade: string }
+> = {
+  sm: { text: 'text-[10px]', scorePadding: 'py-px pe-px ps-1.5', grade: 'size-4' },
+  md: { text: 'text-xs', scorePadding: 'py-0.5 pe-0.5 ps-2', grade: 'size-5' },
+  lg: {
+    text: 'gap-1.25 text-[13px]',
+    scorePadding: 'py-0.75 pe-0.75 ps-2.5',
+    grade: 'size-6',
+  },
+  xl: { text: 'gap-1.5 text-sm', scorePadding: 'py-1 pe-1 ps-3', grade: 'size-7' },
+  '2xl': { text: 'gap-2 text-base', scorePadding: 'py-1.5 pe-1.5 ps-4', grade: 'size-8' },
+  '3xl': { text: 'gap-2.5 text-3xl', scorePadding: 'py-2 pe-2 ps-5', grade: 'size-10' },
+  '4xl': { text: 'gap-3 text-4xl', scorePadding: 'py-2.5 pe-2.5 ps-6', grade: 'size-12' },
+};
+
 /** Hover/long-press text: grade, why, and a note when values were estimated. */
 function useExplain() {
   const { t } = useI18n();
@@ -52,11 +71,12 @@ export function GradeMark({
   score?: number;
   /** Replaces the default "Score B" lead-in of the explanation. */
   label?: string;
-  /** `md` is a touch larger, for marks that are tap targets of their own. */
-  size?: 'sm' | 'md';
+  /** Sizes grow progressively from `sm` through `4xl`. */
+  size?: GradeMarkSize;
 }) {
   const explain = useExplain()(grade, reasons, confidence, label);
   const color = GRADE_COLOR[grade];
+  const sizeStyles = GRADE_MARK_SIZE_STYLES[size];
   return (
     <span
       role="img"
@@ -64,18 +84,15 @@ export function GradeMark({
       title={explain}
       className={cn(
         'inline-flex shrink-0 items-center gap-1 rounded-full font-bold leading-none tabular-nums',
-        size === 'md' ? 'text-xs' : 'text-[10px]',
-        score !== undefined && (size === 'md' ? 'py-0.5 pe-0.5 ps-2' : 'py-px pe-px ps-1.5'),
+        sizeStyles.text,
+        score !== undefined && sizeStyles.scorePadding,
         confidence === 'low' && 'opacity-70',
       )}
       style={{ color, background: `color-mix(in srgb, ${color} 12%, transparent)` }}
     >
       {score}
       <span
-        className={cn(
-          'inline-grid place-items-center rounded-full',
-          size === 'md' ? 'size-5' : 'size-4',
-        )}
+        className={cn('inline-grid place-items-center rounded-full', sizeStyles.grade)}
         style={{ background: `color-mix(in srgb, ${color} 16%, transparent)` }}
       >
         {grade}
@@ -105,14 +122,14 @@ export function MiniGradeScale({
       role="img"
       aria-label={explain}
       title={explain}
-      className="inline-flex items-center gap-[2px]"
+      className="inline-flex items-center gap-0.5"
     >
       {GRADES.map((letter) =>
         letter === grade ? (
           <span
             key={letter}
             className={cn(
-              'grid h-[18px] w-[13px] place-items-center rounded-[4px] text-[10px] font-bold leading-none text-white',
+              'grid h-[18px] w-3.25 place-items-center rounded-[4px] text-[10px] font-bold leading-none text-white',
               confidence === 'low' && 'outline outline-1 outline-offset-1 outline-dashed',
             )}
             style={{ background: GRADE_COLOR[letter], outlineColor: GRADE_COLOR[letter] }}

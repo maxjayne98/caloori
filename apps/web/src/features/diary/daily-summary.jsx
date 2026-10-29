@@ -1,7 +1,7 @@
 'use client';
 import { ExtraNutrientSummary } from '@/components/extra-nutrients';
 import { GradeMark } from '@/components/score-badge';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck, Info } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
 
@@ -12,12 +12,15 @@ import { RollingNumber } from '@/components/rolling-number';
 import { useI18n } from '@/providers/i18n-provider';
 export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
   const { t } = useI18n();
+  const [extraNutrientsOpen, setExtraNutrientsOpen] = useState(false);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
   const status = balanceStatus(tot.cal, profile.cal, day, now);
+  const hasExtraNutrientTotals =
+    tot.extras && (tot.extras.sodium.known > 0 || tot.extras.cholesterol.known > 0);
   const labels = {
     neutral: t('summary.balanceNeutral'),
     over: t('summary.balanceOver'),
@@ -122,6 +125,23 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
           {tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}
         </span>
       </div>
+      {hasExtraNutrientTotals && (
+        <Button
+          variant="unstyled"
+          className="absolute bottom-1 left-1 grid size-7 place-items-center rounded-full -rotate-90 text-[var(--neutral-aaaab2)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] motion-reduce:transition-none"
+          onClick={() => setExtraNutrientsOpen((open) => !open)}
+          aria-label={t(
+            extraNutrientsOpen ? 'summary.hideExtraNutrients' : 'summary.showExtraNutrients',
+          )}
+          aria-controls="daily-extra-nutrients"
+          aria-expanded={extraNutrientsOpen}
+          title={t(
+            extraNutrientsOpen ? 'summary.hideExtraNutrients' : 'summary.showExtraNutrients',
+          )}
+        >
+          <Info className="opacity-40" size={16} aria-hidden="true" />
+        </Button>
+      )}
     </div>
   );
   const energy = (
@@ -177,7 +197,7 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
         </div>
       </div>
       {ring}
-      {tot.extras && <ExtraNutrientSummary totals={tot.extras} />}
+      {tot.extras && <ExtraNutrientSummary totals={tot.extras} visible={extraNutrientsOpen} />}
       {status !== 'neutral' && (
         <div className="balance-message" role="status">
           {status === 'over' ? (
