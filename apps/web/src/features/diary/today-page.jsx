@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarCheck2, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import {
   iso,
@@ -87,10 +87,11 @@ export function TodayPage({
     const timer = setTimeout(() => setReportMessage(false), 5000);
     return () => clearTimeout(timer);
   }, [reportMessage]);
-  // Header actions live in the greeting. If it's hidden, "Today" moves above the calendar icon
-  // and the report nudge shrinks into the date row. In edit mode only a Done bar shows.
+  // Header actions live in the greeting. If it's hidden, "Today" and the report nudge move into
+  // the date row. In edit mode only a Done bar shows.
   const isVisible = (id) => !layout.find((section) => section.id === id)?.hidden;
   const greetingShown = !editing && isVisible('greeting');
+  const showTodayButton = !greetingShown && !editing && day !== today;
   const reportCompact = !editing && !greetingShown && weeklyReport.ready && !reportOpened && (
     <Button
       variant="unstyled"
@@ -150,7 +151,6 @@ export function TodayPage({
           entries={entries}
           goal={profile.cal}
           onSelect={setDay}
-          onToday={!greetingShown && !editing ? () => setDay(today) : undefined}
         />
         <div className="date">
           <Button
@@ -164,19 +164,45 @@ export function TodayPage({
           >
             <ChevronLeft size={18} aria-hidden="true" />
           </Button>
-          <strong>
-            {day === today
-              ? (locale === 'fa' ? t('today.today') + '، ' : t('today.today') + ', ') +
-                formatDate(day, {
-                  month: 'short',
-                  day: 'numeric',
-                })
-              : formatDate(day, {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-          </strong>
+          <div className="flex items-center gap-1">
+            <strong>
+              {day === today
+                ? (locale === 'fa' ? t('today.today') + '، ' : t('today.today') + ', ') +
+                  formatDate(day, {
+                    month: 'short',
+                    day: 'numeric',
+                  })
+                : formatDate(day, {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+            </strong>
+            <span
+              aria-hidden={!showTodayButton}
+              className={`grid overflow-hidden transition-[grid-template-columns,opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
+                showTodayButton
+                  ? 'grid-cols-[1fr] opacity-100'
+                  : 'pointer-events-none grid-cols-[0fr] opacity-0'
+              }`}
+            >
+              <span className="min-w-0 overflow-hidden">
+                <Button
+                  variant="unstyled"
+                  className="h-auto! w-auto! rounded-full! border! border-(--accent)/70! bg-(--accent-soft)! text-(--accent)/70! px-1 py-0 font-semibold text-[8px]!"
+                  onClick={() => setDay(today)}
+                  aria-label={t('today.today')}
+                  title={t('today.today')}
+                  tabIndex={showTodayButton ? 0 : -1}
+                >
+                  <span className="inline-flex items-center gap-0.5 p-0.5!">
+                    <CalendarCheck2 size={12} aria-hidden="true" />
+                    {t('today.today')}
+                  </span>
+                </Button>
+              </span>
+            </span>
+          </div>
           {reportCompact}
           <Button
             aria-label={t('today.nextDay')}

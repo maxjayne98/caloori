@@ -7,7 +7,7 @@ import { ModalSheet } from '@/components/modal-sheet';
 import { DateCalendar } from './date-calendar';
 import { iso, today, savedDayGoal } from '@nourish/core';
 import { useI18n } from '@/providers/i18n-provider';
-export function DayStrip({ day, entries, goal, onSelect, onToday }) {
+export function DayStrip({ day, entries, goal, onSelect }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const { t, locale } = useI18n();
   // fa-IR gives Persian weekday names; en-US gives English.
@@ -18,17 +18,7 @@ export function DayStrip({ day, entries, goal, onSelect, onToday }) {
     base = diff >= 0 && diff < 7 ? nowDate : selectedDate;
   return (
     <div className="day-strip has-calendar" aria-label="Daily calorie history">
-      {/* When the greeting is hidden, a small "Today" sits above the calendar icon. */}
       <div className="relative grid">
-        {onToday && (
-          <Button
-            variant="unstyled"
-            className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-[11px] font-semibold leading-none text-[var(--accent-text)] shadow-[0_1px_3px_var(--neutral-17172a08)] active:scale-95 motion-reduce:transition-none"
-            onClick={onToday}
-          >
-            {t('today.today')}
-          </Button>
-        )}
         <Button
           variant="unstyled"
           className="day-button calendar-trigger"
