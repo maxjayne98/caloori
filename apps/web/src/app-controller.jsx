@@ -54,6 +54,27 @@ import { ProgressPage } from '@/features/progress/progress-page';
 import { field, formData } from '@/components/form-fields';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
+
+const VERSION_CONFETTI_COLORS = [
+  '--accent',
+  '--grade-a',
+  '--grade-b',
+  '--grade-c',
+  '--grade-d',
+  '--grade-e',
+  '--macro-protein',
+  '--macro-carbs',
+  '--macro-fat',
+];
+const VERSION_CONFETTI = Array.from({ length: 64 }, (_, index) => ({
+  x: (index * 37) % 100,
+  delay: (index * 67) % 650,
+  drift: ((index * 29) % 101) - 50,
+  rotation: 240 + ((index * 97) % 540),
+  duration: 1800 + ((index * 71) % 900),
+  color: VERSION_CONFETTI_COLORS[index % VERSION_CONFETTI_COLORS.length],
+}));
+
 export function App() {
   const { t, tMeal } = useI18n();
   const {
@@ -794,35 +815,58 @@ export function App() {
         }}
       />
       {showVersionNotice && (
-        <div
-          role="status"
-          className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-[var(--neutral-eee)] bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
-            versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
-          }`}
-        >
-          <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
-          <div className="min-w-0 flex-1">
-            <p className="m-0 text-xs font-semibold">{t('settings.updateAvailable')}</p>
-            <p className="m-0 text-[10px] text-[var(--neutral-85858b)]">
-              {t('settings.updateVersion', { version: APP_VERSION })}
-            </p>
+        <>
+          <div
+            className="pointer-events-none fixed inset-0 z-[80] overflow-hidden"
+            aria-hidden="true"
+          >
+            {VERSION_CONFETTI.map((piece, index) => (
+              <i
+                key={index}
+                className={`update-confetti-piece ${
+                  index % 3 === 0 ? 'h-3 w-1' : index % 3 === 1 ? 'size-2 rounded-full' : 'size-2'
+                }`}
+                style={{
+                  left: `${piece.x}%`,
+                  backgroundColor: `var(${piece.color})`,
+                  animationDelay: `${piece.delay}ms`,
+                  animationDuration: `${piece.duration}ms`,
+                  '--confetti-drift': `${piece.drift}px`,
+                  '--confetti-rotation': `${piece.rotation}deg`,
+                }}
+              />
+            ))}
           </div>
-          <Button
-            variant="unstyled"
-            className="shrink-0 rounded-lg bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent-text)]"
-            onClick={openVersionChangelog}
+          <div
+            role="status"
+            className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-2xl border-2 border-(--accent) bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
+              versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+            }`}
           >
-            {t('settings.whatsNew')}
-          </Button>
-          <Button
-            variant="unstyled"
-            className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--neutral-85858b)] hover:bg-[var(--neutral-e9e9ee)]"
-            aria-label={t('settings.dismissUpdate')}
-            onClick={acknowledgeVersionNotice}
-          >
-            <X size={16} aria-hidden="true" />
-          </Button>
-        </div>
+            <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="m-0 text-xs font-semibold">{t('settings.updateAvailable')}</p>
+              <p className="m-0 text-[10px] text-[var(--neutral-85858b)]">
+                {t('settings.updateVersion', { version: APP_VERSION })}
+              </p>
+            </div>
+            <Button
+              variant="unstyled"
+              className="shrink-0 rounded-lg bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent-text)]"
+              onClick={openVersionChangelog}
+            >
+              {t('settings.whatsNew')}
+            </Button>
+            <Button
+              variant="unstyled"
+              className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--neutral-85858b)] hover:bg-[var(--neutral-e9e9ee)]"
+              aria-label={t('settings.dismissUpdate')}
+              onClick={acknowledgeVersionNotice}
+            >
+              <X size={16} aria-hidden="true" />
+            </Button>
+          </div>
+        </>
       )}
       {sheet && (
         <ModalSheet

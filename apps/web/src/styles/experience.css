@@ -996,14 +996,40 @@ button.brand {
     transform: translateY(-3px);
   }
 }
+.update-confetti-piece {
+  position: absolute;
+  top: -12px;
+  opacity: 0;
+  animation-name: update-confetti-fall;
+  animation-timing-function: cubic-bezier(0.2, 0.65, 0.35, 1);
+  animation-fill-mode: both;
+}
+@keyframes update-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -4vh, 0) rotate(0);
+  }
+  12% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-drift), 108vh, 0) rotate(var(--confetti-rotation));
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .weekly-report-shortcut,
   .logging-streak.is-celebrating > svg,
   .streak-celebration i,
-  .streak-cheer {
+  .streak-cheer,
+  .update-confetti-piece {
     animation: none;
   }
-  .streak-celebration i {
+  .streak-celebration i,
+  .update-confetti-piece {
     display: none;
   }
 }

@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.9.15
+
+- `8eb4b83` feat: add changelog data structure and enhance settings panel with release notes display
+
 ## 0.9.14
 
 - `dd9f612` feat: enhance ExtraNutrientSummary with visibility control
