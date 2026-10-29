@@ -2,9 +2,11 @@
 import { Button } from '@nourish/ui';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { APP_VERSION, SUPPORTED_LOCALES, LOCALE_METADATA } from '@nourish/core';
+import { ChevronDown } from 'lucide-react';
 import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-provider';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
+import { CHANGELOG } from './changelog-data';
 import {
   PATTERN_COUNT,
   PIXEL_COUNT,
@@ -12,13 +14,18 @@ import {
   avatarChoice,
   resizeProfilePhoto,
 } from '@/components/profile-photo';
-export function SettingsPanel() {
+export function SettingsPanel({
+  showChangelogInitially = false,
+}: {
+  showChangelogInitially?: boolean;
+}) {
   const { theme, setTheme, accent, setAccent } = useAppearance();
   const { profile, setProfile, accountId } = useNourishData();
   const { locale, setLocale, t } = useI18n();
   const picker = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState('');
   const [showAll, setShowAll] = useState(false);
+  const [showChangelog, setShowChangelog] = useState(showChangelogInitially);
   const current = avatarChoice(profile);
   function setAvatar(avatar: string) {
     setProfile((previous) => ({ ...previous, avatar }));
@@ -54,6 +61,7 @@ export function SettingsPanel() {
     : choices.slice(0, COLLAPSED).includes(current)
       ? choices.slice(0, COLLAPSED)
       : [...choices.slice(0, COLLAPSED - 1), current];
+  const currentVersion = String(APP_VERSION);
   return (
     <div className="settings-panel">
       <div className="settings-heading">
@@ -156,10 +164,76 @@ export function SettingsPanel() {
       <div className="settings-heading settings-about">
         <h3>{t('settings.about')}</h3>
       </div>
-      <div className="settings-version">
+      <Button
+        variant="unstyled"
+        className="settings-version w-full text-left transition-colors hover:bg-[var(--accent-soft)] motion-reduce:transition-none"
+        aria-expanded={showChangelog}
+        aria-controls="settings-changelog"
+        onClick={() => setShowChangelog((open) => !open)}
+      >
         <span>{t('settings.version')}</span>
-        <span className="settings-version-number">{APP_VERSION}</span>
-      </div>
+        <span className="flex items-center gap-2">
+          <span className="settings-version-number">{APP_VERSION}</span>
+          <ChevronDown
+            size={16}
+            className={`transition-transform duration-200 motion-reduce:transition-none ${
+              showChangelog ? 'rotate-180' : ''
+            }`}
+            aria-hidden="true"
+          />
+        </span>
+      </Button>
+      {showChangelog && (
+        <div
+          id="settings-changelog"
+          className="mt-2 space-y-2 rounded-xl bg-[var(--neutral-e9e9ee)] p-3 text-[var(--foreground)]"
+        >
+          <h4 className="m-0 text-sm font-semibold">{t('settings.releaseNotes')}</h4>
+          {CHANGELOG.length ? (
+            <div className="space-y-2">
+              {!CHANGELOG.some((release) => release.version === currentVersion) && (
+                <details open className="rounded-lg bg-[var(--surface)] px-3 py-2">
+                  <summary className="cursor-pointer text-xs font-semibold">
+                    {currentVersion}
+                  </summary>
+                  <p className="mb-0 mt-2 text-xs text-[var(--neutral-85858b)]">
+                    {t('settings.noReleaseNotes')}
+                  </p>
+                </details>
+              )}
+              {CHANGELOG.map((release, index) => (
+                <details
+                  key={release.version}
+                  open={release.version === currentVersion || index === 0}
+                  className="rounded-lg bg-[var(--surface)] px-3 py-2"
+                >
+                  <summary className="cursor-pointer text-xs font-semibold">
+                    {release.version}
+                  </summary>
+                  <ul className="mt-2 space-y-2 ps-4 text-xs">
+                    {release.entries.map((entry) => (
+                      <li key={entry.hash}>
+                        <div className="flex items-start justify-between gap-2">
+                          <span>{entry.subject}</span>
+                        </div>
+                        {entry.body && (
+                          <p className="mb-0 mt-1 whitespace-pre-line text-[var(--neutral-85858b)]">
+                            {entry.body}
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <p className="m-0 text-xs text-[var(--neutral-85858b)]">
+              {t('settings.noReleaseNotes')}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

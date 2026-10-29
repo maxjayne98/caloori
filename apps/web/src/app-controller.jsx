@@ -1,11 +1,10 @@
 'use client';
-import { buildWeeklyReport } from '@nourish/core';
 import { WeeklyReportPage } from '@/features/progress/weekly-report-page';
 
 import { AddFoodSheet } from '@/features/foods/add-sheet';
 import { ProfilePage } from '@/features/profile/profile-page';
 import { AssistantPage } from '@/features/assistant/assistant-page';
-import { ClipboardPaste, Sparkles, Settings } from 'lucide-react';
+import { ClipboardPaste, Sparkles, Settings, X } from 'lucide-react';
 import { LogWeightSheet } from '@/features/progress/weight-sheet';
 import { MealDetailSheet } from '@/features/diary/diary-sheet';
 import { CopyDaySheet } from '@/features/diary/copy-sheet';
@@ -14,6 +13,8 @@ import { SettingsPanel } from '@/features/settings/settings-panel';
 import { useState, useEffect } from 'react';
 import { Button, Input } from '@nourish/ui';
 import {
+  APP_VERSION,
+  buildWeeklyReport,
   foods,
   today,
   freshKey,
@@ -89,6 +90,33 @@ export function App() {
     [editingFood, setEditingFood] = useState(null),
     // Prefilled message when the score insights hand off to the assistant.
     [assistantDraft, setAssistantDraft] = useState('');
+  const [showVersionNotice, setShowVersionNotice] = useState(false);
+  const [versionNoticeEntered, setVersionNoticeEntered] = useState(false);
+  const [showChangelogOnSettings, setShowChangelogOnSettings] = useState(false);
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('nourish-next:seen-app-version') === APP_VERSION) return;
+      setShowVersionNotice(true);
+      const frame = requestAnimationFrame(() => setVersionNoticeEntered(true));
+      return () => cancelAnimationFrame(frame);
+    } catch (error) {
+      console.error('Could not check the app version notice.', error);
+    }
+  }, []);
+  function acknowledgeVersionNotice() {
+    setShowVersionNotice(false);
+    setVersionNoticeEntered(false);
+    try {
+      localStorage.setItem('nourish-next:seen-app-version', APP_VERSION);
+    } catch (error) {
+      console.error('Could not save the seen app version.', error);
+    }
+  }
+  function openVersionChangelog() {
+    acknowledgeVersionNotice();
+    setShowChangelogOnSettings(true);
+    setSheetState('settings');
+  }
   function navigate(next) {
     if (next !== 'Today') setTodayEditing(false);
     window.location.hash = next.toLowerCase();
@@ -626,7 +654,8 @@ export function App() {
         notify={notify}
       />
     );
-  if (sheet === 'settings') content = <SettingsPanel />;
+  if (sheet === 'settings')
+    content = <SettingsPanel showChangelogInitially={showChangelogOnSettings} />;
   if (sheet === 'dayInsights' || sheet === 'mealInsights') {
     // Day insights suggest for the meal that fits now; meal insights for the tapped meal.
     const insight =
@@ -764,6 +793,37 @@ export function App() {
           setSheet('activity');
         }}
       />
+      {showVersionNotice && (
+        <div
+          role="status"
+          className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-[var(--neutral-eee)] bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
+            versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+          }`}
+        >
+          <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
+          <div className="min-w-0 flex-1">
+            <p className="m-0 text-xs font-semibold">{t('settings.updateAvailable')}</p>
+            <p className="m-0 text-[10px] text-[var(--neutral-85858b)]">
+              {t('settings.updateVersion', { version: APP_VERSION })}
+            </p>
+          </div>
+          <Button
+            variant="unstyled"
+            className="shrink-0 rounded-lg bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent-text)]"
+            onClick={openVersionChangelog}
+          >
+            {t('settings.whatsNew')}
+          </Button>
+          <Button
+            variant="unstyled"
+            className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--neutral-85858b)] hover:bg-[var(--neutral-e9e9ee)]"
+            aria-label={t('settings.dismissUpdate')}
+            onClick={acknowledgeVersionNotice}
+          >
+            <X size={16} aria-hidden="true" />
+          </Button>
+        </div>
+      )}
       {sheet && (
         <ModalSheet
           title={titles[sheet]}
@@ -783,7 +843,10 @@ export function App() {
               </Button>
             ) : null
           }
-          onClose={() => setSheet(null)}
+          onClose={() => {
+            setSheet(null);
+            setShowChangelogOnSettings(false);
+          }}
         >
           {content}
         </ModalSheet>

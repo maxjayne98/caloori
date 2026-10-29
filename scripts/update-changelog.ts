@@ -3,6 +3,7 @@ import { writeFileSync } from 'node:fs';
 
 const versionFile = 'packages/core/src/version.ts';
 const changelogFile = 'CHANGELOG.md';
+const changelogDataFile = 'apps/web/src/features/settings/changelog-data.ts';
 
 function git(...args: string[]) {
   return execFileSync('git', args, { encoding: 'utf8' });
@@ -54,5 +55,20 @@ const sections = [...grouped.entries()].reverse().map(([version, commits]) => {
   return `## ${version}\n\n${entries}`;
 });
 
+const releases = [...grouped.entries()].reverse().map(([version, commits]) => ({
+  version,
+  entries: [...commits].reverse().map(({ hash, subject, body }) => ({
+    hash: hash.slice(0, 7),
+    subject,
+    body,
+  })),
+}));
+
 const changelog = `# Changelog\n\nGenerated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.\n\n${sections.join('\n\n')}\n`;
-writeFileSync(changelogFile, changelog);
+if (!process.argv.includes('--data-only')) {
+  writeFileSync(changelogFile, changelog);
+}
+writeFileSync(
+  changelogDataFile,
+  `export const CHANGELOG = ${JSON.stringify(releases, null, 2)} as const;\n`,
+);

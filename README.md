@@ -29,7 +29,7 @@ Enable the post-commit changelog hook once per clone:
 git config core.hooksPath .githooks
 ```
 
-After each commit, the hook regenerates `CHANGELOG.md`, grouping commit hashes and full messages by the `APP_VERSION` in each commit. The generated changelog is left unstaged for review. Regenerate it manually at any time with `pnpm changelog`.
+After each commit, the hook regenerates `CHANGELOG.md` and the in-app release notes, grouping commit hashes and full messages by the `APP_VERSION` in each commit. Generated files are left unstaged for review. Regenerate them manually at any time with `pnpm changelog`.
 
 ## Workspace
 

@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.9.14
+
+- `dd9f612` feat: enhance ExtraNutrientSummary with visibility control
+
 ## 0.9.13
 
 - `7d0dda9` feat: implement changelog generation and update APP_VERSION to 0.9.13
