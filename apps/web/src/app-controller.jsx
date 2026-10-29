@@ -23,6 +23,10 @@ import {
   sumExtraNutrients,
   scoreDay,
   mealForTime,
+  foodLibrary,
+  saveFoodEdit,
+  resetFoodEdit,
+  isCatalogFood,
   extraNutrientsFromInput,
 } from '@nourish/core';
 import { ExtraNutrientFields } from '@/components/extra-nutrients';
@@ -75,7 +79,9 @@ export function App() {
     [activity, setActivity] = useState(null),
     [nutritionLabelOpen, setNutritionLabelOpen] = useState(false),
     // Today's layout edit mode; started from the Profile page.
-    [todayEditing, setTodayEditing] = useState(false);
+    [todayEditing, setTodayEditing] = useState(false),
+    // Food being edited in the Food library (built-in or the user's own).
+    [editingFood, setEditingFood] = useState(null);
   function navigate(next) {
     if (next !== 'Today') setTodayEditing(false);
     window.location.hash = next.toLowerCase();
@@ -256,6 +262,10 @@ export function App() {
   if (tab === 'Food')
     body = (
       <FoodPage
+        onEditFood={(food) => {
+          setEditingFood(food);
+          setSheet('editFood');
+        }}
         filter={filter}
         notify={notify}
         setFilter={setFilter}
@@ -345,13 +355,17 @@ export function App() {
         setQty={setQty}
       />
     );
-  if (['custom', 'quick'].includes(sheet))
+  if (['custom', 'quick', 'editFood'].includes(sheet)) {
+    // The same form creates foods, quick-adds, and edits an existing food (prefilled).
+    const draft = sheet === 'editFood' ? editingFood : null;
+    const editingCatalog = draft && isCatalogFood(draft.id, foods);
     content = (
       <form
         onSubmit={(e) => {
           let d = formData(e),
             f = {
-              id: 'u' + Date.now(),
+              ...(draft || {}),
+              id: draft?.id || 'u' + Date.now(),
               name: d.name || 'Quick add',
               serving: d.serving || '1 serving',
               gramsPerServing: +d.grams || null,
@@ -362,13 +376,16 @@ export function App() {
               ...extraNutrientsFromInput(d),
               emoji: '🍽️',
             };
-          if (sheet === 'custom') setCustom([...custom, f]);
+          if (draft) setCustom(saveFoodEdit(custom, f, foods));
+          else if (sheet === 'custom') setCustom([...custom, f]);
           else add(f, 1);
           setSheet(null);
           notify(
-            sheet === 'custom'
-              ? t('toast.foodSavedLibrary')
-              : t('toast.addedTo', { meal: tMeal(meal) }),
+            draft
+              ? t('toast.foodUpdated')
+              : sheet === 'custom'
+                ? t('toast.foodSavedLibrary')
+                : t('toast.addedTo', { meal: tMeal(meal) }),
           );
         }}
       >
@@ -379,9 +396,10 @@ export function App() {
             onOpenChange={setNutritionLabelOpen}
           />
         )}
-        {field(t('food.searchPlaceholder'), 'name', query || '', 'text')}
-        {sheet === 'custom' && field(t('portion.servingSize'), 'serving', '1 serving', 'text')}
-        {sheet === 'custom' && (
+        {field(t('food.searchPlaceholder'), 'name', draft?.name ?? (query || ''), 'text')}
+        {sheet !== 'quick' &&
+          field(t('portion.servingSize'), 'serving', draft?.serving ?? '1 serving', 'text')}
+        {sheet !== 'quick' && (
           <div>
             <label htmlFor="food-grams">{t('portion.gramsPerServing')}</label>
             <Input
@@ -392,22 +410,52 @@ export function App() {
               step="any"
               inputMode="decimal"
               placeholder="Add a weight to enable grams"
+              defaultValue={draft?.gramsPerServing ?? ''}
               unstyled
             />
           </div>
         )}
-        {field(`${t('summary.dailyEnergy')} (${t('common.kcal')})`, 'cal', '')}
+        {field(`${t('summary.dailyEnergy')} (${t('common.kcal')})`, 'cal', draft?.cal ?? '')}
         <div className="grid2">
-          {field(`${t('summary.protein')} (${t('common.grams')})`, 'p', 0)}
-          {field(`${t('summary.carbs')} (${t('common.grams')})`, 'c', 0)}
+          {field(`${t('summary.protein')} (${t('common.grams')})`, 'p', draft?.p ?? 0)}
+          {field(`${t('summary.carbs')} (${t('common.grams')})`, 'c', draft?.c ?? 0)}
         </div>
-        {field(`${t('summary.fat')} (${t('common.grams')})`, 'f', 0)}
-        <ExtraNutrientFields />
+        {field(`${t('summary.fat')} (${t('common.grams')})`, 'f', draft?.f ?? 0)}
+        <ExtraNutrientFields values={draft || undefined} />
         <Button className="primary" variant="unstyled">
-          {sheet === 'custom' ? t('portion.saveFood') : t('meals.addToMeal', { meal: tMeal(meal) })}
+          {sheet === 'quick' ? t('meals.addToMeal', { meal: tMeal(meal) }) : t('portion.saveFood')}
         </Button>
+        {draft && editingCatalog && draft.edited && (
+          <Button
+            className="secondary"
+            type="button"
+            variant="unstyled"
+            onClick={() => {
+              setCustom(resetFoodEdit(custom, draft.id));
+              setSheet(null);
+              notify(t('toast.foodReset'));
+            }}
+          >
+            {t('food.resetToOriginal')}
+          </Button>
+        )}
+        {draft && !editingCatalog && (
+          <Button
+            className="secondary"
+            type="button"
+            variant="unstyled"
+            onClick={() => {
+              setCustom(custom.filter((x) => x.id !== draft.id));
+              setSheet(null);
+              notify(t('toast.foodDeleted'));
+            }}
+          >
+            {t('food.deleteFood')}
+          </Button>
+        )}
       </form>
     );
+  }
   if (sheet === 'weight')
     content = (
       <LogWeightSheet
@@ -448,7 +496,7 @@ export function App() {
           name: meal + ' favorite',
           items: list.filter((x) => x.meal === meal),
         }}
-        foods={[...foods, ...custom.filter((x) => !x.saved)]}
+        foods={foodLibrary(foods, custom).filter((x) => !x.saved)}
         onSave={saveTemplate}
         onCancel={() => setSheet('meals')}
       />
@@ -459,7 +507,7 @@ export function App() {
       <MealBuilder
         key={template?.id || 'new-meal'}
         initial={template}
-        foods={[...foods, ...custom.filter((x) => !x.saved)]}
+        foods={foodLibrary(foods, custom).filter((x) => !x.saved)}
         onSave={saveTemplate}
         onCancel={() => setSheet('meals')}
       />
@@ -519,7 +567,7 @@ export function App() {
   if (sheet === 'recipe')
     content = (
       <Recipe
-        foods={[...foods, ...custom]}
+        foods={foodLibrary(foods, custom)}
         save={(f) => {
           setCustom([...custom, f]);
           setSheet(null);
@@ -564,6 +612,7 @@ export function App() {
     );
   if (sheet === 'settings') content = <SettingsPanel />;
   const titles = {
+    editFood: t('sheet.editFood'),
     settings: t('sheet.settings'),
     meals: t('sheet.meals'),
     mealBuilder: template?.id ? t('meals.editMeal') : t('meals.createMeal'),

@@ -79,6 +79,8 @@ export const FoodSchema = NutrientsSchema.merge(ExtraNutrientsSchema)
     saved: z.boolean().optional(),
     brand: z.string().optional(),
     barcode: z.string().optional(),
+    // True when this custom entry is the user's edit of a shared catalog food with the same id.
+    edited: z.boolean().optional(),
   })
   .passthrough();
 export const WeightSchema = z.object({

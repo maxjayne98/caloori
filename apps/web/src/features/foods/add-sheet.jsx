@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Input } from '@nourish/ui';
-import { foods, meals, appendDiaryEntries } from '@nourish/core';
+import { foods, meals, appendDiaryEntries, foodLibrary } from '@nourish/core';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
 import { FoodRows } from '@/features/foods/food-rows';
 import { useI18n } from '@/providers/i18n-provider';
@@ -91,7 +91,7 @@ export function AddFoodSheet({
       <div className="eyebrow">{query ? t('food.searchResults') : t('food.everydayFavorites')}</div>
       {
         <FoodRows
-          items={[...foods, ...custom].filter((x) =>
+          items={foodLibrary(foods, custom).filter((x) =>
             x.name.toLowerCase().includes(query.toLowerCase()),
           )}
           setChosen={setChosen}
@@ -99,9 +99,9 @@ export function AddFoodSheet({
           setSheet={setSheet}
         />
       }
-      {![...foods, ...custom].some((x) => x.name.toLowerCase().includes(query.toLowerCase())) && (
-        <div className="empty">{t('food.noMatch')}</div>
-      )}
+      {!foodLibrary(foods, custom).some((x) =>
+        x.name.toLowerCase().includes(query.toLowerCase()),
+      ) && <div className="empty">{t('food.noMatch')}</div>}
       <Button className="secondary" onClick={() => setSheet('custom')} variant="unstyled">
         + {t('food.createFood')}
       </Button>

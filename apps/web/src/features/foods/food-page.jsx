@@ -6,7 +6,7 @@ import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
 import { HeartLoader } from '@/components/heart-loader';
 import { RefreshCw } from 'lucide-react';
-import { foods } from '@nourish/core';
+import { foods, foodLibrary } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { MealLibrary } from '@/features/meals/meal-library';
 import { FoodRows } from '@/features/foods/food-rows';
@@ -25,6 +25,7 @@ export function FoodPage({
   setQty,
   entries,
   custom,
+  onEditFood,
 }) {
   const { refreshFoods } = useNourishData();
   const { t } = useI18n();
@@ -132,14 +133,15 @@ export function FoodPage({
                     ).values(),
                   ]
                 : filter === 'My foods'
-                  ? custom.filter((x) => !x.recipe && !x.saved)
+                  ? custom.filter((x) => !x.recipe && !x.saved && !x.edited)
                   : filter === 'Recipes'
                     ? custom.filter((x) => x.recipe)
-                    : [...foods, ...custom.filter((x) => !x.saved)]
+                    : foodLibrary(foods, custom).filter((x) => !x.saved)
               ).filter((x) => x.name.toLowerCase().includes(query.toLowerCase()))}
               setChosen={setChosen}
               setQty={setQty}
               setSheet={setSheet}
+              onEdit={filter === 'Recent' ? undefined : onEditFood}
             />
           }
         </>

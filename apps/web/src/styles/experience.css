@@ -1,7 +1,8 @@
-/* Slim, quiet scrollbars on pages, sheets and menus. iOS may retain its system overlay. */
+/* Slim accent-colored scrollbars on pages, sheets and menus; they follow the chosen accent.
+   iOS may keep its own system overlay. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--foreground) 22%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--accent) 55%, transparent) transparent;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -11,11 +12,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--foreground) 22%, transparent);
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
   border-radius: 20px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent);
 }
 ::-webkit-scrollbar-corner {
   background: transparent;

@@ -86,10 +86,12 @@ export function ExtraNutrientSummary({
 }
 
 /** Optional inputs named after the nutrient keys, so label import can fill them too. */
-export function ExtraNutrientFields() {
+export function ExtraNutrientFields({ values }: { values?: ExtraNutrients } = {}) {
   const { t } = useI18n();
+  // Editing a food that already has extras opens the section so they're visible.
+  const hasValues = EXTRA_NUTRIENTS.some(({ key }) => values?.[key] !== undefined);
   return (
-    <details className="my-1">
+    <details className="my-1" open={hasValues}>
       <summary className="cursor-pointer py-2 text-sm font-semibold">{t('nutrients.more')}</summary>
       <p className="mb-2 mt-0 text-xs text-[var(--neutral-85858b)]">{t('nutrients.moreHint')}</p>
       <div className="grid2">
@@ -101,6 +103,7 @@ export function ExtraNutrientFields() {
             <input
               id={`food-${key}`}
               name={key}
+              defaultValue={values?.[key] ?? ''}
               type="number"
               min={0}
               step="any"
