@@ -49,6 +49,11 @@ export const ProfileSchema = z
       .string()
       .regex(/^(initial|photo|(pattern|pixel):\d{1,2})$/)
       .optional(),
+    // Order and visibility of Today sections (see today-layout.ts); missing means default.
+    todayLayout: z
+      .array(z.object({ id: z.string().max(40), hidden: z.boolean().optional() }))
+      .max(20)
+      .optional(),
   })
   .passthrough();
 export const PortionSchema = z.object({

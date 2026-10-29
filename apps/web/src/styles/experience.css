@@ -826,7 +826,8 @@ button.brand {
 }
 
 .today-intro {
-  padding-right: 112px;
+  /* Room for the absolutely placed header actions (report, edit layout, Today). */
+  padding-right: 156px;
 }
 .today-actions {
   position: absolute;
@@ -1492,4 +1493,12 @@ button.brand {
 }
 .rolling-number .number-reel {
   letter-spacing: 0;
+}
+
+/* Entrance for Today sections when edit mode opens (used via Tailwind motion-safe). */
+@keyframes today-edit-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
 }

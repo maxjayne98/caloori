@@ -7,7 +7,7 @@ import { ModalSheet } from '@/components/modal-sheet';
 import { DateCalendar } from './date-calendar';
 import { iso, today, savedDayGoal } from '@nourish/core';
 import { useI18n } from '@/providers/i18n-provider';
-export function DayStrip({ day, entries, goal, onSelect }) {
+export function DayStrip({ day, entries, goal, onSelect, onToday }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const { t, locale } = useI18n();
   // fa-IR gives Persian weekday names; en-US gives English.
@@ -18,21 +18,33 @@ export function DayStrip({ day, entries, goal, onSelect }) {
     base = diff >= 0 && diff < 7 ? nowDate : selectedDate;
   return (
     <div className="day-strip has-calendar" aria-label="Daily calorie history">
-      <Button
-        variant="unstyled"
-        className="day-button calendar-trigger"
-        aria-label={t('calendar.chooseDay')}
-        aria-haspopup="dialog"
-        aria-expanded={calendarOpen}
-        onClick={() => setCalendarOpen(true)}
-      >
-        <span className="day-ring calendar-ring">
-          <CalendarDays aria-hidden="true" size={19} />
-        </span>
-        <span className="day-weekday" aria-hidden="true">
-          {t('common.date')}
-        </span>
-      </Button>
+      {/* When the greeting is hidden, a small "Today" sits above the calendar icon. */}
+      <div className="relative grid">
+        {onToday && (
+          <Button
+            variant="unstyled"
+            className="absolute inset-x-0 -top-3.5 text-center text-[10px] font-semibold leading-none text-[var(--accent-text)]"
+            onClick={onToday}
+          >
+            {t('today.today')}
+          </Button>
+        )}
+        <Button
+          variant="unstyled"
+          className="day-button calendar-trigger"
+          aria-label={t('calendar.chooseDay')}
+          aria-haspopup="dialog"
+          aria-expanded={calendarOpen}
+          onClick={() => setCalendarOpen(true)}
+        >
+          <span className="day-ring calendar-ring">
+            <CalendarDays aria-hidden="true" size={19} />
+          </span>
+          <span className="day-weekday" aria-hidden="true">
+            {t('common.date')}
+          </span>
+        </Button>
+      </div>
       {calendarOpen && (
         <ModalSheet title={t('calendar.chooseDay')} onClose={() => setCalendarOpen(false)}>
           <DateCalendar

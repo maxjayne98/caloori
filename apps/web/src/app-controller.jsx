@@ -73,8 +73,11 @@ export function App() {
     [editing, setEditing] = useState(null),
     [template, setTemplate] = useState(null),
     [activity, setActivity] = useState(null),
-    [nutritionLabelOpen, setNutritionLabelOpen] = useState(false);
+    [nutritionLabelOpen, setNutritionLabelOpen] = useState(false),
+    // Today's layout edit mode; started from the Profile page.
+    [todayEditing, setTodayEditing] = useState(false);
   function navigate(next) {
+    if (next !== 'Today') setTodayEditing(false);
     window.location.hash = next.toLowerCase();
     setTab(next);
     setSheetState(null);
@@ -228,6 +231,8 @@ export function App() {
   if (tab === 'Today')
     body = (
       <TodayPage
+        editing={todayEditing}
+        setEditing={setTodayEditing}
         weeklyReport={weeklyReport}
         onWeeklyReport={() => navigate('Weekly')}
         setDay={setDay}
@@ -280,7 +285,17 @@ export function App() {
       />
     );
   if (tab === 'Profile')
-    body = <ProfilePage profile={profile} setProfile={setProfile} notify={notify} />;
+    body = (
+      <ProfilePage
+        profile={profile}
+        setProfile={setProfile}
+        notify={notify}
+        onEditTodayLayout={() => {
+          navigate('Today');
+          setTodayEditing(true);
+        }}
+      />
+    );
   if (tab === 'Assistant') body = <AssistantPage day={day} />;
   let content = null;
   if (sheet === 'edit' && editing)

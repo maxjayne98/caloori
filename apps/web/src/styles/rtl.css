@@ -165,7 +165,7 @@
 /* ─── Today page header: flip absolute action tray to left side in RTL ─── */
 [dir='rtl'] .today-intro {
   padding-right: 0;
-  padding-left: 112px;
+  padding-left: 156px;
 }
 [dir='rtl'] .today-actions {
   right: auto;
