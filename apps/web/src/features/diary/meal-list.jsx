@@ -217,10 +217,10 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                   <Button className="item-details" onClick={() => onEdit(x)} variant="unstyled">
                     <b>
                       {x.name}
-                      <GradeDot score={scoreFood(x)} />
                     </b>
                     <small>
                       {formatPortion(x) + ' · ' + portionNumber(x.cal * x.qty) + ' kcal'}
+                      <GradeDot score={scoreFood(x)} />
                     </small>
                   </Button>
                   <Button
