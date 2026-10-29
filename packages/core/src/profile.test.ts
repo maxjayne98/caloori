@@ -7,6 +7,7 @@ test('new accounts contain no invented personal details or goals', () => {
   for (const key of ['age', 'height', 'weight', 'cal', 'p', 'c', 'f', 'goal', 'activity'])
     assert.equal(state.profile[key], null);
   assert.equal(state.profile.name, '');
+  assert.equal(state.profile.sex, 'male');
   const logs = appendDiaryEntries(
     {},
     '2026-10-26',
@@ -15,6 +16,13 @@ test('new accounts contain no invented personal details or goals', () => {
   );
   assert.equal(savedDayGoal(logs['2026-10-26']), null);
   assert.equal(logs['2026-10-26'][0].goalAtLog, undefined);
+});
+test('existing profiles receive the default calculation sex and reject invalid values', () => {
+  const { sex: _sex, ...legacyProfile } = emptyState().profile;
+  assert.equal(validateState({ ...emptyState(), profile: legacyProfile }).profile.sex, 'male');
+  assert.throws(() =>
+    validateState({ ...emptyState(), profile: { ...emptyState().profile, sex: 'unknown' } }),
+  );
 });
 test('only the untouched old nameless preset is cleared, entered values survive', () => {
   const old = {
@@ -31,7 +39,10 @@ test('only the untouched old nameless preset is cleared, entered values survive'
   };
   assert.deepEqual(validateState({ ...emptyState(), profile: old }).profile, emptyState().profile);
   const real = { ...old, name: 'Alex', age: 40 };
-  assert.deepEqual(validateState({ ...emptyState(), profile: real }).profile, real);
+  assert.deepEqual(validateState({ ...emptyState(), profile: real }).profile, {
+    ...real,
+    sex: 'male',
+  });
   assert.throws(() => validateState({ ...emptyState(), profile: { ...real, weight: -1 } }));
 });
 test('profile photo accepts small image data URLs and rejects anything else', () => {

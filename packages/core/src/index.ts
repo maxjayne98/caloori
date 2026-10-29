@@ -15,6 +15,7 @@ export * from './progress';
 export * from './calendar';
 export * from './meal-calories';
 export * from './nutrition-label';
+export * from './weight-change';
 
 export * from './assistant';
 export * from './weekly-report';

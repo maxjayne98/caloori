@@ -1,6 +1,7 @@
 'use client';
 import {
   EXTRA_NUTRIENTS,
+  SODIUM_REFERENCE_MG,
   type ExtraNutrientKey,
   type ExtraNutrientTotal,
   type ExtraNutrients,
@@ -14,11 +15,6 @@ const LABEL_KEYS = {
   satFat: 'nutrients.satFat',
   sodium: 'nutrients.sodium',
   cholesterol: 'nutrients.cholesterol',
-} as const;
-
-const SHORT_LABEL_KEYS = {
-  sodium: 'nutrients.sodiumShort',
-  cholesterol: 'nutrients.cholesterolShort',
 } as const;
 
 function useFormat() {
@@ -58,38 +54,71 @@ export function ExtraNutrientList({ values }: { values: ExtraNutrients }) {
   );
 }
 
-/**
- * Day totals for sodium and cholesterol as one tiny line tucked under the energy ring.
- * Absolutely positioned so it never changes the card height; hidden when nothing is known.
- */
-export function ExtraNutrientSummary({
+/** Day totals for all known extra nutrients, shown in the day-insights sheet. */
+export function ExtraNutrientTotals({
   totals,
-  visible,
+  dailyCalories,
+  referenceNote,
 }: {
   totals: Record<ExtraNutrientKey, ExtraNutrientTotal>;
-  visible: boolean;
+  dailyCalories: number;
+  referenceNote: string;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const format = useFormat();
-  const shown = (['sodium', 'cholesterol'] as const).filter((key) => totals[key].known > 0);
+  const formatPercent = (percent: number) => new Intl.NumberFormat(locale).format(percent);
+  const shown = EXTRA_NUTRIENTS.filter(({ key }) => totals[key].known > 0);
+  const targets: Record<ExtraNutrientKey, number> = {
+    sugar: 50,
+    fiber: (dailyCalories / 1000) * 14,
+    satFat: (dailyCalories * 0.1) / 9,
+    sodium: SODIUM_REFERENCE_MG,
+    cholesterol: 300,
+  };
   if (!shown.length) return null;
   return (
-    <p
-      id="daily-extra-nutrients"
-      aria-hidden={!visible}
-      className={`pointer-events-none absolute bottom-2 end-[22px] m-0 flex w-[152px] max-w-[40%] justify-center gap-2 whitespace-nowrap text-[10px] leading-none text-[var(--neutral-aaaab2)] transition-opacity duration-150 ease-in-out motion-reduce:transition-none max-[360px]:end-4 ${
-        visible ? 'opacity-100' : 'opacity-0'
-      }`}
-    >
-      {shown.map((key) => (
-        <span key={key}>
-          {t(SHORT_LABEL_KEYS[key])}{' '}
-          <b className="font-semibold tabular-nums text-[var(--neutral-919197)]">
-            {format(key, totals[key].amount)}
-          </b>
-        </span>
-      ))}
-    </p>
+    <section className="extra-nutrient-progress">
+      <div className="extra-nutrient-heading">
+        <h3>{t('nutrients.dailyTotals')}</h3>
+        <span>{t('nutrients.dailyReference')}</span>
+      </div>
+      <p className="extra-nutrient-reference-note">{referenceNote}</p>
+      <dl className="extra-nutrient-progress-list">
+        {shown.map(({ key }) => {
+          const target = targets[key];
+          const amount = totals[key].amount;
+          const percent = Math.round((amount / target) * 100);
+          const formattedPercent = formatPercent(percent);
+          const overLimit = (key === 'sodium' || key === 'satFat') && amount > target;
+          return (
+            <div key={key} className="extra-nutrient-progress-item">
+              <div className="extra-nutrient-progress-label">
+                <dt>{t(LABEL_KEYS[key])}</dt>
+                <dd className="extra-nutrient-progress-amount" dir="ltr">
+                  {format(key, amount)} <span>/ {format(key, target)}</span>
+                  <b data-over-limit={overLimit}>
+                    {t('nutrients.progressPercent', { percent: formattedPercent })}
+                  </b>
+                </dd>
+              </div>
+              <div
+                className="track extra-nutrient-progress-track"
+                role="progressbar"
+                aria-label={t('nutrients.progressAria', { nutrient: t(LABEL_KEYS[key]) })}
+                aria-valuemin={0}
+                aria-valuemax={target}
+                aria-valuenow={Math.min(amount, target)}
+                aria-valuetext={t('nutrients.progressValue', { percent: formattedPercent })}
+                data-over-limit={overLimit}
+                data-reached={key === 'fiber' && percent >= 100}
+              >
+                <i style={{ width: `${Math.min(percent, 100)}%` }} />
+              </div>
+            </div>
+          );
+        })}
+      </dl>
+    </section>
   );
 }
 

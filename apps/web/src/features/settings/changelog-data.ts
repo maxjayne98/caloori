@@ -1,5 +1,20 @@
 export const CHANGELOG = [
   {
+    "version": "0.10.0",
+    "entries": [
+      {
+        "hash": "a7183fd",
+        "subject": "feat: add confetti animation in the app",
+        "body": ""
+      },
+      {
+        "hash": "40ea8af",
+        "subject": "feat(progress): add weight trend estimation and display on progress page",
+        "body": "- Introduced weight trend estimation using recent weight data and activity logs.\n- Added a new section on the progress page to display estimated weight changes over different periods.\n- Included icons and formatted weight change values for better user experience.\n- Updated translations for new weight trend features.\n\nchore(changelog): update changelog for version 0.10.0\n\n- Added entry for confetti animation feature.\n\nstyle(css): enhance weight trend card styling\n\n- Improved layout and visual design of the weight trend card in the CSS.\n- Adjusted styles for better responsiveness and aesthetics.\n\nfix(i18n): update translations for weight change features\n\n- Added new keys for weight trend and change descriptions in multiple languages.\n\nfeat(core): implement weight change estimation logic\n\n- Created functions to estimate daily weight change based on intake, activities, and profile.\n- Added tests to validate weight change estimation logic."
+      }
+    ]
+  },
+  {
     "version": "0.9.15",
     "entries": [
       {
@@ -10,7 +25,7 @@ export const CHANGELOG = [
     ]
   },
   {
-    "version": "0.9.14",
+    "version": "0.11.0",
     "entries": [
       {
         "hash": "dd9f612",

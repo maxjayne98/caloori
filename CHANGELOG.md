@@ -2,11 +2,38 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.10.0
+
+- `40ea8af` feat(progress): add weight trend estimation and display on progress page
+  - Introduced weight trend estimation using recent weight data and activity logs.
+  - Added a new section on the progress page to display estimated weight changes over different periods.
+  - Included icons and formatted weight change values for better user experience.
+  - Updated translations for new weight trend features.
+  
+  chore(changelog): update changelog for version 0.10.0
+  
+  - Added entry for confetti animation feature.
+  
+  style(css): enhance weight trend card styling
+  
+  - Improved layout and visual design of the weight trend card in the CSS.
+  - Adjusted styles for better responsiveness and aesthetics.
+  
+  fix(i18n): update translations for weight change features
+  
+  - Added new keys for weight trend and change descriptions in multiple languages.
+  
+  feat(core): implement weight change estimation logic
+  
+  - Created functions to estimate daily weight change based on intake, activities, and profile.
+  - Added tests to validate weight change estimation logic.
+- `a7183fd` feat: add confetti animation in the app
+
 ## 0.9.15
 
 - `8eb4b83` feat: add changelog data structure and enhance settings panel with release notes display
 
-## 0.9.14
+## 0.11.0
 
 - `dd9f612` feat: enhance ExtraNutrientSummary with visibility control
 

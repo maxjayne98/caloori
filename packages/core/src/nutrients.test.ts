@@ -36,6 +36,19 @@ test('totals treat missing values as unknown, not zero', () => {
   assert.deepEqual(totals.fiber, { amount: 0, known: 0, of: 3 });
 });
 
+test('daily totals fill missing legacy log nutrients from the matching catalog food', () => {
+  const totals = sumExtraNutrients(
+    [
+      { id: 'legacy-food', qty: 2, sodium: 0 },
+      { id: 'legacy-food', qty: 1 },
+      { id: 'custom-food', qty: 1, sodium: 25 },
+    ],
+    [{ id: 'legacy-food', sodium: 120, fiber: 3 }],
+  );
+  assert.deepEqual(totals.sodium, { amount: 145, known: 3, of: 3 });
+  assert.deepEqual(totals.fiber, { amount: 9, known: 2, of: 3 });
+});
+
 test('portions scale known extras and leave unknown ones out', () => {
   const food = {
     id: 'x',

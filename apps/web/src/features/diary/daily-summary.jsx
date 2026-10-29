@@ -1,32 +1,55 @@
 'use client';
-import { ExtraNutrientSummary } from '@/components/extra-nutrients';
 import { GradeMark } from '@/components/score-badge';
-import { CircleCheck, Info } from 'lucide-react';
+import { CircleCheck, Scale } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
 
 import { useEffect, useState } from 'react';
-import { balanceStatus } from '@nourish/core';
+import {
+  balanceStatus,
+  estimateAdaptiveBaselineKcal,
+  estimateDailyWeightChange,
+} from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
 import { useI18n } from '@/providers/i18n-provider';
-export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
-  const { t } = useI18n();
-  const [extraNutrientsOpen, setExtraNutrientsOpen] = useState(false);
+export function DailySummary({
+  tot,
+  profile,
+  weight,
+  onEdit,
+  day,
+  onScore,
+  entries,
+  activities,
+  weights,
+  hasFood,
+}) {
+  const { t, locale } = useI18n();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
   const status = balanceStatus(tot.cal, profile.cal, day, now);
-  const hasExtraNutrientTotals =
-    tot.extras && (tot.extras.sodium.known > 0 || tot.extras.cholesterol.known > 0);
   const labels = {
     neutral: t('summary.balanceNeutral'),
     over: t('summary.balanceOver'),
     low: t('summary.balanceLow'),
     reached: t('summary.balanceReached'),
   };
+  const adaptiveBaselineKcal = hasFood
+    ? estimateAdaptiveBaselineKcal({ entries, activities, weights, profile, throughDate: day })
+    : null;
+  const weightChange =
+    hasFood &&
+    estimateDailyWeightChange({
+      profile,
+      intake: tot.cal,
+      weight,
+      activities: activities[day] ?? [],
+      adaptiveBaselineKcal,
+    });
   if (!profile.cal)
     return (
       <section className="card profile-setup-card">
@@ -125,23 +148,6 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
           {tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}
         </span>
       </div>
-      {hasExtraNutrientTotals && (
-        <Button
-          variant="unstyled"
-          className="absolute bottom-1 left-1 grid size-7 place-items-center rounded-full -rotate-90 text-[var(--neutral-aaaab2)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--accent-text)] motion-reduce:transition-none"
-          onClick={() => setExtraNutrientsOpen((open) => !open)}
-          aria-label={t(
-            extraNutrientsOpen ? 'summary.hideExtraNutrients' : 'summary.showExtraNutrients',
-          )}
-          aria-controls="daily-extra-nutrients"
-          aria-expanded={extraNutrientsOpen}
-          title={t(
-            extraNutrientsOpen ? 'summary.hideExtraNutrients' : 'summary.showExtraNutrients',
-          )}
-        >
-          <Info className="opacity-40" size={16} aria-hidden="true" />
-        </Button>
-      )}
     </div>
   );
   const energy = (
@@ -166,6 +172,25 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
         </Button>
         <em>{t('common.kcal')}</em>
       </div>
+    </div>
+  );
+  const weightEstimate = weightChange && (
+    <div className="daily-weight-estimate">
+      <Scale size={13} aria-hidden="true" />
+      <span>
+        {t('summary.estimatedWeightChange', {
+          change: new Intl.NumberFormat(locale, {
+            signDisplay: 'always',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(weightChange.changeKg),
+        })}
+        {weightChange.adaptive && (
+          <span className="daily-weight-estimate-source">
+            · {t('summary.weightChangeAdaptive')}
+          </span>
+        )}
+      </span>
     </div>
   );
   return (
@@ -196,8 +221,10 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
           <div className="macros">{macroItems}</div>
         </div>
       </div>
-      {ring}
-      {tot.extras && <ExtraNutrientSummary totals={tot.extras} visible={extraNutrientsOpen} />}
+      <div className="daily-energy-chart">
+        {ring}
+        {weightEstimate}
+      </div>
       {status !== 'neutral' && (
         <div className="balance-message" role="status">
           {status === 'over' ? (

@@ -22,6 +22,7 @@ export function TodayPage({
   setDay,
   profile,
   weight,
+  weights,
   day,
   entries,
   tot,
@@ -146,12 +147,7 @@ export function TodayPage({
     ),
     days: (
       <>
-        <DayStrip
-          day={day}
-          entries={entries}
-          goal={profile.cal}
-          onSelect={setDay}
-        />
+        <DayStrip day={day} entries={entries} goal={profile.cal} onSelect={setDay} />
         <div className="date">
           <Button
             aria-label={t('today.prevDay')}
@@ -225,6 +221,10 @@ export function TodayPage({
           tot={tot}
           profile={profile}
           weight={weight}
+          weights={weights}
+          entries={entries}
+          activities={activities}
+          hasFood={list.length > 0}
           onEdit={() => setSheet('profile')}
           onScore={onDayScore}
         />

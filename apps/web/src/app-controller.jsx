@@ -193,7 +193,8 @@ export function App() {
         f: 0,
       },
     );
-  tot.extras = sumExtraNutrients(list);
+  const nutrientCatalog = foodLibrary(foods, custom);
+  tot.extras = sumExtraNutrients(list, nutrientCatalog);
   // Energy and protein only count toward the day score once the day is over.
   tot.dayScore = scoreDay(list, profile, { complete: day < today });
   const notify = (t) => setToast(t),
@@ -308,6 +309,7 @@ export function App() {
         setDay={setDay}
         profile={profile}
         weight={[...weights].reverse().find((x) => x.date <= day)?.weight || profile.weight}
+        weights={weights}
         day={day}
         entries={entries}
         tot={tot}
@@ -688,12 +690,14 @@ export function App() {
           .map((x) => x.id),
       ),
     ];
-    const suggestions = suggestFoods(list, foodLibrary(foods, custom), profile, { recentIds });
+    const suggestions = suggestFoods(list, nutrientCatalog, profile, { recentIds });
     if (insight)
       content = (
         <ScoreInsights
           insight={insight}
           suggestions={suggestions}
+          extras={sheet === 'dayInsights' ? tot.extras : undefined}
+          dailyCalories={profile.cal}
           onLog={(suggestion) => {
             add(suggestion.food, suggestion.qty);
             setSheet(null);

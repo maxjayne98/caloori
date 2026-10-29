@@ -11,6 +11,7 @@ export const NutrientsSchema = z.object({
   f: nonnegative,
 });
 // Optional per-serving extras (see nutrients.ts). Missing means unknown, never zero.
+export const ProfileSexSchema = z.enum(['male', 'female']);
 export const ExtraNutrientsSchema = z.object({
   sugar: nonnegative.max(100000).optional(),
   fiber: nonnegative.max(100000).optional(),
@@ -28,6 +29,7 @@ export const ProfileSchema = z
     height: positive.max(300).nullable(),
     age: finite.int().min(1).max(130).nullable(),
     weight: positive.max(700).nullable(),
+    sex: ProfileSexSchema.default('male'),
     goal: z.enum(['Lose weight', 'Maintain weight', 'Gain weight']).nullable(),
     activity: z.enum(['Not very active', 'Lightly active', 'Active', 'Very active']).nullable(),
     mealCalories: z
@@ -156,6 +158,7 @@ export const DEFAULT_PROFILE: Profile = {
   height: null,
   age: null,
   weight: null,
+  sex: 'male',
   goal: null,
   activity: null,
   mealCalories: { ...DEFAULT_MEAL_CALORIES },

@@ -18,6 +18,10 @@ export function ProfileForm({ notify, setProfile, profile }) {
     { value: 'Active', label: t('profile.actActive') },
     { value: 'Very active', label: t('profile.actVery') },
   ];
+  const sexOptions = [
+    { value: 'male', label: t('profile.sexMale') },
+    { value: 'female', label: t('profile.sexFemale') },
+  ];
   return (
     <form
       className="profile-form"
@@ -31,10 +35,8 @@ export function ProfileForm({ notify, setProfile, profile }) {
         );
         if (![d.age, d.height, d.weight].every((value) => Number.isFinite(+value) && +value > 0))
           return notify(t('toast.fillProfileFields'));
-        if (+d.cal < 1 || +d.p < 1 || +d.c < 1 || +d.f < 1)
-          return notify(t('toast.goalsPositive'));
-        if (!validMealCalorieShares(mealCalories))
-          return notify(t('toast.mealCalories100'));
+        if (+d.cal < 1 || +d.p < 1 || +d.c < 1 || +d.f < 1) return notify(t('toast.goalsPositive'));
+        if (!validMealCalorieShares(mealCalories)) return notify(t('toast.mealCalories100'));
         const result = ProfileSchema.safeParse({ ...profile, ...d, mealCalories });
         if (!result.success) return notify(t('toast.checkProfileDetails'));
         setProfile(result.data);
@@ -42,24 +44,20 @@ export function ProfileForm({ notify, setProfile, profile }) {
         notify(t('toast.goalsSaved'));
       }}
     >
-      {!profile.cal && (
-        <p className="profile-setup-copy">
-          {t('profile.setupCopy')}
-        </p>
-      )}
+      {!profile.cal && <p className="profile-setup-copy">{t('profile.setupCopy')}</p>}
       {field(t('profile.yourName'), 'name', profile.name, 'text')}
       <div className="grid2">
         {field(t('profile.age'), 'age', profile.age)}
         {field(t('profile.height'), 'height', profile.height)}
       </div>
       {field(t('profile.weight'), 'weight', profile.weight)}
+      {select(t('profile.calculationSex'), 'sex', sexOptions, profile.sex || 'male')}
+      <p className="text-[11px] text-[var(--neutral-85858b)]">{t('profile.sexExplanation')}</p>
       {select(t('profile.yourGoal'), 'goal', goalOptions, profile.goal)}
-      {select(
-        t('profile.activityLevel'),
-        'activity',
-        activityOptions,
-        profile.activity,
-      )}
+      {select(t('profile.activityLevel'), 'activity', activityOptions, profile.activity)}
+      <p className="text-[11px] text-[var(--neutral-85858b)]">
+        {t('profile.activityWithoutExercise')}
+      </p>
       <p>{t('profile.nutritionGoals')}</p>
       {field(t('profile.dailyEnergy'), 'cal', profile.cal)}
       <div className="grid2">

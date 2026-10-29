@@ -16,7 +16,7 @@ export type ExtraNutrients = Partial<Record<ExtraNutrientKey, number>>;
 
 export const EXTRA_NUTRIENT_KEYS = EXTRA_NUTRIENTS.map((n) => n.key) as ExtraNutrientKey[];
 
-type WithExtras = ExtraNutrients & { qty?: number };
+type WithExtras = ExtraNutrients & { id?: string; qty?: number };
 
 function known(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0;
@@ -43,13 +43,19 @@ export interface ExtraNutrientTotal {
 /** Totals each extra nutrient over logged items (value × qty), tracking how many items had data. */
 export function sumExtraNutrients(
   items: readonly WithExtras[],
+  catalog: readonly WithExtras[] = [],
 ): Record<ExtraNutrientKey, ExtraNutrientTotal> {
   const totals = {} as Record<ExtraNutrientKey, ExtraNutrientTotal>;
+  const catalogById = new Map(
+    catalog
+      .filter((food): food is WithExtras & { id: string } => Boolean(food.id))
+      .map((food) => [food.id, food]),
+  );
   for (const key of EXTRA_NUTRIENT_KEYS) {
     let amount = 0;
     let count = 0;
     for (const item of items) {
-      const value = item[key];
+      const value = item[key] ?? (item.id ? catalogById.get(item.id)?.[key] : undefined);
       if (!known(value)) continue;
       amount += value * (item.qty ?? 1);
       count++;
