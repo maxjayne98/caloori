@@ -1,3 +1,4 @@
+import { scaleExtraNutrients } from './nutrients';
 export const householdPortions = {
   f0: {
     grams: 170,
@@ -179,6 +180,7 @@ export function calculatePortion(food, amount, unitId, gramOverride) {
     p: food.p * qty,
     c: food.c * qty,
     f: food.f * qty,
+    ...scaleExtraNutrients(food, qty),
   };
 }
 export const fractionOptions = [

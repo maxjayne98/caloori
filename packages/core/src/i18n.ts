@@ -182,7 +182,8 @@ export const translations = {
     // Profile
     'profile.title': 'Made for you.',
     'profile.subtitle': 'Your details. Your goals. Your own pace.',
-    'profile.setupCopy': 'Complete your profile to set your personal goals. All fields start empty.',
+    'profile.setupCopy':
+      'Complete your profile to set your personal goals. All fields start empty.',
     'profile.yourName': 'Your name',
     'profile.age': 'Age',
     'profile.height': 'Height (cm)',
@@ -201,7 +202,8 @@ export const translations = {
     'profile.protein': 'Protein (g)',
     'profile.carbs': 'Carbs (g)',
     'profile.fat': 'Fat (g)',
-    'profile.mealSplit': 'Choose roughly how to split your daily calories between meals. Total: 100%.',
+    'profile.mealSplit':
+      'Choose roughly how to split your daily calories between meals. Total: 100%.',
     'profile.saveGoals': 'Save goals',
     'profile.signOut': 'Sign out',
     'profile.signingOut': 'Signing out…',
@@ -259,6 +261,37 @@ export const translations = {
     'common.date': 'Date',
     'common.kcal': 'kcal',
     'common.grams': 'g',
+    'common.mg': 'mg',
+    'nutrients.sugar': 'Sugar',
+    'nutrients.fiber': 'Fiber',
+    'nutrients.satFat': 'Saturated fat',
+    'nutrients.sodium': 'Sodium',
+    'nutrients.cholesterol': 'Cholesterol',
+    'nutrients.more': 'More nutrients (optional)',
+    'nutrients.moreHint': 'Leave blank if the label does not list it.',
+    'nutrients.sodiumShort': 'Na',
+    'nutrients.cholesterolShort': 'Chol',
+    'score.grade': 'Score {grade}',
+    'score.day': 'Day score {score}',
+    'score.estimated': 'some values estimated',
+    'score.reason.highSugar': 'high in sugar',
+    'score.reason.highSatFat': 'high in saturated fat',
+    'score.reason.highSodium': 'high in sodium',
+    'score.reason.highEnergy': 'very energy-dense',
+    'score.reason.goodFiber': 'good fiber',
+    'score.reason.goodProtein': 'good protein',
+    'score.reason.fruitVeg': 'fruit, veg or legumes',
+    'score.reason.qualityGood': 'mostly wholesome foods',
+    'score.reason.qualityLow': 'food quality could be better',
+    'score.reason.sodiumOk': 'sodium within range',
+    'score.reason.sodiumHigh': 'sodium above 2,000 mg',
+    'score.reason.fiberGood': 'plenty of fiber',
+    'score.reason.fiberLow': 'low in fiber',
+    'score.reason.energyOnTarget': 'energy close to goal',
+    'score.reason.energyOver': 'above energy goal',
+    'score.reason.energyUnder': 'well below energy goal',
+    'score.reason.proteinGood': 'protein goal met',
+    'score.reason.proteinLow': 'protein below goal',
 
     // Calendar
     'calendar.chooseDay': 'Choose a day',
@@ -271,6 +304,20 @@ export const translations = {
     'portion.format': 'Amount format',
     'portion.decimal': 'Decimal',
     'portion.fraction': 'Fraction',
+    'portion.decimalShort': 'D',
+    'portion.enterAmount': 'Enter an amount to see how big this portion is',
+    'portion.fractionShort': 'F',
+    'portion.level.good': 'Good portion',
+    'portion.level.hearty': 'Hearty portion',
+    'portion.level.large': 'Large portion',
+    'portion.level.tooMuch': 'Too much at once',
+    'portion.driver.energy': '{percent}% of daily calories',
+    'portion.driver.sodium': '{percent}% of daily sodium',
+    'portion.driver.satFat': '{percent}% of daily saturated fat',
+    'portion.driver.sugar': '{percent}% of daily sugar',
+    'nutrients.sugarShort': 'Sugar',
+    'nutrients.fiberShort': 'Fiber',
+    'nutrients.satFatShort': 'Sat fat',
     'portion.servingSize': 'Serving size',
     'portion.gramsPerServing': 'Grams per serving (optional)',
     'portion.portionAmount': 'Amount',
@@ -563,6 +610,37 @@ export const translations = {
     'common.date': 'تاریخ',
     'common.kcal': 'کالری',
     'common.grams': 'گرم',
+    'common.mg': 'میلی‌گرم',
+    'nutrients.sugar': 'قند',
+    'nutrients.fiber': 'فیبر',
+    'nutrients.satFat': 'چربی اشباع',
+    'nutrients.sodium': 'سدیم',
+    'nutrients.cholesterol': 'کلسترول',
+    'nutrients.more': 'مواد مغذی بیشتر (اختیاری)',
+    'nutrients.moreHint': 'اگر روی برچسب نیامده، خالی بگذارید.',
+    'nutrients.sodiumShort': 'سدیم',
+    'nutrients.cholesterolShort': 'کلسترول',
+    'score.grade': 'امتیاز {grade}',
+    'score.day': 'امتیاز روز {score}',
+    'score.estimated': 'بعضی مقادیر تخمینی است',
+    'score.reason.highSugar': 'قند بالا',
+    'score.reason.highSatFat': 'چربی اشباع بالا',
+    'score.reason.highSodium': 'سدیم بالا',
+    'score.reason.highEnergy': 'کالری بسیار فشرده',
+    'score.reason.goodFiber': 'فیبر خوب',
+    'score.reason.goodProtein': 'پروتئین خوب',
+    'score.reason.fruitVeg': 'میوه، سبزی یا حبوبات',
+    'score.reason.qualityGood': 'بیشتر غذاهای سالم',
+    'score.reason.qualityLow': 'کیفیت غذاها می‌تواند بهتر باشد',
+    'score.reason.sodiumOk': 'سدیم در محدوده‌ی مناسب',
+    'score.reason.sodiumHigh': 'سدیم بیش از ۲۰۰۰ میلی‌گرم',
+    'score.reason.fiberGood': 'فیبر کافی',
+    'score.reason.fiberLow': 'فیبر کم',
+    'score.reason.energyOnTarget': 'کالری نزدیک هدف',
+    'score.reason.energyOver': 'بالاتر از هدف کالری',
+    'score.reason.energyUnder': 'خیلی کمتر از هدف کالری',
+    'score.reason.proteinGood': 'هدف پروتئین تأمین شد',
+    'score.reason.proteinLow': 'پروتئین کمتر از هدف',
 
     // Calendar
     'calendar.chooseDay': 'انتخاب روز',
@@ -575,6 +653,20 @@ export const translations = {
     'portion.format': 'قالب مقدار',
     'portion.decimal': 'اعشاری',
     'portion.fraction': 'کسری',
+    'portion.decimalShort': 'ا',
+    'portion.enterAmount': 'مقدار را وارد کنید تا اندازه‌ی این وعده را ببینید',
+    'portion.fractionShort': 'ک',
+    'portion.level.good': 'مقدار مناسب',
+    'portion.level.hearty': 'مقدار مفصل',
+    'portion.level.large': 'مقدار زیاد',
+    'portion.level.tooMuch': 'یک‌باره زیاد است',
+    'portion.driver.energy': '{percent}٪ از کالری روزانه',
+    'portion.driver.sodium': '{percent}٪ از سدیم روزانه',
+    'portion.driver.satFat': '{percent}٪ از چربی اشباع روزانه',
+    'portion.driver.sugar': '{percent}٪ از قند روزانه',
+    'nutrients.sugarShort': 'قند',
+    'nutrients.fiberShort': 'فیبر',
+    'nutrients.satFatShort': 'اشباع',
     'portion.servingSize': 'اندازه هر سهم',
     'portion.gramsPerServing': 'گرم در هر سهم (اختیاری)',
     'portion.portionAmount': 'مقدار',
@@ -670,12 +762,26 @@ export function isRtl(locale: Locale): boolean {
   return getLocaleDirection(locale) === 'rtl';
 }
 
+/**
+ * Short form for big numbers where only the scale matters (chart axes, weekly totals):
+ * 11,500 → "11.5K" / "۱۱٫۵ هزار". Values under 1,000 stay exact.
+ */
+export function formatCompact(value: number, locale: Locale): string {
+  const intlLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
+  if (Math.abs(value) < 1000) return Math.round(value).toLocaleString(intlLocale);
+  return new Intl.NumberFormat(intlLocale, {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
 export function formatDate(
   date: string | Date,
   locale: Locale,
   options?: Intl.DateTimeFormatOptions,
 ): string {
-  const d = typeof date === 'string' ? new Date(date.includes('T') ? date : `${date}T12:00:00`) : date;
+  const d =
+    typeof date === 'string' ? new Date(date.includes('T') ? date : `${date}T12:00:00`) : date;
   const intlLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
   return d.toLocaleDateString(intlLocale, options);
 }

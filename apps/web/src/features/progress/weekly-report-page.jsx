@@ -5,7 +5,7 @@ import { RollingNumber } from '@/components/rolling-number';
 import { useI18n } from '@/providers/i18n-provider';
 
 export function WeeklyReportPage({ report, onBack }) {
-  const { t, formatDate } = useI18n();
+  const { t, formatDate, formatCompact } = useI18n();
   const dateLabel = (date) => formatDate(date, { month: 'short', day: 'numeric' });
   const max = Math.max(1, ...report.days.flatMap((day) => [day.intake, day.goal || 0]));
   return (
@@ -39,7 +39,7 @@ export function WeeklyReportPage({ report, onBack }) {
               {report.days.map((day) => (
                 <div className="weekly-bar-day" key={day.date}>
                   <span className="weekly-bar-value">
-                    {day.hasFood ? Math.round(day.intake).toLocaleString('en-US') : '—'}
+                    {day.hasFood ? formatCompact(day.intake) : '—'}
                   </span>
                   <div className="weekly-bar-track">
                     {day.hasFood && <i style={{ height: `${(day.intake / max) * 100}%` }} />}
@@ -82,7 +82,7 @@ export function WeeklyReportPage({ report, onBack }) {
                 <small>{t('weekly.minutes')}</small>
               </div>
               <div>
-                <strong>{Math.round(report.burned).toLocaleString('en-US')}</strong>
+                <strong>{formatCompact(report.burned)}</strong>
                 <small>{t('weekly.estKcal')}</small>
               </div>
             </div>

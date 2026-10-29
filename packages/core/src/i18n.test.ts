@@ -10,6 +10,7 @@ import {
   getLocaleDirection,
   isRtl,
   formatDate,
+  formatCompact,
 } from './i18n';
 import { APP_VERSION } from './version';
 
@@ -71,5 +72,12 @@ test('formatDate outputs localized date strings', () => {
 
 test('app version is defined and matches semantic versioning format', () => {
   assert.ok(/^\d+\.\d+\.\d+$/.test(APP_VERSION));
-  assert.equal(APP_VERSION, '0.2.1');
+  assert.equal(APP_VERSION, '0.5.4');
+});
+
+test('formatCompact shortens only numbers of a thousand or more, per locale', () => {
+  assert.equal(formatCompact(950, 'en'), '950');
+  assert.equal(formatCompact(11500, 'en'), '11.5K');
+  assert.equal(formatCompact(2000, 'en'), '2K');
+  assert.match(formatCompact(11500, 'fa'), /هزار/);
 });

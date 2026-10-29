@@ -3,6 +3,21 @@
   --macro-protein: #4d7cff;
   --macro-carbs: #2fcf8f;
   --macro-fat: #ffbf1f;
+  /* Score grades, Nutri-Score style: A dark green → E red. */
+  --grade-a: #1e9e5a;
+  --grade-b: #79bf3a;
+  --grade-c: #e3b21b;
+  --grade-d: #f08a24;
+  --grade-e: #e5483b;
+  /* Meal identity colors (icon / soft background), shared by meal cards and the meal picker. */
+  --meal-breakfast: #dd9d39;
+  --meal-breakfast-soft: #fff4e6;
+  --meal-lunch: #69a17b;
+  --meal-lunch-soft: var(--neutral-edf8ef);
+  --meal-dinner: #8d85c6;
+  --meal-dinner-soft: var(--neutral-eff1ff);
+  --meal-snacks: #d38399;
+  --meal-snacks-soft: var(--accent-tint);
   --progress-track: #ededf2;
   --accent: #ff375f;
   --accent-soft: #fff0f3;

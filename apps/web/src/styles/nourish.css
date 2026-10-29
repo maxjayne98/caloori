@@ -2031,20 +2031,23 @@ label {
   height: 34px;
 }
 .portion-toolbar .portion-format {
-  width: 132px;
+  /* Pill track with two small round letter buttons (D / F). */
+  width: auto;
   max-width: none;
   padding: 3px;
   gap: 2px;
-  border-radius: 10px;
+  border-radius: 999px;
   margin: 0;
   height: 34px;
 }
 .portion-toolbar .portion-format button {
-  font-size: 10px;
-  padding: 5px 4px;
-  border-radius: 7px;
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  padding: 0;
+  border-radius: 50%;
   min-width: 0;
-  line-height: 18px;
+  line-height: 28px;
 }
 .portion-toolbar .toolbar-meal {
   margin: 0;
@@ -2467,7 +2470,7 @@ label {
     gap: 5px;
   }
   .portion-toolbar .portion-format {
-    width: 127px;
+    width: auto;
   }
   .portion-toolbar .toolbar-meal select {
     width: 96px;

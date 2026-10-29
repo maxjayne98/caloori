@@ -1,3 +1,4 @@
+import { saltToSodiumMg } from './nutrients';
 export function barcodeIsValid(input) {
   if (!/^\d{8}$|^\d{12,14}$/.test(input)) return false;
   let total = 0;
@@ -36,9 +37,29 @@ export function barcodeProductToFood(product, code) {
     p: Math.max(0, +n.proteins_100g || 0),
     c: Math.max(0, +n.carbohydrates_100g || 0),
     f: Math.max(0, +n.fat_100g || 0),
+    ...offExtras(n),
     barcode: code,
     productSize: basis,
   };
+}
+
+// Open Food Facts reports these per 100 g in grams; sodium and cholesterol become mg.
+function offExtras(n) {
+  const grams = (value) => (value === undefined || value === '' ? undefined : +value);
+  const extras = {
+    sugar: grams(n.sugars_100g),
+    fiber: grams(n.fiber_100g),
+    satFat: grams(n['saturated-fat_100g']),
+    sodium:
+      grams(n.sodium_100g) !== undefined
+        ? grams(n.sodium_100g) * 1000
+        : grams(n.salt_100g) !== undefined
+          ? saltToSodiumMg(grams(n.salt_100g))
+          : undefined,
+    cholesterol:
+      grams(n.cholesterol_100g) !== undefined ? grams(n.cholesterol_100g) * 1000 : undefined,
+  };
+  return Object.fromEntries(Object.entries(extras).filter(([, v]) => Number.isFinite(v) && v >= 0));
 }
 
 /** Re-scanning a known barcode preserves the user's existing food and its edits. */

@@ -20,7 +20,12 @@ import {
   reusableItems,
   appendDiaryEntries,
   rememberScannedFood,
+  sumExtraNutrients,
+  scoreDay,
+  mealForTime,
+  extraNutrientsFromInput,
 } from '@nourish/core';
+import { ExtraNutrientFields } from '@/components/extra-nutrients';
 import { Icon } from '@/components/icon';
 import { ProfileAvatar } from '@/components/profile-photo';
 import { BottomNavigation } from '@/components/bottom-navigation';
@@ -123,8 +128,12 @@ export function App() {
         f: 0,
       },
     );
+  tot.extras = sumExtraNutrients(list);
+  // Energy and protein only count toward the day score once the day is over.
+  tot.dayScore = scoreDay(list, profile, { complete: day < today });
   const notify = (t) => setToast(t),
-    openAdd = (m = 'Breakfast') => {
+    // Without a chosen meal (bottom Add button), default to the meal that fits the time of day.
+    openAdd = (m = mealForTime(new Date())) => {
       setMeal(m);
       setQuery('');
       setChosen(null);
@@ -335,6 +344,7 @@ export function App() {
               p: +d.p || 0,
               c: +d.c || 0,
               f: +d.f || 0,
+              ...extraNutrientsFromInput(d),
               emoji: '🍽️',
             };
           if (sheet === 'custom') setCustom([...custom, f]);
@@ -377,10 +387,9 @@ export function App() {
           {field(`${t('summary.carbs')} (${t('common.grams')})`, 'c', 0)}
         </div>
         {field(`${t('summary.fat')} (${t('common.grams')})`, 'f', 0)}
+        <ExtraNutrientFields />
         <Button className="primary" variant="unstyled">
-          {sheet === 'custom'
-            ? t('portion.saveFood')
-            : t('meals.addToMeal', { meal: tMeal(meal) })}
+          {sheet === 'custom' ? t('portion.saveFood') : t('meals.addToMeal', { meal: tMeal(meal) })}
         </Button>
       </form>
     );

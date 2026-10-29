@@ -8,7 +8,9 @@ test('shared defaults are valid, unique, and separate from personal account data
   assert.equal(new Set(foods.map((food) => food.id)).size, foods.length);
   for (const food of additionalFoods) {
     assert(FoodSchema.safeParse(food).success, food.id);
-    assert.deepEqual(foods.find((entry) => entry.id === food.id), food);
+    // The catalog adds extra nutrients on top, but must keep every JSON field unchanged.
+    const entry = foods.find((item) => item.id === food.id) as Record<string, unknown>;
+    for (const [key, value] of Object.entries(food)) assert.deepEqual(entry[key], value, food.id);
   }
   assert.deepEqual(emptyState().custom, []);
   assert.deepEqual(emptyState().entries, {});

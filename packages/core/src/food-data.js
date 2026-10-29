@@ -1,4 +1,5 @@
 import additionalFoods from './default-foods.json';
+import { catalogExtras } from './default-food-extras';
 
 const originalFoods = [
   ['Greek yogurt', '170 g', 100, 17, 6, 0, '🥣'],
@@ -27,5 +28,9 @@ const originalFoods = [
   emoji: a[6],
 }));
 // Shared catalog: available to every account, without copying into private user records.
-export const foods = [...originalFoods, ...additionalFoods];
+// Extra nutrients (sugar, fiber, …) come from a per-100-g reference table, scaled per serving.
+export const foods = [...originalFoods, ...additionalFoods].map((food) => ({
+  ...food,
+  ...catalogExtras(food.id, food.gramsPerServing),
+}));
 export const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];

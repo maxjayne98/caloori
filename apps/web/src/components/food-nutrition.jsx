@@ -1,4 +1,5 @@
 'use client';
+import { ExtraNutrientList } from '@/components/extra-nutrients';
 
 import { RollingNumber } from '@/components/rolling-number';
 export function FoodNutrition({ values }) {
@@ -49,6 +50,7 @@ export function FoodNutrition({ values }) {
           </div>
         ))}
       </div>
+      <ExtraNutrientList values={values} />
     </div>
   );
 }

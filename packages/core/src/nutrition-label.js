@@ -1,9 +1,18 @@
+import { saltToSodiumMg } from './nutrients';
 const LABELS = {
   cal: /^(?:energy|calories?|energy value)\b/i,
   f: /^(?:total\s+)?fat\b/i,
   c: /^(?:total\s+)?(?:carbohydrates?|carbs?)\b/i,
   p: /^(?:proteins?|protein)\b/i,
+  sugar: /^(?:of\s+which\s+|total\s+)?sugars?\b/i,
+  fiber: /^(?:dietary\s+)?fib(?:er|re)\b/i,
+  satFat: /^(?:of\s+which\s+)?(?:saturated(?:\s+fat)?|saturates)\b/i,
+  sodium: /^sodium\b/i,
+  salt: /^salt\b/i,
+  cholesterol: /^cholesterol\b/i,
 };
+// Stored in mg; labels may print either mg or g.
+const MILLIGRAM_KEYS = new Set(['sodium', 'cholesterol']);
 
 function parseNumber(value) {
   const normalized = value.replace(/\s/g, '');
@@ -64,8 +73,21 @@ export function parseNutritionLabel(input) {
       continue;
     }
 
+    if (MILLIGRAM_KEYS.has(key)) {
+      const mg = amountBeforeUnit(line, 'mg');
+      const grams = mg === null ? amountBeforeUnit(line, 'g') : null;
+      const amount = mg ?? (grams === null ? null : grams * 1000);
+      if (amount !== null && Number.isFinite(amount)) values[key] = amount;
+      continue;
+    }
+
     const grams = amountBeforeUnit(line, 'g');
     if (grams !== null && Number.isFinite(grams)) values[key] = grams;
+  }
+  // European labels list salt instead of sodium.
+  if (values.salt !== undefined) {
+    if (values.sodium === undefined) values.sodium = saltToSodiumMg(values.salt);
+    delete values.salt;
   }
 
   if (!Object.keys(values).length) return null;

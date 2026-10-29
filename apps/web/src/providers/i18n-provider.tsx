@@ -11,6 +11,7 @@ import {
   translateMealName,
   type TranslationKey,
   formatDate as coreFormatDate,
+  formatCompact as coreFormatCompact,
 } from '@nourish/core';
 
 interface I18nContextValue {
@@ -21,6 +22,7 @@ interface I18nContextValue {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
   tMeal: (meal: string) => string;
   formatDate: (date: string | Date, options?: Intl.DateTimeFormatOptions) => string;
+  formatCompact: (value: number) => string;
 }
 
 const I18nContext = createContext<I18nContextValue>({
@@ -31,6 +33,7 @@ const I18nContext = createContext<I18nContextValue>({
   t: (key, params) => coreTranslate(DEFAULT_LOCALE, key, params),
   tMeal: (meal) => translateMealName(meal, DEFAULT_LOCALE),
   formatDate: (date, options) => coreFormatDate(date, DEFAULT_LOCALE, options),
+  formatCompact: (value) => coreFormatCompact(value, DEFAULT_LOCALE),
 });
 
 const STORAGE_KEY = 'nourish-next:locale';
@@ -83,6 +86,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         t: (key, params) => coreTranslate(locale, key, params),
         tMeal: (meal) => translateMealName(meal, locale),
         formatDate: (date, options) => coreFormatDate(date, locale, options),
+        formatCompact: (value) => coreFormatCompact(value, locale),
       }}
     >
       {children}

@@ -1,4 +1,6 @@
 'use client';
+import { ExtraNutrientSummary } from '@/components/extra-nutrients';
+import { GradeMark } from '@/components/score-badge';
 import { CircleCheck } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
@@ -71,14 +73,20 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
           <em className="macro-per-kg">
             {' · '}
             {/* LTR isolation: keep numeric ratio readable in RTL */}
-            <span dir="ltr">{((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg</span>
+            <span dir="ltr">
+              {((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg
+            </span>
           </em>
         )}
       </small>
       {/* LTR isolation: keep "18.6g / 130g" order correct in RTL */}
       <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>
         <RollingNumber value={tot[k]} decimals={2} />
-        <em>{t('common.grams')} / {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}{t('common.grams')}</em>
+        <em>
+          {t('common.grams')} /{' '}
+          {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}
+          {t('common.grams')}
+        </em>
       </b>
       <div className="track">
         <i
@@ -110,7 +118,9 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
         <b>
           <RollingNumber value={Math.round(Math.abs(profile.cal - tot.cal))} />
         </b>
-        <span>{tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}</span>
+        <span>
+          {tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}
+        </span>
       </div>
     </div>
   );
@@ -139,9 +149,14 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
     </div>
   );
   return (
-    <section className={`card energy-card daily-summary balance-${status}`}>
+    <section className={`card energy-card daily-summary relative balance-${status}`}>
       <div className="card-top">
-        <span>{t('summary.dailyEnergy')}</span>
+        <span className="inline-flex items-center gap-2">
+          {t('summary.dailyEnergy')}
+          {tot.dayScore && (
+            <GradeMark {...tot.dayScore} label={t('score.day', { score: tot.dayScore.score })} />
+          )}
+        </span>
         <span className="tag">{labels[status]}</span>
       </div>
       <div className="energy-details">
@@ -151,6 +166,7 @@ export function DailySummary({ tot, profile, weight, onEdit, day }) {
         </div>
       </div>
       {ring}
+      {tot.extras && <ExtraNutrientSummary totals={tot.extras} />}
       {status !== 'neutral' && (
         <div className="balance-message" role="status">
           {status === 'over' ? (

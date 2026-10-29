@@ -10,9 +10,14 @@ import {
   fractionOptions,
   fractionDisplay,
   portionUnitLabel,
+  scoreFood,
+  scorePortion,
 } from '@nourish/core';
 import { FoodNutrition } from '@/components/food-nutrition';
+import { MiniGradeScale, PortionScoreLabel } from '@/components/score-badge';
+import { MealPicker } from '@/components/meal-picker';
 import { useI18n } from '@/providers/i18n-provider';
+import { useNourishData } from '@/providers/data-provider';
 export function FoodPortionEditor({
   food,
   initialMeal,
@@ -23,6 +28,7 @@ export function FoodPortionEditor({
   saveLabel,
 }) {
   const { t, tMeal } = useI18n();
+  const { profile } = useNourishData();
   const units = getFoodUnits(food),
     saved = food.portion;
   const initialUnit =
@@ -46,6 +52,15 @@ export function FoodPortionEditor({
     value = mode === 'fraction' ? Number(whole) + Number(fraction) : Number(amount),
     valid = Number.isFinite(value) && value > 0 && Number.isFinite(+weight) && +weight >= 0,
     tot = calculatePortion(food, valid ? value : 0, unitId, +weight);
+  // Judge the actual amount being logged, not the food in general.
+  const portionScore = scorePortion(
+    {
+      ...food,
+      ...tot,
+      gramsPerServing: food.gramsPerServing ? food.gramsPerServing * tot.qty : null,
+    },
+    profile.cal,
+  );
   const text =
     (mode === 'fraction' ? fractionDisplay(value) : portionNumber(value)) +
     ' ' +
@@ -94,7 +109,17 @@ export function FoodPortionEditor({
       }}
     >
       <div className="portion-food-heading">
-        <h3>{food.name}</h3>
+        <h3 className="flex items-center gap-2">
+          {food.name}
+          <MiniGradeScale {...scoreFood(food)} />
+        </h3>
+        {valid && portionScore ? (
+          <PortionScoreLabel score={portionScore} />
+        ) : (
+          <p className="m-0 mt-1 text-xs text-[var(--neutral-898993)]">
+            {t('portion.enterAmount')}
+          </p>
+        )}
       </div>
       <div className="portion-toolbar">
         <div className="portion-format" role="group" aria-label="Amount format">
@@ -103,34 +128,25 @@ export function FoodPortionEditor({
             className={mode === 'decimal' ? 'selected' : ''}
             aria-pressed={mode === 'decimal'}
             onClick={() => changeMode('decimal')}
+            aria-label={t('portion.decimal')}
+            title={t('portion.decimal')}
             variant="unstyled"
           >
-            Decimal
+            {t('portion.decimalShort')}
           </Button>
           <Button
             type="button"
             className={mode === 'fraction' ? 'selected' : ''}
             aria-pressed={mode === 'fraction'}
             onClick={() => changeMode('fraction')}
+            aria-label={t('portion.fraction')}
+            title={t('portion.fraction')}
             variant="unstyled"
           >
-            Fraction
+            {t('portion.fractionShort')}
           </Button>
         </div>
-        {!hideMeal && (
-          <div className="portion-meal toolbar-meal">
-            <label htmlFor="portion-meal">Log to</label>
-            <Select
-              id="portion-meal"
-              value={selectedMeal}
-              onValueChange={setMeal}
-              options={['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map((m) => ({
-                value: m,
-                label: m,
-              }))}
-            />
-          </div>
-        )}
+        {!hideMeal && <MealPicker value={selectedMeal} onChange={setMeal} />}
       </div>
       <div className="amount-unit-row">
         <div className="amount-field">

@@ -2,6 +2,7 @@
 
 import { Button } from '@nourish/ui';
 import { portionNumber } from '@nourish/core';
+import { useI18n } from '@/providers/i18n-provider';
 export function HistoryBars({
   days,
   metric,
@@ -12,6 +13,7 @@ export function HistoryBars({
   selected,
   historicalGoals = false,
 }) {
+  const { formatCompact } = useI18n();
   const peak = Math.max(
       target || 0,
       ...days.map((d) => d[metric]),
@@ -23,7 +25,7 @@ export function HistoryBars({
   return (
     <div className="history-bars">
       <div className="chart-scale">
-        <span>{Math.ceil(max).toLocaleString('en-US')}</span>
+        <span>{formatCompact(Math.ceil(max))}</span>
         <span>{'0 ' + unit}</span>
       </div>
       <div className="bar-plot">

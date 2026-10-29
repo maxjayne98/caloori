@@ -1,8 +1,16 @@
 'use client';
+import { GradeDot, GradeMark } from '@/components/score-badge';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@nourish/ui';
-import { meals, portionNumber, formatPortion, mealCalorieTarget } from '@nourish/core';
+import {
+  meals,
+  portionNumber,
+  formatPortion,
+  mealCalorieTarget,
+  scoreMeal,
+  scoreFood,
+} from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { useI18n } from '@/providers/i18n-provider';
 export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, onView, onSave }) {
@@ -105,6 +113,7 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
           const target = mealCalorieTarget(profile?.cal, m, profile?.mealCalories);
           const consumed = Math.round(items.reduce((sum, item) => sum + item.cal * item.qty, 0));
           const goalPercent = target > 0 ? Math.round((consumed / target) * 100) : null;
+          const mealScore = scoreMeal(items);
           return (
             <section
               key={m}
@@ -146,7 +155,10 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                   )}
                 </div>
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
-                  <b>{tMeal(m)}</b>
+                  <b className="inline-flex items-center gap-1.5">
+                    {tMeal(m)}
+                    {mealScore && <GradeMark {...mealScore} />}
+                  </b>
                   <small>
                     {items.length
                       ? `${consumed} / ${target !== null ? `~${target}` : '—'} ${t('common.kcal')}`
@@ -203,7 +215,10 @@ export function MealList({ day, list, profile, onAdd, onEdit, onDelete, onMove, 
                     <Icon type="Grip" />
                   </Button>
                   <Button className="item-details" onClick={() => onEdit(x)} variant="unstyled">
-                    <b>{x.name}</b>
+                    <b>
+                      {x.name}
+                      <GradeDot score={scoreFood(x)} />
+                    </b>
                     <small>
                       {formatPortion(x) + ' · ' + portionNumber(x.cal * x.qty) + ' kcal'}
                     </small>

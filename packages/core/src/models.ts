@@ -10,6 +10,14 @@ export const NutrientsSchema = z.object({
   c: nonnegative,
   f: nonnegative,
 });
+// Optional per-serving extras (see nutrients.ts). Missing means unknown, never zero.
+export const ExtraNutrientsSchema = z.object({
+  sugar: nonnegative.max(100000).optional(),
+  fiber: nonnegative.max(100000).optional(),
+  satFat: nonnegative.max(100000).optional(),
+  sodium: nonnegative.max(10000000).optional(),
+  cholesterol: nonnegative.max(10000000).optional(),
+});
 export const ProfileSchema = z
   .object({
     name: z.string().max(100),
@@ -50,22 +58,24 @@ export const PortionSchema = z.object({
   mode: z.enum(['decimal', 'fraction']),
   gramOverride: positive.nullable().optional(),
 });
-export const FoodSchema = NutrientsSchema.extend({
-  id: z.string().min(1).max(200),
-  name: z.string().min(1).max(500),
-  serving: z.string().min(1).max(200),
-  gramsPerServing: positive.nullable().optional(),
-  qty: nonnegative.max(1000000).optional(),
-  meal: MealNameSchema.optional(),
-  key: z.union([z.string().max(200), z.number().finite()]).optional(),
-  portion: PortionSchema.optional(),
-  goalAtLog: NutrientsSchema.optional(),
-  loggedAt: z.string().max(100).optional(),
-  recipe: z.boolean().optional(),
-  saved: z.boolean().optional(),
-  brand: z.string().optional(),
-  barcode: z.string().optional(),
-}).passthrough();
+export const FoodSchema = NutrientsSchema.merge(ExtraNutrientsSchema)
+  .extend({
+    id: z.string().min(1).max(200),
+    name: z.string().min(1).max(500),
+    serving: z.string().min(1).max(200),
+    gramsPerServing: positive.nullable().optional(),
+    qty: nonnegative.max(1000000).optional(),
+    meal: MealNameSchema.optional(),
+    key: z.union([z.string().max(200), z.number().finite()]).optional(),
+    portion: PortionSchema.optional(),
+    goalAtLog: NutrientsSchema.optional(),
+    loggedAt: z.string().max(100).optional(),
+    recipe: z.boolean().optional(),
+    saved: z.boolean().optional(),
+    brand: z.string().optional(),
+    barcode: z.string().optional(),
+  })
+  .passthrough();
 export const WeightSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   weight: positive.max(700),
