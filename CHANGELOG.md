@@ -4,7 +4,7 @@ Generated from Git history by the post-commit hook. Entries are grouped by the a
 
 ## 0.10.0
 
-- `40ea8af` feat(progress): add weight trend estimation and display on progress page
+- `1b7f7c8` feat(progress): add weight trend estimation and display on progress page
   - Introduced weight trend estimation using recent weight data and activity logs.
   - Added a new section on the progress page to display estimated weight changes over different periods.
   - Included icons and formatted weight change values for better user experience.

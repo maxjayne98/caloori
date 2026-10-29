@@ -81,7 +81,6 @@ export function ProgressPage({
                 <CalendarRange size={12} aria-hidden="true" />
                 <span>
                   {t('progress.weightChangeSoFar')}
-                  <br />
                   {t('progress.weightChangePeriod')}
                 </span>
               </small>

@@ -183,7 +183,7 @@ export const translations = {
     'progress.tapDayFood': 'Tap a day to see its intake.',
     'progress.tapDayActivity': 'Tap a day to see its activity.',
     'progress.weightTrend': 'Estimated weight trend',
-    'progress.weightChangeSoFar': 'Estimated change',
+    'progress.weightChangeSoFar': 'Estimated',
     'progress.weightChangePeriod': '28 days',
     'progress.weightChangeWeek': 'Per week',
     'progress.weightChangeFourWeeks': 'In 4 weeks',

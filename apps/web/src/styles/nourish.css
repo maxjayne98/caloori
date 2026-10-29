@@ -2597,11 +2597,7 @@ label {
   margin-top: 16px;
   padding: 13px 10px;
   border-radius: 17px;
-  background: linear-gradient(
-    115deg,
-    color-mix(in srgb, var(--accent-soft) 75%, var(--surface)),
-    color-mix(in srgb, var(--accent-soft) 28%, var(--surface))
-  );
+  
 }
 .weight-trend-metric {
   min-width: 0;
