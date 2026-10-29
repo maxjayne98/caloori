@@ -21,6 +21,16 @@ pnpm build
 
 The production static site is `apps/web/out`. It has no Next.js server process or paid server requirement.
 
+## Changelog
+
+Enable the post-commit changelog hook once per clone:
+
+```sh
+git config core.hooksPath .githooks
+```
+
+After each commit, the hook regenerates `CHANGELOG.md`, grouping commit hashes and full messages by the `APP_VERSION` in each commit. The generated changelog is left unstaged for review. Regenerate it manually at any time with `pnpm changelog`.
+
 ## Workspace
 
 - `apps/web/src/features`: readable JSX components, grouped by feature; original behavior kept during migration.

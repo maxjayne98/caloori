@@ -7,6 +7,7 @@
     "build": "pnpm --filter @nourish/web build",
     "typecheck": "pnpm -r typecheck",
     "test": "tsx --test packages/core/src/*.test.ts packages/database/src/*.test.ts",
+    "changelog": "tsx scripts/update-changelog.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
