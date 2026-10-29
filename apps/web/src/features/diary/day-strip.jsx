@@ -23,7 +23,7 @@ export function DayStrip({ day, entries, goal, onSelect, onToday }) {
         {onToday && (
           <Button
             variant="unstyled"
-            className="absolute inset-x-0 -top-3.5 text-center text-[10px] font-semibold leading-none text-[var(--accent-text)]"
+            className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-[11px] font-semibold leading-none text-[var(--accent-text)] shadow-[0_1px_3px_var(--neutral-17172a08)] active:scale-95 motion-reduce:transition-none"
             onClick={onToday}
           >
             {t('today.today')}

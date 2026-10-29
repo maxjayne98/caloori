@@ -719,17 +719,18 @@ export function App() {
           </Button>
           <LoggingStreak entries={entries} today={today} />
           {tab === 'Profile' ? (
+            // Opens Today straight into layout edit mode; styled apart from the round settings button.
             <Button
               variant="unstyled"
-              className="avatar profile-settings"
-              onEditTodayLayout={() => {
+              className="grid size-[42px] place-items-center rounded-[14px] bg-[var(--accent-soft)] text-[var(--accent-text)]"
+              aria-label={t('today.editLayout')}
+              title={t('today.editLayout')}
+              onClick={() => {
                 navigate('Today');
                 setTodayEditing(true);
               }}
             >
-              <span>
-                <LayoutGrid size={18} aria-hidden="true" />
-              </span>
+              <LayoutGrid size={18} aria-hidden="true" />
             </Button>
           ) : null}
           <Button
@@ -740,7 +741,7 @@ export function App() {
             variant="unstyled"
           >
             {tab === 'Profile' ? (
-                <Settings size={20} aria-hidden="true" />
+              <Settings size={20} aria-hidden="true" />
             ) : (
               <ProfileAvatar profile={profile} seed={accountId} />
             )}

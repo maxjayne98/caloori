@@ -160,7 +160,11 @@ export function DailySummary({ tot, profile, weight, onEdit, day, onScore }) {
               onClick={onScore}
               aria-label={t('insights.dayTitle')}
             >
-              <GradeMark {...tot.dayScore} label={t('score.day', { score: tot.dayScore.score })} />
+              <GradeMark
+                {...tot.dayScore}
+                size="md"
+                label={t('score.day', { score: tot.dayScore.score })}
+              />
             </Button>
           )}
         </span>

@@ -44,6 +44,7 @@ export function GradeMark({
   confidence,
   score,
   label,
+  size = 'sm',
 }: {
   grade: Grade;
   reasons: readonly (ScoreReason | DayReason)[];
@@ -51,6 +52,8 @@ export function GradeMark({
   score?: number;
   /** Replaces the default "Score B" lead-in of the explanation. */
   label?: string;
+  /** `md` is a touch larger, for marks that are tap targets of their own. */
+  size?: 'sm' | 'md';
 }) {
   const explain = useExplain()(grade, reasons, confidence, label);
   const color = GRADE_COLOR[grade];
@@ -60,15 +63,19 @@ export function GradeMark({
       aria-label={score === undefined ? explain : `${score} · ${explain}`}
       title={explain}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1 rounded-full text-[10px] font-bold leading-none tabular-nums',
-        score !== undefined && 'py-px pe-px ps-1.5',
+        'inline-flex shrink-0 items-center gap-1 rounded-full font-bold leading-none tabular-nums',
+        size === 'md' ? 'text-xs' : 'text-[10px]',
+        score !== undefined && (size === 'md' ? 'py-0.5 pe-0.5 ps-2' : 'py-px pe-px ps-1.5'),
         confidence === 'low' && 'opacity-70',
       )}
       style={{ color, background: `color-mix(in srgb, ${color} 12%, transparent)` }}
     >
       {score}
       <span
-        className="inline-grid size-4 place-items-center rounded-full"
+        className={cn(
+          'inline-grid place-items-center rounded-full',
+          size === 'md' ? 'size-5' : 'size-4',
+        )}
         style={{ background: `color-mix(in srgb, ${color} 16%, transparent)` }}
       >
         {grade}

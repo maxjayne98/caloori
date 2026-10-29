@@ -166,29 +166,7 @@ export function MealList({
                   )}
                 </div>
                 <Button className="meal-body" onClick={() => onView(m)} variant="unstyled">
-                  <b className="inline-flex items-center gap-1.5">
-                    {tMeal(m)}
-                    {mealScore && (
-                      // Lives inside the meal button, so it is a span that stops the meal click.
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        aria-label={t('insights.mealTitle', { meal: tMeal(m) })}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onScore?.(m);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key !== 'Enter' && e.key !== ' ') return;
-                          e.preventDefault();
-                          e.stopPropagation();
-                          onScore?.(m);
-                        }}
-                      >
-                        <GradeMark {...mealScore} />
-                      </span>
-                    )}
-                  </b>
+                  <b>{tMeal(m)}</b>
                   <small>
                     {items.length
                       ? `${consumed} / ${target !== null ? `~${target}` : '—'} ${t('common.kcal')}`
@@ -198,6 +176,17 @@ export function MealList({
                   </small>
                 </Button>
                 <div className="meal-header-actions">
+                  {mealScore && (
+                    // Only the grade opens suggestions; tapping the meal itself still opens it.
+                    <Button
+                      variant="unstyled"
+                      className="grid"
+                      aria-label={t('insights.mealTitle', { meal: tMeal(m) })}
+                      onClick={() => onScore?.(m)}
+                    >
+                      <GradeMark {...mealScore} size="md" />
+                    </Button>
+                  )}
                   {items.length > 0 && (
                     <Button
                       className="save-meal-action"
