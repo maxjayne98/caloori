@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.16.1
+
+- `9e22fe1` feat: implement meal reminders with web push notifications and add pull-to-refresh functionality
+
 ## 0.15.2
 
 - `aa73155` feat(reminders): implement meal reminders with web push notifications

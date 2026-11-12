@@ -127,7 +127,7 @@ export function FoodPage({
               {t('sheet.barcode')}
             </Button>
           </div>
-          {
+          <div className="pb-36">
             <FoodRows
               items={(filter === 'Recent'
                 ? [
@@ -149,7 +149,7 @@ export function FoodPage({
               setSheet={setSheet}
               onEdit={filter === 'Recent' ? undefined : onEditFood}
             />
-          }
+          </div>
         </>
       )}
       <ScrollTopButton offset="bottom-28" />

@@ -230,9 +230,6 @@ export function TodayPage({
             <Button className="link" onClick={() => setSheet('meals')} variant="unstyled">
               {t('today.myMeals')}
             </Button>
-            <Button className="link" onClick={() => setSheet('copy')} variant="unstyled">
-              {t('today.copyDay')}
-            </Button>
           </div>
         </div>
         <MealList

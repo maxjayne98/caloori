@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    "version": "0.16.1",
+    "entries": [
+      {
+        "hash": "9e22fe1",
+        "subject": "feat: implement meal reminders with web push notifications and add pull-to-refresh functionality",
+        "body": ""
+      }
+    ]
+  },
+  {
     "version": "0.15.2",
     "entries": [
       {

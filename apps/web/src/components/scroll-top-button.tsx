@@ -33,7 +33,7 @@ export function ScrollTopButton({ offset = 'bottom-4' }: { offset?: string }) {
   return (
     <div
       ref={anchor}
-      className={`pointer-events-none sticky ${offset} z-20 flex h-0 justify-end`}
+      className={`pointer-events-none sticky ${offset} z-20 flex h-0 justify-center`}
     >
       <Button
         variant="unstyled"
@@ -42,13 +42,11 @@ export function ScrollTopButton({ offset = 'bottom-4' }: { offset?: string }) {
         tabIndex={shown ? 0 : -1}
         aria-hidden={!shown}
         onClick={toTop}
-        // Inline so the global button reset (unlayered CSS) cannot override the colors.
-        style={{ background: 'var(--foreground)', color: 'var(--surface)' }}
-        className={`grid size-13 -translate-y-full place-items-center rounded-full shadow-[0_8px_22px_var(--neutral-18181e55)] transition-[opacity,scale] duration-200 active:scale-95 motion-reduce:transition-none ${
+        className={`grid h-12 w-40 -translate-y-full place-items-center rounded-lg border border-[color-mix(in_srgb,var(--foreground)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)] text-[var(--foreground)] shadow-[0_8px_22px_var(--neutral-18181e55)] backdrop-blur-xl backdrop-saturate-150 transition-[background-color,opacity,scale] duration-200 hover:bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] active:scale-95 motion-reduce:transition-none ${
           shown ? 'pointer-events-auto opacity-100' : 'scale-90 opacity-0'
         }`}
       >
-        <ArrowUp size={22} strokeWidth={2.4} aria-hidden="true" />
+        <ArrowUp size={23} strokeWidth={3.5} aria-hidden="true" />
       </Button>
     </div>
   );
