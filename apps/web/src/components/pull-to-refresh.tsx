@@ -7,6 +7,7 @@ import { useI18n } from '@/providers/i18n-provider';
 
 const REFRESH_THRESHOLD = 64;
 const MAX_PULL_DISTANCE = 88;
+const REFRESH_START_REGION = 0.25;
 type PullState = 'idle' | 'pulling' | 'ready' | 'refreshing' | 'failed';
 
 export function PullToRefresh() {
@@ -71,7 +72,9 @@ export function PullToRefresh() {
             return;
         }
       }
-      startY.current = event.touches[0].clientY;
+      const touchY = event.touches[0].clientY;
+      if (touchY > window.innerHeight * REFRESH_START_REGION) return;
+      startY.current = touchY;
     }
 
     function onTouchMove(event: TouchEvent) {
