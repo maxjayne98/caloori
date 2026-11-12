@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.16.10
+
+- `5240a21` feat: update app version to 0.16.10, adjust changelog, and modify related tests
+
 ## 0.16.9
 
 - `cf7c380` feat: update app version to 0.16.9 and adjust related tests
