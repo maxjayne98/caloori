@@ -7,27 +7,53 @@ import { useI18n } from '@/providers/i18n-provider';
 
 const REFRESH_THRESHOLD = 64;
 const MAX_PULL_DISTANCE = 88;
+type PullState = 'idle' | 'pulling' | 'ready' | 'refreshing' | 'failed';
 
 export function PullToRefresh() {
   const { prepareRefresh } = useNourishData();
   const { t } = useI18n();
-  const [pullDistance, setPullDistance] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [pullState, setPullState] = useState<PullState>('idle');
+  const indicator = useRef<HTMLDivElement>(null);
+  const icon = useRef<SVGSVGElement>(null);
   const startY = useRef<number | null>(null);
   const pullDistanceRef = useRef(0);
-  const refreshingRef = useRef(false);
+  const pullStateRef = useRef<PullState>('idle');
+  const animationFrame = useRef<number | null>(null);
   const failureTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    function updatePullState(next: PullState) {
+      if (pullStateRef.current === next) return;
+      pullStateRef.current = next;
+      setPullState(next);
+    }
+
+    function paintPull(distance: number, immediate = false, hidden = false) {
+      if (animationFrame.current !== null) {
+        cancelAnimationFrame(animationFrame.current);
+        animationFrame.current = null;
+      }
+      const paint = () => {
+        animationFrame.current = null;
+        if (indicator.current)
+          indicator.current.style.transform = `translate(-50%, ${distance || (hidden ? -48 : 0)}px)`;
+        if (icon.current) icon.current.style.transform = `rotate(${distance * 4}deg)`;
+      };
+      if (immediate) paint();
+      else animationFrame.current = requestAnimationFrame(paint);
+    }
+
     function resetPull() {
       startY.current = null;
       pullDistanceRef.current = 0;
-      setPullDistance(0);
+      if (indicator.current) indicator.current.style.transition = '';
+      paintPull(0, true, true);
+      if (pullStateRef.current !== 'refreshing') updatePullState('idle');
     }
 
     function onTouchStart(event: TouchEvent) {
-      if (refreshingRef.current || event.touches.length !== 1 || window.scrollY > 0) return;
+      if (pullStateRef.current === 'refreshing' || event.touches.length !== 1 || window.scrollY > 0)
+        return;
       const target = event.target;
       if (target instanceof Element) {
         if (
@@ -64,32 +90,34 @@ export function PullToRefresh() {
 
       const dampenedDistance = Math.min(MAX_PULL_DISTANCE, distance * 0.75);
       pullDistanceRef.current = dampenedDistance;
-      setPullDistance(dampenedDistance);
+      if (indicator.current) indicator.current.style.transition = 'none';
+      paintPull(dampenedDistance);
+      updatePullState(dampenedDistance >= REFRESH_THRESHOLD ? 'ready' : 'pulling');
     }
 
     function onTouchEnd(event: TouchEvent) {
       if (event.touches.length > 0) return;
       startY.current = null;
-      if (pullDistanceRef.current < REFRESH_THRESHOLD || refreshingRef.current) {
+      if (pullDistanceRef.current < REFRESH_THRESHOLD || pullStateRef.current === 'refreshing') {
         pullDistanceRef.current = 0;
-        setPullDistance(0);
+        if (indicator.current) indicator.current.style.transition = '';
+        paintPull(0, true, true);
+        updatePullState('idle');
         return;
       }
 
-      refreshingRef.current = true;
-      setRefreshing(true);
-      setFailed(false);
-      setPullDistance(REFRESH_THRESHOLD);
+      pullDistanceRef.current = REFRESH_THRESHOLD;
+      if (indicator.current) indicator.current.style.transition = '';
+      paintPull(REFRESH_THRESHOLD, true);
+      updatePullState('refreshing');
       void prepareRefresh()
         .then(() => window.location.reload())
         .catch((error: unknown) => {
           console.error('Could not refresh the app.', error);
-          refreshingRef.current = false;
-          setRefreshing(false);
-          setPullDistance(0);
           pullDistanceRef.current = 0;
-          setFailed(true);
-          failureTimer.current = setTimeout(() => setFailed(false), 4000);
+          paintPull(0, true);
+          updatePullState('failed');
+          failureTimer.current = setTimeout(() => updatePullState('idle'), 4000);
         });
     }
 
@@ -107,37 +135,38 @@ export function PullToRefresh() {
       document.removeEventListener('touchend', onTouchEnd);
       document.removeEventListener('touchcancel', onTouchCancel);
       if (failureTimer.current) clearTimeout(failureTimer.current);
+      if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
     };
   }, [prepareRefresh]);
 
-  const visible = pullDistance > 0 || refreshing || failed;
-  const label = failed
-    ? t('refresh.failed')
-    : refreshing
-      ? t('refresh.loading')
-      : pullDistance >= REFRESH_THRESHOLD
-        ? t('refresh.release')
-        : t('refresh.pull');
+  const visible = pullState !== 'idle';
+  const label =
+    pullState === 'failed'
+      ? t('refresh.failed')
+      : pullState === 'refreshing'
+        ? t('refresh.loading')
+        : pullState === 'ready'
+          ? t('refresh.release')
+          : t('refresh.pull');
 
   return (
     <div
-      className={`fixed left-1/2 z-[100] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--neutral-e9e9ee)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-150 motion-reduce:transition-none ${
+      ref={indicator}
+      className={`fixed left-1/2 z-[100] flex -translate-x-1/2 will-change-transform items-center gap-2 rounded-full border border-[var(--neutral-e9e9ee)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-150 motion-reduce:transition-none ${
         visible ? 'opacity-100' : 'pointer-events-none opacity-0'
       }`}
       style={{
         top: 'calc(env(safe-area-inset-top) + 10px)',
-        transform: `translate(-50%, ${visible ? Math.max(pullDistance, refreshing ? REFRESH_THRESHOLD : 0) : -48}px)`,
+        transform: 'translate(-50%, -48px)',
       }}
       role="status"
       aria-live="polite"
     >
       <RefreshCw
+        ref={icon}
         size={16}
         aria-hidden="true"
-        className={`text-[var(--accent)] ${refreshing ? 'animate-spin motion-reduce:animate-none' : ''}`}
-        style={{
-          transform: `rotate(${pullDistance * 4}deg)`,
-        }}
+        className={`text-[var(--accent)] ${pullState === 'refreshing' ? 'animate-spin motion-reduce:animate-none' : ''}`}
       />
       {label}
     </div>
