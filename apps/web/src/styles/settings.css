@@ -456,36 +456,30 @@
 }
 .avatar-choices {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
   gap: 10px;
   margin: 10px 0 12px;
   min-width: 0;
+  padding: 4px;
+  max-height: 56px;
+  overflow: hidden;
 }
 .avatar-choices.is-expanded {
-  display: flex;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-.avatar-choices.is-expanded::-webkit-scrollbar {
-  display: none;
+  max-height: none;
 }
 .avatar-choices button {
   display: grid;
   place-items: center;
-  aspect-ratio: 1;
+  width: 48px;
+  height: 48px;
   min-width: 0;
+  justify-self: center;
   overflow: hidden;
   border-radius: 50%;
   background: var(--surface);
   color: var(--accent);
   box-shadow: 0 0 0 1px var(--neutral-e9e9ee);
   transition: box-shadow 0.15s ease;
-}
-.avatar-choices.is-expanded button {
-  flex: 0 0 48px;
-  width: 48px;
-  height: 48px;
 }
 .avatar-choices button.selected {
   box-shadow:

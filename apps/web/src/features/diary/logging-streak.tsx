@@ -6,28 +6,82 @@ import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
 import { RollingNumber } from '@/components/rolling-number';
 
+type StreakCelebrationProgress = {
+  accountId: string;
+  streak: number;
+  remaining: number;
+};
+
 export function LoggingStreak({ entries, today }: { entries: Diary; today: string }) {
   const streak = getLoggingStreak(entries, today);
   const { accountId } = useNourishData();
   const { t } = useI18n();
-  const previous = useRef<number | null>(null);
+  const processedOpen = useRef('');
+  const progress = useRef<StreakCelebrationProgress | null>(null);
   const [celebration, setCelebration] = useState(0);
   const [celebrating, setCelebrating] = useState(false);
   useEffect(() => {
+    const open = `${accountId}:${streak}`;
+    if (processedOpen.current === open) return;
+    processedOpen.current = open;
     const key = `nourish:streak-seen:${accountId}`;
-    let seen = previous.current;
+    let saved =
+      progress.current?.accountId === accountId
+        ? { streak: progress.current.streak, remaining: progress.current.remaining }
+        : null;
     try {
-      if (seen === null) {
-        const saved = localStorage.getItem(key);
-        if (saved !== null && Number.isInteger(Number(saved)) && Number(saved) >= 0)
-          seen = Number(saved);
+      if (!saved) {
+        const stored = localStorage.getItem(key);
+        if (stored !== null) {
+          try {
+            const parsed: unknown = JSON.parse(stored);
+            if (typeof parsed === 'number' && Number.isInteger(parsed) && parsed >= 0) {
+              saved = { streak: parsed, remaining: 0 };
+            } else if (
+              typeof parsed === 'object' &&
+              parsed !== null &&
+              'streak' in parsed &&
+              'remaining' in parsed &&
+              typeof parsed.streak === 'number' &&
+              typeof parsed.remaining === 'number' &&
+              Number.isInteger(parsed.streak) &&
+              Number.isInteger(parsed.remaining) &&
+              parsed.streak >= 0 &&
+              parsed.remaining >= 0 &&
+              parsed.remaining <= 4
+            ) {
+              saved = { streak: parsed.streak, remaining: parsed.remaining };
+            }
+          } catch {
+            const legacyStreak = Number(stored);
+            if (Number.isInteger(legacyStreak) && legacyStreak >= 0)
+              saved = { streak: legacyStreak, remaining: 0 };
+          }
+        }
       }
-      localStorage.setItem(key, String(streak));
     } catch {
-      /* Animation still works in this session when storage is unavailable. */
+      // Fall back to in-memory progress when storage is unavailable.
     }
-    previous.current = streak;
-    if (seen !== null && streak > seen && streak > 0) {
+    saved ??= { streak, remaining: 0 };
+
+    let next: StreakCelebrationProgress;
+    let shouldCelebrate = false;
+    if (streak > saved.streak) {
+      next = { accountId, streak, remaining: 4 };
+      shouldCelebrate = true;
+    } else if (streak === saved.streak && streak > 0 && saved.remaining > 0) {
+      next = { accountId, streak, remaining: saved.remaining - 1 };
+      shouldCelebrate = true;
+    } else {
+      next = { accountId, streak, remaining: 0 };
+    }
+    progress.current = next;
+    try {
+      localStorage.setItem(key, JSON.stringify({ streak: next.streak, remaining: next.remaining }));
+    } catch {
+      // The celebration still works for the current app session.
+    }
+    if (shouldCelebrate) {
       setCelebration((value) => value + 1);
       setCelebrating(true);
     }

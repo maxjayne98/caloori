@@ -30,6 +30,8 @@ export function ModalSheet({
     startY: number;
     lastY: number;
     lastTime: number;
+    distance: number;
+    frame: number | null;
   } | null>(null);
 
   function startDrag(event: PointerEvent<HTMLDivElement>) {
@@ -44,8 +46,19 @@ export function ModalSheet({
       startY: event.clientY,
       lastY: event.clientY,
       lastTime: event.timeStamp,
+      distance: 0,
+      frame: null,
     };
+    if (sheet.current) sheet.current.style.willChange = 'transform';
     event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function applyDragPosition() {
+    const activeDrag = drag.current;
+    if (!activeDrag || !sheet.current) return;
+    activeDrag.frame = null;
+    sheet.current.style.transition = 'none';
+    sheet.current.style.transform = `translate3d(0, ${activeDrag.distance}px, 0)`;
   }
 
   function moveDrag(event: PointerEvent<HTMLDivElement>) {
@@ -54,38 +67,55 @@ export function ModalSheet({
     const distance = Math.max(0, event.clientY - activeDrag.startY);
     activeDrag.lastY = event.clientY;
     activeDrag.lastTime = event.timeStamp;
-    if (distance > 0) {
-      sheet.current.style.transition = 'none';
-      sheet.current.style.transform = `translate3d(0, ${distance}px, 0)`;
+    activeDrag.distance = distance;
+    if (activeDrag.frame === null) {
+      activeDrag.frame = requestAnimationFrame(applyDragPosition);
     }
+  }
+
+  function restorePosition() {
+    if (!sheet.current) return;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 280;
+    if (duration === 0) {
+      sheet.current.style.transition = '';
+      sheet.current.style.transform = '';
+      sheet.current.style.willChange = '';
+      return;
+    }
+    sheet.current.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+    sheet.current.style.transform = 'translate3d(0, 0, 0)';
   }
 
   function finishDrag(event: PointerEvent<HTMLDivElement>) {
     const activeDrag = drag.current;
     if (!activeDrag || activeDrag.pointerId !== event.pointerId || !sheet.current) return;
     drag.current = null;
+    if (activeDrag.frame !== null) cancelAnimationFrame(activeDrag.frame);
     const distance = Math.max(0, event.clientY - activeDrag.startY);
     const elapsed = Math.max(1, event.timeStamp - activeDrag.lastTime);
     const velocity = Math.max(0, (event.clientY - activeDrag.lastY) / elapsed);
+    sheet.current.style.transition = 'none';
+    sheet.current.style.transform = `translate3d(0, ${distance}px, 0)`;
     if (distance >= DISMISS_DISTANCE || (distance >= 32 && velocity >= DISMISS_VELOCITY)) {
       onClose();
       return;
     }
-    sheet.current.style.transition = 'transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1)';
-    sheet.current.style.transform = 'translate3d(0, 0, 0)';
+    void sheet.current.offsetHeight;
+    restorePosition();
   }
 
   function cancelDrag() {
+    if (drag.current?.frame !== null && drag.current?.frame !== undefined)
+      cancelAnimationFrame(drag.current.frame);
     drag.current = null;
-    if (!sheet.current) return;
-    sheet.current.style.transition = 'transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1)';
-    sheet.current.style.transform = 'translate3d(0, 0, 0)';
+    restorePosition();
   }
 
   function clearDragStyles(event: TransitionEvent<HTMLElement>) {
     if (event.target !== sheet.current || event.propertyName !== 'transform') return;
     sheet.current.style.transition = '';
     sheet.current.style.transform = '';
+    sheet.current.style.willChange = '';
   }
 
   return (

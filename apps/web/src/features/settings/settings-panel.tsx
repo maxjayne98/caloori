@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@nourish/ui';
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { APP_VERSION, SUPPORTED_LOCALES, LOCALE_METADATA } from '@nourish/core';
 import { Check, ChevronDown, Monitor, Moon, Sun } from 'lucide-react';
 import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-provider';
@@ -24,10 +24,8 @@ export function SettingsPanel({
   const { profile, setProfile, accountId } = useNourishData();
   const { locale, setLocale, t } = useI18n();
   const picker = useRef<HTMLInputElement>(null);
-  const avatarChoicesRef = useRef<HTMLDivElement>(null);
   const [photoError, setPhotoError] = useState('');
   const [showAll, setShowAll] = useState(false);
-  const [choicesPerRow, setChoicesPerRow] = useState(7);
   const [showChangelog, setShowChangelog] = useState(showChangelogInitially);
   const current = avatarChoice(profile);
   function setAvatar(avatar: string) {
@@ -57,26 +55,7 @@ export function SettingsPanel({
     ...Array.from({ length: PATTERN_COUNT }, (_, i) => `pattern:${i}`),
   ];
   if (profile.photo) choices.splice(1, 0, 'photo');
-  useEffect(() => {
-    const container = avatarChoicesRef.current;
-    if (!container) return;
-    const updateChoicesPerRow = () => {
-      const gap = Number.parseFloat(getComputedStyle(container).columnGap) || 10;
-      const availableWidth = container.getBoundingClientRect().width;
-      const count = Math.max(1, Math.floor((availableWidth + gap) / (48 + gap)));
-      setChoicesPerRow(Math.min(count, choices.length));
-    };
-    const observer = new ResizeObserver(updateChoicesPerRow);
-    observer.observe(container);
-    updateChoicesPerRow();
-    return () => observer.disconnect();
-  }, [choices.length]);
-  // Keep the selected avatar visible in the single-row collapsed picker.
-  const visible = showAll
-    ? choices
-    : choices.slice(0, choicesPerRow).includes(current)
-      ? choices.slice(0, choicesPerRow)
-      : [...choices.slice(0, choicesPerRow - 1), current];
+  const visible = showAll ? choices : [current, ...choices.filter((choice) => choice !== current)];
   const currentVersion = String(APP_VERSION);
   return (
     <div className="settings-panel">
@@ -102,11 +81,7 @@ export function SettingsPanel({
         </div>
       </div>
       <div
-        ref={avatarChoicesRef}
         className={`avatar-choices${showAll ? ' is-expanded' : ''}`}
-        style={
-          showAll ? undefined : { gridTemplateColumns: `repeat(${visible.length}, minmax(0, 1fr))` }
-        }
         role="radiogroup"
         aria-label={t('settings.avatar')}
       >
