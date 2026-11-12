@@ -1,8 +1,8 @@
 'use client';
 import { Button } from '@nourish/ui';
-import { useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { APP_VERSION, SUPPORTED_LOCALES, LOCALE_METADATA } from '@nourish/core';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, Monitor, Moon, Sun } from 'lucide-react';
 import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-provider';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
@@ -24,8 +24,10 @@ export function SettingsPanel({
   const { profile, setProfile, accountId } = useNourishData();
   const { locale, setLocale, t } = useI18n();
   const picker = useRef<HTMLInputElement>(null);
+  const avatarChoicesRef = useRef<HTMLDivElement>(null);
   const [photoError, setPhotoError] = useState('');
   const [showAll, setShowAll] = useState(false);
+  const [choicesPerRow, setChoicesPerRow] = useState(7);
   const [showChangelog, setShowChangelog] = useState(showChangelogInitially);
   const current = avatarChoice(profile);
   function setAvatar(avatar: string) {
@@ -55,13 +57,26 @@ export function SettingsPanel({
     ...Array.from({ length: PATTERN_COUNT }, (_, i) => `pattern:${i}`),
   ];
   if (profile.photo) choices.splice(1, 0, 'photo');
-  // Collapsed: one row, always including the current choice so the selection stays visible.
-  const COLLAPSED = 7;
+  useEffect(() => {
+    const container = avatarChoicesRef.current;
+    if (!container) return;
+    const updateChoicesPerRow = () => {
+      const gap = Number.parseFloat(getComputedStyle(container).columnGap) || 10;
+      const availableWidth = container.getBoundingClientRect().width;
+      const count = Math.max(1, Math.floor((availableWidth + gap) / (48 + gap)));
+      setChoicesPerRow(Math.min(count, choices.length));
+    };
+    const observer = new ResizeObserver(updateChoicesPerRow);
+    observer.observe(container);
+    updateChoicesPerRow();
+    return () => observer.disconnect();
+  }, [choices.length]);
+  // Keep the selected avatar visible in the single-row collapsed picker.
   const visible = showAll
     ? choices
-    : choices.slice(0, COLLAPSED).includes(current)
-      ? choices.slice(0, COLLAPSED)
-      : [...choices.slice(0, COLLAPSED - 1), current];
+    : choices.slice(0, choicesPerRow).includes(current)
+      ? choices.slice(0, choicesPerRow)
+      : [...choices.slice(0, choicesPerRow - 1), current];
   const currentVersion = String(APP_VERSION);
   return (
     <div className="settings-panel">
@@ -86,7 +101,15 @@ export function SettingsPanel({
           </Button>
         </div>
       </div>
-      <div className="avatar-choices" role="radiogroup" aria-label={t('settings.avatar')}>
+      <div
+        ref={avatarChoicesRef}
+        className={`avatar-choices${showAll ? ' is-expanded' : ''}`}
+        style={
+          showAll ? undefined : { gridTemplateColumns: `repeat(${visible.length}, minmax(0, 1fr))` }
+        }
+        role="radiogroup"
+        aria-label={t('settings.avatar')}
+      >
         {visible.map((choice) => (
           <Button
             key={choice}
@@ -110,60 +133,73 @@ export function SettingsPanel({
         ))}
       </div>
       {photoError && <p role="alert">{photoError}</p>}
-      <div className="settings-heading">
-        <h3>{t('settings.appearance')}</h3>
-        <p>{t('settings.appearanceDesc')}</p>
-      </div>
-      <label>{t('settings.theme')}</label>
-      <div className="settings-segments">
-        {(['light', 'dark', 'system'] as const).map((value) => (
-          <Button
-            key={value}
-            variant="unstyled"
-            aria-pressed={theme === value}
-            className={theme === value ? 'selected' : ''}
-            onClick={() => setTheme(value)}
-          >
-            {value === 'light'
-              ? t('settings.themeLight')
-              : value === 'dark'
-                ? t('settings.themeDark')
-                : t('settings.themeSystem')}
-          </Button>
-        ))}
-      </div>
-      <label>{t('settings.accentColor')}</label>
-      <div className="accent-swatches">
-        {Object.entries(ACCENTS).map(([name, color]) => (
-          <Button
-            variant="unstyled"
-            key={name}
-            aria-label={`${name} accent`}
-            aria-pressed={accent === name}
-            onClick={() => setAccent(name as Accent)}
-            style={{ background: color }}
-            className={accent === name ? 'selected' : ''}
-          >
-            {accent === name ? '✓' : ''}
-          </Button>
-        ))}
-      </div>
-      <label>{t('settings.language')}</label>
-      <div className="settings-segments">
-        {SUPPORTED_LOCALES.map((code) => (
-          <Button
-            key={code}
-            variant="unstyled"
-            aria-pressed={locale === code}
-            className={locale === code ? 'selected' : ''}
-            onClick={() => setLocale(code)}
-          >
-            {LOCALE_METADATA[code].label}
-          </Button>
-        ))}
-      </div>
-      <div className="settings-heading">
-        <h3>{t('reminders.section')}</h3>
+      <div className="settings-appearance">
+        <div className="settings-heading settings-appearance-heading">
+          <h3>{t('settings.appearance')}</h3>
+          <p>{t('settings.appearanceDesc')}</p>
+        </div>
+        <div className="settings-appearance-options">
+          <div className="settings-appearance-top-row">
+            <div className="settings-appearance-control">
+              <label>{t('settings.theme')}</label>
+              <div className="settings-segments">
+                {(['light', 'dark', 'system'] as const).map((value) => {
+                  const ThemeIcon = value === 'light' ? Sun : value === 'dark' ? Moon : Monitor;
+                  return (
+                    <Button
+                      key={value}
+                      variant="unstyled"
+                      aria-pressed={theme === value}
+                      className={theme === value ? 'selected' : ''}
+                      onClick={() => setTheme(value)}
+                    >
+                      <ThemeIcon size={13} strokeWidth={2} aria-hidden="true" />
+                      {value === 'light'
+                        ? t('settings.themeLight')
+                        : value === 'dark'
+                          ? t('settings.themeDark')
+                          : t('settings.themeSystem')}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="settings-appearance-control">
+              <label>{t('settings.language')}</label>
+              <div className="settings-segments">
+                {SUPPORTED_LOCALES.map((code) => (
+                  <Button
+                    key={code}
+                    variant="unstyled"
+                    aria-pressed={locale === code}
+                    className={locale === code ? 'selected' : ''}
+                    onClick={() => setLocale(code)}
+                  >
+                    {LOCALE_METADATA[code].label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="settings-appearance-row">
+            <label>{t('settings.accentColor')}</label>
+            <div className="accent-swatches">
+              {Object.entries(ACCENTS).map(([name, color]) => (
+                <Button
+                  variant="unstyled"
+                  key={name}
+                  aria-label={`${name} accent`}
+                  aria-pressed={accent === name}
+                  onClick={() => setAccent(name as Accent)}
+                  style={{ background: color }}
+                  className={accent === name ? 'selected' : ''}
+                >
+                  {accent === name && <Check size={14} strokeWidth={3} aria-hidden="true" />}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
       <ReminderSettings />
       <div className="settings-heading settings-about">

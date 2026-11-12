@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Button } from '@nourish/ui';
-import { Bell } from 'lucide-react';
+import { Bell, Info } from 'lucide-react';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
 
@@ -120,19 +120,26 @@ export function ReminderSettings() {
 
   const on = deviceOn && !!reminders.enabled;
   return (
-    <div className="grid gap-3">
-      <div className="flex items-center gap-3">
+    <div className="grid gap-2">
+      <div className="settings-reminder-row flex items-center gap-2">
         <Bell size={18} aria-hidden="true" className="shrink-0 text-[var(--accent-text)]" />
-        <span className="grid min-w-0 flex-1 gap-0.5">
-          <b className="text-sm font-semibold">{t('reminders.title')}</b>
-          <small className="text-xs text-[var(--neutral-85858b)]">{t('reminders.hint')}</small>
-        </span>
+        <b className="min-w-0 flex-1 text-sm font-semibold">{t('reminders.shortTitle')}</b>
+        {block && (
+          <span
+            className="shrink-0 text-[var(--neutral-85858b)]"
+            title={t(`reminders.block.${block}`)}
+            aria-label={t(`reminders.block.${block}`)}
+            role="img"
+          >
+            <Info size={15} aria-hidden="true" />
+          </span>
+        )}
         <Button
           type="button"
           variant="unstyled"
           role="switch"
           aria-checked={on}
-          aria-label={t('reminders.title')}
+          aria-label={t('reminders.shortTitle')}
           disabled={busy || !!block}
           onClick={on ? turnOff : turnOn}
           className="relative h-7 w-12 shrink-0 rounded-full transition-colors motion-reduce:transition-none disabled:opacity-50"
@@ -144,9 +151,6 @@ export function ReminderSettings() {
           />
         </Button>
       </div>
-      {block && (
-        <p className="m-0 text-xs text-[var(--neutral-85858b)]">{t(`reminders.block.${block}`)}</p>
-      )}
       {error && (
         <p className="m-0 text-xs text-[var(--accent-text)]" role="alert">
           {error}

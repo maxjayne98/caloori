@@ -45,6 +45,73 @@
 .settings-about {
   margin-top: 18px;
 }
+.settings-appearance {
+  margin: 8px 0 16px;
+}
+.settings-appearance-heading {
+  margin: 0 0 7px;
+}
+.settings-panel .settings-appearance-heading h3 {
+  font-size: 16px;
+  letter-spacing: -0.3px;
+}
+.settings-panel .settings-appearance-heading p {
+  font-size: 11px;
+}
+.settings-appearance-options {
+  display: grid;
+  gap: 7px;
+}
+.settings-appearance-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.8fr);
+  gap: 8px;
+}
+.settings-appearance-control {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.settings-appearance-row {
+  display: grid;
+  grid-template-columns: minmax(78px, 0.7fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.settings-appearance-row > label {
+  min-width: 0;
+  color: var(--neutral-85858b);
+  font-size: 11px;
+}
+.settings-appearance .settings-segments {
+  min-width: 0;
+  padding: 3px;
+  border-radius: 10px;
+}
+.settings-appearance .settings-segments button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 2px;
+  font-size: 10px;
+}
+.settings-appearance .accent-swatches {
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px 2px;
+}
+.settings-appearance .accent-swatches button {
+  width: 28px;
+  height: 28px;
+  flex: 0 1 28px;
+  padding: 0;
+  line-height: 0;
+}
+.settings-reminder-row {
+  min-height: 36px;
+}
 .settings-version {
   display: flex;
   align-items: center;
@@ -389,20 +456,36 @@
 }
 .avatar-choices {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   margin: 10px 0 12px;
+  min-width: 0;
+}
+.avatar-choices.is-expanded {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.avatar-choices.is-expanded::-webkit-scrollbar {
+  display: none;
 }
 .avatar-choices button {
   display: grid;
   place-items: center;
   aspect-ratio: 1;
+  min-width: 0;
   overflow: hidden;
   border-radius: 50%;
   background: var(--surface);
   color: var(--accent);
   box-shadow: 0 0 0 1px var(--neutral-e9e9ee);
   transition: box-shadow 0.15s ease;
+}
+.avatar-choices.is-expanded button {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
 }
 .avatar-choices button.selected {
   box-shadow:
