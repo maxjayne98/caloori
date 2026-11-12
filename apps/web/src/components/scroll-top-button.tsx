@@ -42,7 +42,12 @@ export function ScrollTopButton({ offset = 'bottom-4' }: { offset?: string }) {
         tabIndex={shown ? 0 : -1}
         aria-hidden={!shown}
         onClick={toTop}
-        className={`grid h-12 w-40 -translate-y-full place-items-center rounded-lg border border-[color-mix(in_srgb,var(--foreground)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)] text-[var(--foreground)] shadow-[0_8px_22px_var(--neutral-18181e55)] backdrop-blur-xl backdrop-saturate-150 transition-[background-color,opacity,scale] duration-200 hover:bg-[color-mix(in_srgb,var(--surface)_84%,transparent)] active:scale-95 motion-reduce:transition-none ${
+        // Inline: the global button reset (unlayered) would otherwise clear these colors.
+        style={{
+          color: 'var(--accent-text)',
+          background: 'color-mix(in srgb, var(--accent-soft) 80%, transparent)',
+        }}
+        className={`grid h-12 w-40 -translate-y-full place-items-center rounded-lg border border-[color-mix(in_srgb,var(--accent)_28%,transparent)] shadow-[0_8px_22px_color-mix(in_srgb,var(--accent)_22%,transparent)] backdrop-blur-xl backdrop-saturate-150 transition-[background-color,opacity,scale] duration-200 active:scale-95 motion-reduce:transition-none ${
           shown ? 'pointer-events-auto opacity-100' : 'scale-90 opacity-0'
         }`}
       >

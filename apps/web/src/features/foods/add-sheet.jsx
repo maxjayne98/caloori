@@ -1,19 +1,14 @@
 'use client';
 
-import { ClearTextButton } from '@/components/text-actions';
-import { Button, Input } from '@nourish/ui';
+import { Button } from '@nourish/ui';
 import { Bookmark, Plus } from 'lucide-react';
 import { Icon } from '@/components/icon';
 import { MealPicker } from '@/components/meal-picker';
 import { foods, appendDiaryEntries, foodLibrary } from '@nourish/core';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
 import { FoodRows } from '@/features/foods/food-rows';
+import { FoodSearchBar } from '@/features/foods/food-search-bar';
 import { useI18n } from '@/providers/i18n-provider';
-const chip = 'inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-medium';
-// Inline so the global button reset cannot override size and colors.
-const chipSize = { height: 30, padding: '0 9px', fontSize: 12 };
-const accentChip = { background: 'var(--accent-soft)', color: 'var(--accent-text)' };
-
 export function AddFoodSheet({
   chosen,
   meal,
@@ -63,60 +58,33 @@ export function AddFoodSheet({
     />
   ) : (
     <>
-      <div className="relative mb-[15px]">
-        <Input
-          className="search"
-          style={{ marginBottom: 0, paddingInlineEnd: 44 }}
-          placeholder={t('food.searchPlaceholder')}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-label={t('food.searchAria')}
-          unstyled
-        />
-        <ClearTextButton value={query} onChange={setQuery} />
-      </div>
-      {/* One compact row: meal on the start side, actions on the end. The two ways to bring
-          in a new food stand out in the accent color. */}
-      <div className="@container mb-[18px] flex flex-nowrap items-center gap-1.5">
-        <MealPicker value={meal} onChange={setMeal} divider={false} />
-        <span className="flex-1" />
-        <Button
-          onClick={() => setSheet('meals')}
-          variant="unstyled"
-          aria-label={t('food.mealsShort')}
-          title={t('food.mealsShort')}
-          className={chip}
-          style={{ ...chipSize, background: 'var(--neutral-eaeaf0)', color: 'var(--foreground)' }}
-        >
-          <Bookmark size={13} aria-hidden="true" />
-          {/* Labels only when the row has room; narrow phones get icon chips. */}
-          <span className="hidden @min-[430px]:inline">{t('food.mealsShort')}</span>
-        </Button>
-        <Button
-          onClick={() => setSheet('barcode')}
-          variant="unstyled"
-          aria-label={t('food.barcode')}
-          title={t('food.barcode')}
-          className={chip}
-          style={{ ...chipSize, ...accentChip }}
-        >
-          <span className="grid size-[13px] [&_svg]:size-[13px]">
-            <Icon type="Barcode" />
-          </span>
-          <span className="hidden @min-[430px]:inline">{t('food.barcode')}</span>
-        </Button>
-        <Button
-          onClick={() => setSheet('custom')}
-          variant="unstyled"
-          aria-label={t('sheet.custom')}
-          title={t('sheet.custom')}
-          className={chip}
-          style={{ ...chipSize, ...accentChip }}
-        >
-          <Plus size={13} aria-hidden="true" />
-          <span className="hidden @min-[430px]:inline">{t('sheet.custom')}</span>
-        </Button>
-      </div>
+      <FoodSearchBar
+        query={query}
+        setQuery={setQuery}
+        start={<MealPicker value={meal} onChange={setMeal} divider={false} />}
+        actions={[
+          {
+            key: 'meals',
+            label: t('food.mealsShort'),
+            icon: <Bookmark aria-hidden="true" />,
+            onClick: () => setSheet('meals'),
+          },
+          {
+            key: 'barcode',
+            label: t('food.barcode'),
+            icon: <Icon type="Barcode" />,
+            onClick: () => setSheet('barcode'),
+            accent: true,
+          },
+          {
+            key: 'custom',
+            label: t('sheet.custom'),
+            icon: <Plus aria-hidden="true" />,
+            onClick: () => setSheet('custom'),
+            accent: true,
+          },
+        ]}
+      />
       <div className="eyebrow">{query ? t('food.searchResults') : t('food.everydayFavorites')}</div>
       {
         <FoodRows

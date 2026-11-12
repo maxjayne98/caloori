@@ -337,7 +337,10 @@ p {
   border-radius: 50%;
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 23px;
+  /* An icon, centered on both axes (a "+" glyph sat off-center on its baseline). */
+  display: grid;
+  place-items: center;
+  padding: 0;
   line-height: 1;
 }
 .note {
@@ -406,6 +409,9 @@ p {
   overflow: auto;
   border-radius: 29px 29px 0 0;
   padding: 10px 22px 32px;
+  /* Reserve the scrollbar's width on both sides so content stays centered (it only took the
+     right side before). Overlay scrollbars, as on iPhone, reserve nothing. */
+  scrollbar-gutter: stable both-edges;
   animation: up 0.2s ease-out;
 }
 .handle {
@@ -447,6 +453,50 @@ select {
 }
 .search {
   margin-bottom: 15px;
+}
+.food-search-sticky {
+  --sticky-backdrop: var(--canvas);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: transparent;
+  /* A little air above the search box once stuck; the negative margin keeps the layout unchanged. */
+  padding-top: 10px;
+  margin-top: -10px;
+}
+.sheet .food-search-sticky {
+  --sticky-backdrop: var(--sheet-background);
+}
+.food-search-sticky .search {
+  box-shadow: none;
+}
+/* Once stuck, a backdrop in the page color hides the list scrolling underneath, fading out at
+   the bottom so the edge stays soft. */
+.food-search-sticky.is-stuck {
+  background: linear-gradient(var(--sticky-backdrop) 82%, transparent);
+}
+.food-search-sticky.is-stuck .search {
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+/* Each group of round buttons sits in its own pill once stuck. The padding is always there
+   (offset by the margin) and the outline is an inset shadow, so nothing moves. */
+.food-search-group {
+  padding: 4px;
+  margin: -4px;
+  border-radius: 999px;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
+}
+.food-search-sticky.is-stuck .food-search-group {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+  filter: drop-shadow(0 3px 8px color-mix(in srgb, var(--accent) 14%, transparent));
+}
+@media (prefers-reduced-motion: reduce) {
+  .food-search-group {
+    transition: none;
+  }
 }
 .pills {
   display: flex;
@@ -1511,20 +1561,6 @@ label {
   color: var(--neutral-a2a2aa);
 }
 .save-meal-action svg {
-  width: 18px;
-  height: 18px;
-}
-.food-library-actions {
-  display: flex;
-  justify-content: space-between;
-  margin: 3px 0 17px;
-}
-.food-library-actions button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.food-library-actions svg {
   width: 18px;
   height: 18px;
 }

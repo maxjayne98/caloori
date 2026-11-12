@@ -3,6 +3,7 @@ import { GradeDot, GradeMark } from '@/components/score-badge';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@nourish/ui';
+import { Plus } from 'lucide-react';
 import {
   meals,
   portionNumber,
@@ -203,7 +204,7 @@ export function MealList({
                     onClick={() => onAdd(m)}
                     variant="unstyled"
                   >
-                    +
+                    <Plus size={20} aria-hidden="true" />
                   </Button>
                 </div>
               </div>

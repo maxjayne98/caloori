@@ -2,7 +2,7 @@
 
 import { Button } from '@nourish/ui';
 import { portionNumber } from '@nourish/core';
-import { Pencil } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import { useI18n } from '@/providers/i18n-provider';
 export function FoodRows({ items, setChosen, setQty, setSheet, onEdit }) {
   const { t } = useI18n();
@@ -50,7 +50,7 @@ export function FoodRows({ items, setChosen, setQty, setSheet, onEdit }) {
         }}
         variant="unstyled"
       >
-        +
+        <Plus size={18} aria-hidden="true" />
       </Button>
     </div>
   ));
