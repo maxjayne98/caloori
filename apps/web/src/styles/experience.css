@@ -919,6 +919,9 @@ button.brand {
   position: relative;
   isolation: isolate;
 }
+.logging-streak.is-celebrating {
+  z-index: 10;
+}
 .logging-streak.is-celebrating > svg {
   animation: streak-icon-return 3.67s linear both;
 }
