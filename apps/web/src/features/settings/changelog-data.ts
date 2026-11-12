@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    "version": "0.15.2",
+    "entries": [
+      {
+        "hash": "aa73155",
+        "subject": "feat(reminders): implement meal reminders with web push notifications",
+        "body": "- Added ReminderSettings component to settings panel for managing meal reminders.\n- Updated data provider to include methods for saving and removing push device subscriptions.\n- Enhanced i18n translations for reminders section in both English and Persian.\n- Introduced new ProfileSchema to handle reminder times for meals.\n- Implemented logic for calculating due reminders based on user settings and logged meals.\n- Created push notification handler to send reminders based on user preferences.\n- Added database migrations for push reminder subscriptions and cron job setup.\n- Developed tests for reminder functionality and push notifications.\n- Updated application version to 0.15.2."
+      }
+    ]
+  },
+  {
     "version": "0.10.0",
     "entries": [
       {

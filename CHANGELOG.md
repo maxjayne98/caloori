@@ -2,6 +2,19 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.15.2
+
+- `aa73155` feat(reminders): implement meal reminders with web push notifications
+  - Added ReminderSettings component to settings panel for managing meal reminders.
+  - Updated data provider to include methods for saving and removing push device subscriptions.
+  - Enhanced i18n translations for reminders section in both English and Persian.
+  - Introduced new ProfileSchema to handle reminder times for meals.
+  - Implemented logic for calculating due reminders based on user settings and logged meals.
+  - Created push notification handler to send reminders based on user preferences.
+  - Added database migrations for push reminder subscriptions and cron job setup.
+  - Developed tests for reminder functionality and push notifications.
+  - Updated application version to 0.15.2.
+
 ## 0.10.0
 
 - `aab24ce` feat(progress): update changelog and improve weight change translations

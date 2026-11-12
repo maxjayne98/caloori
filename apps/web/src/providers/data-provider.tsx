@@ -33,6 +33,7 @@ type DataContext = AppState & {
   error: string;
   importBackup: (state: AppState) => void;
   retry: () => void;
+  prepareRefresh: () => Promise<void>;
   signOut?: () => Promise<void>;
   refreshFoods?: () => Promise<void>;
   savePushDevice?: NourishRepository['savePushDevice'];
@@ -111,6 +112,14 @@ export function DataProvider({
         }
       });
   }, [repository]);
+  const prepareRefresh = useCallback(async () => {
+    if (assistantSaving.current)
+      throw new Error('Please wait for your assistant changes to finish saving.');
+    await persist();
+    await queue.current;
+    if (JSON.stringify(current.current) !== lastSaved.current)
+      throw new Error('Your changes could not be saved. Please try refreshing again.');
+  }, [persist]);
   useEffect(() => {
     if (ready) persist();
   }, [state, ready, persist]);
@@ -203,6 +212,7 @@ export function DataProvider({
     repositoryKind: repository.kind,
     status,
     error,
+    prepareRefresh,
     retry: persist,
     importBackup: (next: AppState) => {
       if (assistantSaving.current) return;

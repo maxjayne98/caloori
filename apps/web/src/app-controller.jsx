@@ -55,6 +55,7 @@ import { ProgressPage } from '@/features/progress/progress-page';
 import { field, formData } from '@/components/form-fields';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
+import { PullToRefresh } from '@/components/pull-to-refresh';
 
 const VERSION_CONFETTI_COLORS = [
   '--accent',
@@ -734,6 +735,7 @@ export function App() {
   };
   return (
     <main className="app">
+      <PullToRefresh />
       <header className="top">
         <Button
           variant="unstyled"
@@ -840,9 +842,8 @@ export function App() {
           >
             <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-xs font-semibold">{t('settings.updateAvailable')}</p>
-              <p className="m-0 text-[10px] text-[var(--neutral-85858b)]">
-                {t('settings.updateVersion', { version: APP_VERSION })}
+              <p className="m-0 truncate whitespace-nowrap text-xs font-semibold">
+                {t('settings.updateAvailable')}
               </p>
             </div>
             <Button
