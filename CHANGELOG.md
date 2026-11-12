@@ -2,6 +2,14 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.16.9
+
+- `cf7c380` feat: update app version to 0.16.9 and adjust related tests
+
+## 0.16.8
+
+- `04c381f` feat: update changelog for version 0.16.1 and modify app version to 0.16.8
+
 ## 0.16.1
 
 - `9e22fe1` feat: implement meal reminders with web push notifications and add pull-to-refresh functionality

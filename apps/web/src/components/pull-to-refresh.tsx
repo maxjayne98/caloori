@@ -152,7 +152,7 @@ export function PullToRefresh() {
   return (
     <div
       ref={indicator}
-      className={`fixed left-1/2 z-[100] flex -translate-x-1/2 will-change-transform items-center gap-2 rounded-full border border-[var(--neutral-e9e9ee)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-150 motion-reduce:transition-none ${
+      className={`fixed left-1/2 z-[100] flex will-change-transform items-center gap-2 rounded-full border border-[var(--neutral-e9e9ee)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-150 motion-reduce:transition-none ${
         visible ? 'opacity-100' : 'pointer-events-none opacity-0'
       }`}
       style={{
