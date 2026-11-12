@@ -254,8 +254,8 @@ export const translations = {
     'settings.avatarPattern': 'Pattern {n}',
     'refresh.pull': 'Pull down to refresh',
     'refresh.release': 'Release to refresh',
-    'refresh.loading': 'Refreshing…',
-    'refresh.failed': 'Couldn’t refresh. Please try again.',
+    'refresh.loading': 'Refreshing',
+    'refresh.failed': 'Refresh failed',
 
     // Sheet titles
     'sheet.settings': 'Settings',
@@ -696,8 +696,8 @@ export const translations = {
     'settings.avatarPattern': 'طرح {n}',
     'refresh.pull': 'برای تازه‌سازی به پایین بکشید',
     'refresh.release': 'برای تازه‌سازی رها کنید',
-    'refresh.loading': 'در حال تازه‌سازی…',
-    'refresh.failed': 'تازه‌سازی انجام نشد. دوباره تلاش کنید.',
+    'refresh.loading': 'در حال تازه‌سازی',
+    'refresh.failed': 'تازه‌سازی انجام نشد',
 
     // Sheet titles
     'sheet.settings': 'تنظیمات',

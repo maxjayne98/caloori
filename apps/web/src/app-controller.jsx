@@ -735,7 +735,7 @@ export function App() {
   };
   return (
     <main className="app">
-      <PullToRefresh />
+      {tab === 'Today' && <PullToRefresh />}
       <header className="top">
         <Button
           variant="unstyled"

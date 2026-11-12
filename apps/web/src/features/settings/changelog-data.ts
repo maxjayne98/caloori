@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    "version": "0.16.11",
+    "entries": [
+      {
+        "hash": "a477bb7",
+        "subject": "feat: update app version to 0.16.11, adjust changelog, and modify related tests",
+        "body": ""
+      }
+    ]
+  },
+  {
     "version": "0.16.10",
     "entries": [
       {
