@@ -1,5 +1,7 @@
 'use client';
 
+import { ClearTextButton } from '@/components/text-actions';
+import { ScrollTopButton } from '@/components/scroll-top-button';
 import { Button, Input } from '@nourish/ui';
 import { useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
@@ -100,14 +102,18 @@ export function FoodPage({
         <MealLibrary {...libraryProps} />
       ) : (
         <>
-          <Input
-            className="search"
-            placeholder={t('food.searchPlaceholder')}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label={t('food.searchAria')}
-            unstyled
-          />
+          <div className="relative mb-[15px]">
+            <Input
+              className="search"
+              style={{ marginBottom: 0, paddingInlineEnd: 44 }}
+              placeholder={t('food.searchPlaceholder')}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label={t('food.searchAria')}
+              unstyled
+            />
+            <ClearTextButton value={query} onChange={setQuery} />
+          </div>
           <div className="food-library-actions">
             <Button
               className="link"
@@ -146,6 +152,7 @@ export function FoodPage({
           }
         </>
       )}
+      <ScrollTopButton offset="bottom-28" />
     </>
   );
 }

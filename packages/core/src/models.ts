@@ -52,6 +52,17 @@ export const ProfileSchema = z
       .regex(/^(initial|photo|(pattern|pixel):\d{1,2})$/)
       .optional(),
     // Order and visibility of Today sections (see today-layout.ts); missing means default.
+    // Meal reminder times ("HH:MM" or null = off); delivered by the nourish-push function.
+    reminders: z
+      .object({
+        enabled: z.boolean().optional(),
+        Breakfast: z.string().max(5).nullable().optional(),
+        Lunch: z.string().max(5).nullable().optional(),
+        Dinner: z.string().max(5).nullable().optional(),
+        Snacks: z.string().max(5).nullable().optional(),
+        day: z.string().max(5).nullable().optional(),
+      })
+      .optional(),
     todayLayout: z
       .array(z.object({ id: z.string().max(40), hidden: z.boolean().optional() }))
       .max(20)
@@ -71,6 +82,11 @@ export const FoodSchema = NutrientsSchema.merge(ExtraNutrientsSchema)
     name: z.string().min(1).max(500),
     serving: z.string().min(1).max(200),
     gramsPerServing: positive.nullable().optional(),
+    // Personal units ("block = 6 g", "can = 330 ml"), in the food's own measure.
+    units: z
+      .array(z.object({ name: z.string().min(1).max(40), grams: positive.max(100000) }))
+      .max(20)
+      .optional(),
     qty: nonnegative.max(1000000).optional(),
     meal: MealNameSchema.optional(),
     key: z.union([z.string().max(200), z.number().finite()]).optional(),

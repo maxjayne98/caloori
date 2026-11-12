@@ -109,40 +109,73 @@ export function portionNumber(n) {
     maximumFractionDigits: 2,
   });
 }
+/** Rounds a converted amount so the editor shows 33.33 instead of 33.333333333333336. */
+export function roundAmount(n) {
+  return Math.round(Number(n) * 1000) / 1000;
+}
+/**
+ * Reads what a food's nutrition values are measured per. "100 g" / "250 ml" are measures;
+ * anything else is a named serving ("1 tbsp (20 g)" → "tbsp", 20 g), with an optional weight.
+ */
+export function parseServing(serving, gramsPerServing) {
+  const text = String(serving ?? '').trim();
+  const measure = text.match(/^([\d.]+)\s*(g|ml)$/i);
+  if (measure && +measure[1] > 0)
+    return { kind: measure[2].toLowerCase(), amount: +measure[1], label: '', grams: +measure[1] };
+  const inner = text.match(/\(\s*([\d.]+)\s*(g|ml)\s*\)/i);
+  const label =
+    text
+      .replace(/\([^)]*\)/g, '')
+      .replace(/^\s*1\s+/, '')
+      .trim() || 'serving';
+  return {
+    kind: 'serving',
+    amount: 1,
+    label,
+    grams: Number(gramsPerServing) || (inner ? +inner[1] : null),
+    measure: inner ? inner[2].toLowerCase() : 'g',
+  };
+}
 export function getFoodUnits(food) {
-  const def = householdPortions[food.id];
-  const match = String(food.serving).match(/^\s*([\d.]+)\s*g\s*$/i);
-  const baseGrams = Number(food.gramsPerServing) || (match ? +match[1] : def?.grams) || null;
-  const baseName = def?.base || (match ? 'serving' : String(food.serving).replace(/^1\s+/, ''));
+  // Household estimates belong to the catalog serving; a personal edit may have changed it.
+  const def = food.edited ? undefined : householdPortions[food.id];
+  const parsed = parseServing(food.serving, food.gramsPerServing);
+  const isMeasure = parsed.kind !== 'serving';
+  const measure = isMeasure ? parsed.kind : parsed.measure;
+  const baseGrams = (isMeasure ? parsed.grams : parsed.grams || def?.grams) || null;
+  const estimated = !!def?.estimatedBase;
   const units = [
     {
       id: 'serving',
-      label: baseName || 'serving',
+      label: def?.base || (isMeasure ? portionNumber(parsed.amount) + ' ' + measure : parsed.label),
       factor: 1,
       grams: baseGrams,
-      estimated: !!def?.estimatedBase,
+      estimated,
+      // "1 × 100 g" is never a useful choice; kept only so older entries still resolve.
+      hidden: isMeasure,
     },
   ];
   if (baseGrams > 0)
-    units.push({
-      id: 'g',
-      label: 'g',
-      factor: 1 / baseGrams,
-      grams: 1,
-      estimated: !!def?.estimatedBase,
-    });
-  for (const [label, grams] of def?.units || [])
-    units.push({
-      id: label,
-      label,
-      factor: grams / baseGrams,
-      grams,
-      estimated: true,
-    });
+    units.push({ id: 'g', label: measure, factor: 1 / baseGrams, grams: 1, estimated });
+  for (const unit of food.units || [])
+    if (unit?.name && unit.grams > 0 && baseGrams > 0)
+      units.push({
+        id: 'u:' + unit.name,
+        label: unit.name,
+        factor: unit.grams / baseGrams,
+        grams: unit.grams,
+        estimated: false,
+        custom: true,
+      });
+  if (baseGrams > 0)
+    for (const [label, grams] of def?.units || [])
+      units.push({ id: label, label, factor: grams / baseGrams, grams, estimated: true });
   return units;
 }
 export function defaultFoodUnit(food) {
-  return /^\s*[\d.]+\s*g\s*$/i.test(food.serving) ? 'g' : 'serving';
+  const units = getFoodUnits(food);
+  // A food with its own unit ("block", "can") is most often logged in that unit.
+  return units.find((unit) => unit.custom)?.id || (units[0].hidden ? 'g' : 'serving');
 }
 export function formatPortion(food) {
   if (food.portion) {
@@ -157,12 +190,10 @@ export function formatPortion(food) {
       );
     if (food.portion.text) return food.portion.text;
   }
-  const unit = getFoodUnits(food).find((x) => x.id === defaultFoodUnit(food));
-  return (
-    portionNumber((food.qty ?? 1) / (unit?.factor || 1)) +
-    ' ' +
-    (unit ? portionUnitLabel(unit, (food.qty ?? 1) / (unit.factor || 1)) : 'serving')
-  );
+  const units = getFoodUnits(food);
+  const unit = units.find((x) => x.id === (units[0].hidden ? 'g' : 'serving'));
+  const amount = roundAmount((food.qty ?? 1) / (unit?.factor || 1));
+  return portionNumber(amount) + ' ' + (unit ? portionUnitLabel(unit, amount) : 'serving');
 }
 export function calculatePortion(food, amount, unitId, gramOverride) {
   let units = getFoodUnits(food),
@@ -202,8 +233,9 @@ export function fractionDisplay(amount) {
 }
 export function portionUnitLabel(unit, amount) {
   let label = unit.label;
-  if (amount <= 1 || ['g', 'small', 'medium', 'large'].includes(label)) return label;
+  if (amount <= 1 || ['g', 'ml', 'small', 'medium', 'large'].includes(label)) return label;
   if (label.startsWith('cup,')) return label.replace('cup,', 'cups,');
+  if (unit.custom) return label;
   if (
     [
       'serving',
@@ -217,6 +249,9 @@ export function portionUnitLabel(unit, amount) {
       'large egg',
       'medium egg',
       'small egg',
+      'tbsp',
+      'tsp',
+      'date',
     ].includes(label)
   )
     return label + 's';

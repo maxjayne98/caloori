@@ -2,7 +2,12 @@ import type { FoodCache } from './food-cache';
 import type { SnapshotCache } from './snapshot-cache';
 import { emptyState, validateState, type AppState } from '@nourish/core';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { RevisionConflict, type NourishRepository, type Snapshot } from './repository';
+import {
+  RevisionConflict,
+  type NourishRepository,
+  type PushDevice,
+  type Snapshot,
+} from './repository';
 /** Supabase is one replaceable adapter; the rest of the monorepo has no Supabase dependency. */
 export class SupabaseRepository implements NourishRepository {
   readonly kind = 'supabase' as const;
@@ -82,6 +87,26 @@ export class SupabaseRepository implements NourishRepository {
     this.libraryBaseline = snapshot.state.custom;
     this.foodCache?.write(snapshot.state.custom);
     this.cache?.write(snapshot);
+  }
+  async savePushDevice(device: PushDevice) {
+    await this.requireOwner();
+    const { error } = await this.client.from('nourish_push_subscriptions').upsert({
+      endpoint: device.endpoint,
+      user_id: this.ownerId,
+      p256dh: device.p256dh,
+      auth: device.auth,
+      time_zone: device.timeZone,
+      locale: device.locale === 'fa' ? 'fa' : 'en',
+    });
+    if (error) throw new Error('Could not turn on reminders. Please try again.');
+  }
+  async removePushDevice(endpoint: string) {
+    await this.requireOwner();
+    const { error } = await this.client
+      .from('nourish_push_subscriptions')
+      .delete()
+      .eq('endpoint', endpoint);
+    if (error) throw new Error('Could not turn off reminders. Please try again.');
   }
   async save(state: AppState, expectedRevision: number) {
     await this.requireOwner();

@@ -3,3 +3,7 @@
 # Supports the project's asymmetric JWT signing keys rather than the legacy gateway check.
 # Owner approved handler-based token verification on 2026-10-27.
 verify_jwt = false
+
+[functions.nourish-push]
+# Called only by pg_cron; the handler checks the CRON_SECRET header instead of a user token.
+verify_jwt = false

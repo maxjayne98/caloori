@@ -19,16 +19,22 @@ const MEALS = [
 export function MealPicker({
   value,
   onChange,
+  divider = true,
 }: {
   value: string;
   onChange: (meal: string) => void;
+  /** The start border separates it from the D/F toggle; standalone rows leave it off. */
+  divider?: boolean;
 }) {
   const { t, tMeal } = useI18n();
   return (
     <div
       role="radiogroup"
       aria-label={t('meals.logTo')}
-      className="flex items-center gap-1.5 border-s border-[var(--neutral-e2e2e8)] ps-3"
+      className={cn(
+        'flex items-center gap-1.5',
+        divider && 'border-s border-[var(--neutral-e2e2e8)] ps-3',
+      )}
     >
       {MEALS.map(({ meal, icon, color, soft }) => {
         const selected = value === meal;

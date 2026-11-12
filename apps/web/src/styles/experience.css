@@ -477,6 +477,8 @@ button.brand {
   height: 1em;
   /* Clip the reel vertically only, so wide bold glyphs aren't cut at the sides */
   clip-path: inset(0 -0.15em);
+  /* clip-path only paints; the 30em reel still made sheets scroll. Clip its layout overflow too. */
+  overflow-y: clip;
   display: inline-block;
   font: inherit;
   color: inherit;

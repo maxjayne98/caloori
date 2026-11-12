@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
-import { CalendarCheck2, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import {
   iso,
@@ -96,7 +96,8 @@ export function TodayPage({
   const reportCompact = !editing && !greetingShown && weeklyReport.ready && !reportOpened && (
     <Button
       variant="unstyled"
-      className="grid size-7 place-items-center rounded-full bg-[var(--surface)] text-[var(--accent-text)] [&_svg]:size-4"
+      // A plain icon beside the date; `!` beats the `.date button` size and background rule.
+      className="grid size-6! place-items-center rounded-full! border! border-(--accent)/40! bg-transparent! p-0! text-(--accent-text)! [&_svg]:size-3.5"
       onClick={openWeeklyReport}
       aria-label={t('today.viewWeeklyReport')}
       title={t('today.lastWeekReady')}
@@ -160,8 +161,8 @@ export function TodayPage({
           >
             <ChevronLeft size={18} aria-hidden="true" />
           </Button>
-          <div className="flex items-center gap-1">
-            <strong>
+          <div className="relative flex min-w-0 items-center justify-center">
+            <strong className="truncate">
               {day === today
                 ? (locale === 'fa' ? t('today.today') + '، ' : t('today.today') + ', ') +
                   formatDate(day, {
@@ -174,32 +175,23 @@ export function TodayPage({
                     day: 'numeric',
                   })}
             </strong>
-            <span
-              aria-hidden={!showTodayButton}
-              className={`grid overflow-hidden transition-[grid-template-columns,opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
-                showTodayButton
-                  ? 'grid-cols-[1fr] opacity-100'
-                  : 'pointer-events-none grid-cols-[0fr] opacity-0'
-              }`}
-            >
-              <span className="min-w-0 overflow-hidden">
-                <Button
-                  variant="unstyled"
-                  className="h-auto! w-auto! rounded-full! border! border-(--accent)/70! bg-(--accent-soft)! text-(--accent)/70! px-1 py-0 font-semibold text-[8px]!"
-                  onClick={() => setDay(today)}
-                  aria-label={t('today.today')}
-                  title={t('today.today')}
-                  tabIndex={showTodayButton ? 0 : -1}
-                >
-                  <span className="inline-flex items-center gap-0.5 p-0.5!">
-                    <CalendarCheck2 size={12} aria-hidden="true" />
-                    {t('today.today')}
-                  </span>
-                </Button>
-              </span>
+            {/* Extras hang off the date's end side (absolute), so the date stays centered. The
+                report comes first and Today last, so Today fading out never moves the report. */}
+            <span className="absolute start-full top-1/2 ms-2 flex -translate-y-1/2 items-center gap-1.5">
+              {reportCompact}
+              <Button
+                variant="unstyled"
+                aria-hidden={!showTodayButton}
+                tabIndex={showTodayButton ? 0 : -1}
+                className={`h-6! w-auto! shrink-0 whitespace-nowrap rounded-full! border! border-(--accent)/40! bg-transparent! px-2! py-0! text-[11px]! font-semibold leading-none text-(--accent-text)! transition-opacity duration-200 motion-reduce:transition-none ${
+                  showTodayButton ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+                onClick={() => setDay(today)}
+              >
+                {t('today.today')}
+              </Button>
             </span>
           </div>
-          {reportCompact}
           <Button
             aria-label={t('today.nextDay')}
             onClick={() => {

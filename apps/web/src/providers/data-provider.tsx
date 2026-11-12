@@ -35,6 +35,8 @@ type DataContext = AppState & {
   retry: () => void;
   signOut?: () => Promise<void>;
   refreshFoods?: () => Promise<void>;
+  savePushDevice?: NourishRepository['savePushDevice'];
+  removePushDevice?: NourishRepository['removePushDevice'];
   askAssistant?: (request: AssistantRequest) => Promise<unknown>;
   applyAssistant: (proposal: AssistantProposal, baseline: string) => Promise<void>;
 };
@@ -195,6 +197,8 @@ export function DataProvider({
           setStatus('saved');
         }
       : undefined,
+    savePushDevice: repository.savePushDevice?.bind(repository),
+    removePushDevice: repository.removePushDevice?.bind(repository),
     accountId,
     repositoryKind: repository.kind,
     status,

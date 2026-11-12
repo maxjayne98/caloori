@@ -10,6 +10,7 @@ import {
   fractionOptions,
   fractionDisplay,
   portionUnitLabel,
+  roundAmount,
   scoreFood,
   scorePortion,
 } from '@nourish/core';
@@ -35,7 +36,9 @@ export function FoodPortionEditor({
     units.find((x) => x.id === saved?.unit) ||
     units.find((x) => x.id === defaultFoodUnit(food)) ||
     units[0];
-  const initialAmount = saved?.amount ?? (food.qty ?? 1) / initialUnit.factor;
+  // A new food (no qty yet) starts at one of its default unit: 1 can, not 0.4 can.
+  const initialAmount =
+    saved?.amount ?? (food.qty == null ? 1 : roundAmount(food.qty / initialUnit.factor));
   const [unitId, setUnit] = React.useState(initialUnit.id),
     [amount, setAmount] = React.useState(String(initialAmount)),
     [mode, setMode] = React.useState(saved?.mode || 'decimal'),
@@ -74,16 +77,23 @@ export function FoodPortionEditor({
         option = fractionOptions.find(([n]) => Math.abs(+n - r) < 1e-8);
       setWhole(String(Math.floor(v)));
       setFraction(option ? option[0] : String(r));
-    } else setAmount(String(Number(whole) + Number(fraction)));
+    } else setAmount(String(roundAmount(Number(whole) + Number(fraction))));
     setMode(next);
   }
   function changeUnit(next) {
     const oldQty = calculatePortion(food, Number.isFinite(value) ? value : 0, unitId, +weight).qty;
     const nextUnit = units.find((x) => x.id === next);
+    const nextAmount = roundAmount(oldQty / nextUnit.factor);
+    const r = nextAmount - Math.floor(nextAmount);
+    const option = fractionOptions.find(([n]) => Math.abs(+n - r) < 1e-3);
     setUnit(next);
+    // The custom weight belonged to the old unit; the converted amount already includes it.
     setWeight('');
-    setAmount(String(oldQty / nextUnit.factor));
-    setMode('decimal');
+    setAmount(String(nextAmount));
+    setWhole(String(Math.floor(nextAmount)));
+    setFraction(option ? option[0] : '0');
+    // Stay in fractions when the new amount is still a clean fraction (1 ½ cups → 3 tbsp…).
+    if (mode === 'fraction' && !option) setMode('decimal');
     setError('');
   }
   return (
@@ -92,7 +102,7 @@ export function FoodPortionEditor({
       onSubmit={(e) => {
         e.preventDefault();
         if (!valid) {
-          setError('Enter an amount greater than zero.');
+          setError(t('portion.enterPositive'));
           return;
         }
         onSave({
@@ -122,7 +132,7 @@ export function FoodPortionEditor({
         )}
       </div>
       <div className="portion-toolbar">
-        <div className="portion-format" role="group" aria-label="Amount format">
+        <div className="portion-format" role="group" aria-label={t('portion.format')}>
           <Button
             type="button"
             className={mode === 'decimal' ? 'selected' : ''}
@@ -150,7 +160,9 @@ export function FoodPortionEditor({
       </div>
       <div className="amount-unit-row">
         <div className="amount-field">
-          <label htmlFor="portion-amount">{mode === 'fraction' ? 'Whole amount' : 'Amount'}</label>
+          <label htmlFor="portion-amount">
+            {mode === 'fraction' ? t('portion.wholeAmount') : t('portion.portionAmount')}
+          </label>
           <Input
             id="portion-amount"
             type="number"
@@ -168,7 +180,7 @@ export function FoodPortionEditor({
         </div>
         {mode === 'fraction' && (
           <div className="fraction-field">
-            <label htmlFor="portion-fraction">Fraction</label>
+            <label htmlFor="portion-fraction">{t('portion.fraction')}</label>
             <Select
               id="portion-fraction"
               value={fraction}
@@ -183,27 +195,26 @@ export function FoodPortionEditor({
           </div>
         )}
         <div className="unit-field">
-          <label htmlFor="portion-unit">Unit</label>
+          <label htmlFor="portion-unit">{t('portion.unit')}</label>
           <Select
             id="portion-unit"
             value={unitId}
             onValueChange={changeUnit}
-            options={units.map((u) => ({ value: u.id, label: u.label }))}
+            options={units
+              .filter((u) => !u.hidden || u.id === unitId)
+              .map((u) => ({ value: u.id, label: u.label }))}
           />
         </div>
       </div>
       {unit.estimated && (
         <p className="portion-estimate">
-          {'Household weights are estimates. ' +
-            (unit.id === 'g'
-              ? 'This food’s base serving weight is estimated.'
-              : 'Weigh your portion for a closer match.')}
+          {t(unit.id === 'g' ? 'portion.estimatedBase' : 'portion.estimatedUnit')}
         </p>
       )}
       {unit.estimated && unit.id !== 'g' && (
-        <details className="weight-override">
-          <summary>{'Adjust weight per ' + unit.label}</summary>
-          <label htmlFor="portion-unit-weight">{'Grams per ' + unit.label}</label>
+        <details className="weight-override" open={!!weight || undefined}>
+          <summary>{t('portion.adjustWeight', { unit: unit.label })}</summary>
+          <label htmlFor="portion-unit-weight">{t('portion.gramsPer', { unit: unit.label })}</label>
           <Input
             id="portion-unit-weight"
             type="number"
@@ -224,16 +235,19 @@ export function FoodPortionEditor({
       )}
       <FoodNutrition values={tot} />
       <Button className="primary" type="submit" disabled={!valid} variant="unstyled">
-        {saveLabel || (onDelete ? 'Save changes' : 'Add to ' + selectedMeal)}
+        {saveLabel ||
+          (onDelete
+            ? t('portion.saveChanges')
+            : t('meals.addToMeal', { meal: tMeal(selectedMeal) }))}
       </Button>
       {onDelete && (
         <Button className="secondary" type="button" onClick={onDelete} variant="unstyled">
-          Delete food
+          {t('portion.deleteFromDiary')}
         </Button>
       )}
       {onBack && (
         <Button className="secondary" type="button" onClick={onBack} variant="unstyled">
-          {hideMeal ? 'Back to ingredients' : 'Back to search'}
+          {hideMeal ? t('portion.backToIngredients') : t('portion.backToSearch')}
         </Button>
       )}
     </form>

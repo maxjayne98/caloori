@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@nourish/ui';
+import { ScrollTopButton } from '@/components/scroll-top-button';
 import { useRef, type ReactNode } from 'react';
 export function ModalSheet({
   title,
@@ -59,6 +60,7 @@ export function ModalSheet({
                 </Button>
               </div>
               {children}
+              <ScrollTopButton />
             </section>
           </DialogContent>
         </DialogOverlay>

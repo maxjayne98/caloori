@@ -1,5 +1,13 @@
 import type { AppState } from '@nourish/core';
 
+/** A browser push channel for meal reminders (Web Push subscription keys are public). */
+export interface PushDevice {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  timeZone: string;
+  locale: string;
+}
 export type RepositoryKind = 'local' | 'memory' | 'supabase';
 export interface Snapshot {
   state: AppState;
@@ -12,6 +20,9 @@ export interface NourishRepository {
   refreshFoods?(): Promise<Snapshot>;
   acceptSnapshot?(snapshot: Snapshot): void;
   save(state: AppState, expectedRevision: number): Promise<number>;
+  /** Only repositories with a server can deliver push reminders. */
+  savePushDevice?(device: PushDevice): Promise<void>;
+  removePushDevice?(endpoint: string): Promise<void>;
 }
 export class RevisionConflict extends Error {
   constructor() {

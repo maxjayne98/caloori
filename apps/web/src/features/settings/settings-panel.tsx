@@ -7,6 +7,7 @@ import { ACCENTS, type Accent, useAppearance } from '@/providers/appearance-prov
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
 import { CHANGELOG } from './changelog-data';
+import { ReminderSettings } from './reminder-settings';
 import {
   PATTERN_COUNT,
   PIXEL_COUNT,
@@ -161,6 +162,10 @@ export function SettingsPanel({
           </Button>
         ))}
       </div>
+      <div className="settings-heading">
+        <h3>{t('reminders.section')}</h3>
+      </div>
+      <ReminderSettings />
       <div className="settings-heading settings-about">
         <h3>{t('settings.about')}</h3>
       </div>

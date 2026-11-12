@@ -1,4 +1,5 @@
 'use client';
+import { TextActions } from '@/components/text-actions';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, Check } from 'lucide-react';
 import { Button } from '@nourish/ui';
@@ -196,19 +197,22 @@ export function AssistantPage({
         )}
         <div ref={bottom} />
       </div>
-      <form className="assistant-composer" onSubmit={send}>
+      <form className="assistant-composer" style={{ position: 'relative' }} onSubmit={send}>
         <label className="sr-only" htmlFor="assistant-message">
           Message Nourish
         </label>
         <textarea
           id="assistant-message"
           placeholder="Ask Nourish…"
-          rows={2}
+          rows={3}
           maxLength={2000}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={saving}
+          // 1.5× the old two-line height; room on the end side for the paste/clear button.
+          style={{ height: 96, paddingInlineEnd: 40 }}
         />
+        <TextActions value={input} onChange={setInput} disabled={saving} />
         <Button
           variant="unstyled"
           aria-label="Send message"

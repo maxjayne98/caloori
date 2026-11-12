@@ -41,6 +41,7 @@ import { ProfileAvatar } from '@/components/profile-photo';
 import { BottomNavigation } from '@/components/bottom-navigation';
 import { LoggingStreak } from '@/features/diary/logging-streak';
 import { FoodPortionEditor } from '@/features/foods/portion-editor';
+import { ServingFields } from '@/features/foods/serving-fields';
 import { Recipe } from '@/features/recipes/recipe-editor';
 import { MealLibrary } from '@/features/meals/meal-library';
 import { MealBuilder } from '@/features/meals/meal-builder';
@@ -436,6 +437,7 @@ export function App() {
               name: d.name || 'Quick add',
               serving: d.serving || '1 serving',
               gramsPerServing: +d.grams || null,
+              units: d.units ? JSON.parse(d.units) : undefined,
               cal: +d.cal,
               p: +d.p || 0,
               c: +d.c || 0,
@@ -464,23 +466,12 @@ export function App() {
           />
         )}
         {field(t('food.searchPlaceholder'), 'name', draft?.name ?? (query || ''), 'text')}
-        {sheet !== 'quick' &&
-          field(t('portion.servingSize'), 'serving', draft?.serving ?? '1 serving', 'text')}
         {sheet !== 'quick' && (
-          <div>
-            <label htmlFor="food-grams">{t('portion.gramsPerServing')}</label>
-            <Input
-              id="food-grams"
-              name="grams"
-              type="number"
-              min={0.001}
-              step="any"
-              inputMode="decimal"
-              placeholder="Add a weight to enable grams"
-              defaultValue={draft?.gramsPerServing ?? ''}
-              unstyled
-            />
-          </div>
+          <ServingFields
+            serving={draft?.serving}
+            gramsPerServing={draft?.gramsPerServing}
+            units={draft?.units}
+          />
         )}
         {field(`${t('summary.dailyEnergy')} (${t('common.kcal')})`, 'cal', draft?.cal ?? '')}
         <div className="grid2">
