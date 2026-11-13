@@ -4,7 +4,7 @@ import { CircleCheck, Scale } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   balanceStatus,
   roundToHalf,
@@ -32,6 +32,8 @@ export function DailySummary({
   const { t, locale } = useI18n();
   const [now, setNow] = useState(() => new Date());
   const [showWeightInfo, setShowWeightInfo] = useState(false);
+  // Unique per card, so two summaries on one page never share a gradient.
+  const gradientId = `energy-ring-${useId().replace(/:/g, '')}`;
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(timer);
@@ -105,7 +107,12 @@ export function DailySummary({
     const overColor = k === 'p' ? 'var(--grade-a)' : 'var(--grade-d)';
     return (
       <div className="macro" key={k}>
-        <small>
+        <small className="inline-flex items-center gap-1.5">
+          <span
+            className="size-1.5 shrink-0 rounded-full"
+            style={{ background: color }}
+            aria-hidden="true"
+          />
           {name}
           {weight > 0 && (
             <em className="macro-per-kg">
@@ -126,7 +133,7 @@ export function DailySummary({
           </em>
           {over > 0 && (
             <span
-              className="ms-1.5 inline-block rounded-full px-1.5 align-middle text-[10px] font-bold leading-4 tabular-nums"
+              className="ms-1 inline-block rounded-full px-1 align-middle text-[9px] font-bold leading-4 tabular-nums min-[421px]:ms-1.5 min-[421px]:px-1.5 min-[421px]:text-[10px]"
               style={{
                 color: overColor,
                 background: `color-mix(in srgb, ${overColor} 14%, transparent)`,
@@ -148,29 +155,61 @@ export function DailySummary({
       </div>
     );
   });
+  const progress = profile.cal > 0 ? Math.min(tot.cal / profile.cal, 1) : 0;
+  const percent = profile.cal > 0 ? Math.round((tot.cal / profile.cal) * 100) : 0;
   const ring = (
     <div className="energy-ring">
-      <svg viewBox="0 0 202 202">
-        <circle cx={101} cy={101} r={90} fill="none" stroke="var(--accent-soft)" strokeWidth={13} />
+      <svg
+        viewBox="0 0 202 202"
+        // A soft glow in the ring's own color lifts it off the card.
+        style={{
+          overflow: 'visible',
+          filter:
+            'drop-shadow(0 3px 6px color-mix(in srgb, var(--balance-color, var(--accent)) 22%, transparent))',
+        }}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            <stop
+              offset="0"
+              style={{ stopColor: 'color-mix(in srgb, var(--accent) 55%, var(--surface))' }}
+            />
+            <stop offset="1" style={{ stopColor: 'var(--accent)' }} />
+          </linearGradient>
+        </defs>
+        <circle cx={101} cy={101} r={90} fill="none" stroke="var(--accent-soft)" strokeWidth={14} />
+        {/* Fine inner dial for a crafted, instrument-like look. */}
+        <circle
+          cx={101}
+          cy={101}
+          r={74}
+          fill="none"
+          stroke="var(--neutral-e2e2e8)"
+          strokeWidth={1}
+          strokeDasharray="1.5 5.3"
+          aria-hidden="true"
+        />
+        {/* Must stay the last circle: status colors (over, low, reached) restyle it. */}
         <circle
           cx={101}
           cy={101}
           r={90}
           fill="none"
-          stroke="var(--accent)"
-          strokeWidth={13}
+          stroke={`url(#${gradientId})`}
+          strokeWidth={14}
           strokeLinecap="round"
           strokeDasharray={565.5}
-          strokeDashoffset={565.5 * (1 - Math.min(tot.cal / profile.cal, 1))}
+          strokeDashoffset={565.5 * (1 - progress)}
         />
       </svg>
       <div className="inside">
-        <b>
+        <b className="tabular-nums">
           <RollingNumber value={Math.round(Math.abs(profile.cal - tot.cal))} />
         </b>
         <span>
           {tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}
         </span>
+        
       </div>
     </div>
   );
@@ -282,7 +321,17 @@ export function DailySummary({
     </ModalSheet>
   );
   return (
-    <section className={`card energy-card daily-summary relative balance-${status}`}>
+    <section
+      className={`card energy-card daily-summary relative balance-${status}`}
+      // Layered surface: a faint accent wash in the corner, a hairline edge and a soft lift.
+      style={{
+        background:
+          'radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 7%, var(--surface)) 0%, var(--surface) 55%)',
+        border: '1px solid color-mix(in srgb, var(--foreground) 6%, transparent)',
+        boxShadow:
+          '0 1px 2px color-mix(in srgb, var(--foreground) 4%, transparent), 0 12px 32px color-mix(in srgb, var(--accent) 8%, transparent)',
+      }}
+    >
       <div className="card-top">
         <span className="inline-flex items-center gap-2">
           {t('summary.dailyEnergy')}

@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.20.0
+
+- `26e2c74` feat: update changelog for version 0.18.2, enhance food rows with quick add functionality, and improve weight tracking features
+
 ## 0.18.2
 
 - `90e0e9b` feat: enhance food rows with quick add functionality and portion editor improvements

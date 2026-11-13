@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    "version": "0.20.0",
+    "entries": [
+      {
+        "hash": "26e2c74",
+        "subject": "feat: update changelog for version 0.18.2, enhance food rows with quick add functionality, and improve weight tracking features",
+        "body": ""
+      }
+    ]
+  },
+  {
     "version": "0.18.2",
     "entries": [
       {

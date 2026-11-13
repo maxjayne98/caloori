@@ -399,7 +399,8 @@ button.brand {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 .daily-summary .energy-amounts b {
   font-size: 20px;
@@ -428,13 +429,27 @@ button.brand {
 }
 .daily-summary .macro {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  /* The value keeps its width; the label (name · g/kg) gives way and truncates on narrow phones. */
+  grid-template-columns: minmax(0, 1fr) auto;
   column-gap: 5px;
   align-items: baseline;
 }
 .daily-summary .macro small {
   margin: 0;
   font-size: 10px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.daily-summary .dashboard-macro-block .macro b {
+  white-space: nowrap;
+}
+/* On phones the macro name matters more than g/kg; the ratio returns on wider screens. */
+@media (max-width: 420px) {
+  .daily-summary .macro .macro-per-kg {
+    display: none;
+  }
 }
 .daily-summary .dashboard-macro-block .macro b {
   justify-self: end;
@@ -538,9 +553,15 @@ button.brand {
 /* Make intake the first number the eye finds in the consumed / goal comparison. */
 .daily-summary .energy-amounts > .consumed-value {
   color: var(--accent-text);
-  font-size: 30px;
+  font-size: clamp(26px, 7.5vw, 34px);
   font-weight: 780;
-  letter-spacing: -1px;
+  letter-spacing: -1.4px;
+  font-variant-numeric: tabular-nums;
+}
+/* The goal reads as context for the big number, not a second headline. */
+.daily-summary .energy-amounts > button b {
+  color: var(--neutral-85858b);
+  font-weight: 600;
 }
 @media (max-width: 360px) {
   .daily-summary .energy-amounts > .consumed-value {
