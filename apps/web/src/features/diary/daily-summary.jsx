@@ -32,6 +32,20 @@ export function DailySummary({
   const { t, locale } = useI18n();
   const [now, setNow] = useState(() => new Date());
   const [showWeightInfo, setShowWeightInfo] = useState(false);
+  // The ring starts empty and fills to today's value once the card is on screen; the existing
+  // stroke transition animates it (and is off for reduced motion, so it simply appears).
+  const [ringReady, setRingReady] = useState(false);
+  useEffect(() => {
+    // Two frames so the empty ring is painted first and the transition has a starting point.
+    let second;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setRingReady(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, []);
   // Unique per card, so two summaries on one page never share a gradient.
   const gradientId = `energy-ring-${useId().replace(/:/g, '')}`;
   useEffect(() => {
@@ -199,7 +213,7 @@ export function DailySummary({
           strokeWidth={14}
           strokeLinecap="round"
           strokeDasharray={565.5}
-          strokeDashoffset={565.5 * (1 - progress)}
+          strokeDashoffset={565.5 * (1 - (ringReady ? progress : 0))}
         />
       </svg>
       <div className="inside">

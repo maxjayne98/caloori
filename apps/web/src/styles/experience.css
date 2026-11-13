@@ -542,7 +542,8 @@ button.brand {
   line-height: 1;
 }
 .daily-summary .energy-ring circle:last-child {
-  transition: stroke-dashoffset 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Long enough to read as the ring filling up on first open; also used for later updates. */
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   .daily-summary .energy-ring circle:last-child {
