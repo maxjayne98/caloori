@@ -86,7 +86,8 @@ export function GradeMark({
         'inline-flex shrink-0 items-center gap-1 rounded-full font-bold leading-none tabular-nums',
         sizeStyles.text,
         score !== undefined && sizeStyles.scorePadding,
-        confidence === 'low' && 'opacity-70',
+        // The larger day/meal marks stay fully readable; their label already says "estimated".
+        confidence === 'low' && size === 'sm' && 'opacity-70',
       )}
       style={{ color, background: `color-mix(in srgb, ${color} 12%, transparent)` }}
     >

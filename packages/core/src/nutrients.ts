@@ -83,3 +83,18 @@ export function extraNutrientsFromInput(
   }
   return extras;
 }
+
+/**
+ * Rounds a gram amount to a whole or half for display: below .3 rounds down, .3 up to .7 becomes
+ * .5, above .7 rounds up (148.2 → 148, 148.4 → 148.5, 148.8 → 149). Works the same for negatives.
+ */
+export function roundToHalf(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  const sign = value < 0 ? -1 : 1;
+  const abs = Math.abs(value);
+  const whole = Math.floor(abs);
+  // Tiny epsilon so 0.3 and 0.7 land on the documented side despite float error.
+  const fraction = Math.round((abs - whole) * 1e9) / 1e9;
+  const rounded = fraction < 0.3 ? whole : fraction <= 0.7 ? whole + 0.5 : whole + 1;
+  return rounded === 0 ? 0 : sign * rounded;
+}

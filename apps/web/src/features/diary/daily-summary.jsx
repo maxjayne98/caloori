@@ -7,11 +7,15 @@ import { SkinnyCat } from '@/components/skinny-cat';
 import { useEffect, useState } from 'react';
 import {
   balanceStatus,
+  roundToHalf,
   estimateAdaptiveBaselineKcal,
   estimateDailyWeightChange,
+  KCAL_PER_KG,
+  weightTrendTone,
 } from '@nourish/core';
 import { Button } from '@nourish/ui';
 import { RollingNumber } from '@/components/rolling-number';
+import { ModalSheet } from '@/components/modal-sheet';
 import { useI18n } from '@/providers/i18n-provider';
 export function DailySummary({
   tot,
@@ -27,6 +31,7 @@ export function DailySummary({
 }) {
   const { t, locale } = useI18n();
   const [now, setNow] = useState(() => new Date());
+  const [showWeightInfo, setShowWeightInfo] = useState(false);
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(timer);
@@ -91,39 +96,58 @@ export function DailySummary({
     [t('summary.protein'), 'p', 'var(--macro-protein)'],
     [t('summary.carbs'), 'c', 'var(--macro-carbs)'],
     [t('summary.fat'), 'f', 'var(--macro-fat)'],
-  ].map(([name, k, color]) => (
-    <div className="macro" key={k}>
-      <small>
-        {name}
-        {weight > 0 && (
-          <em className="macro-per-kg">
-            {' · '}
-            {/* LTR isolation: keep numeric ratio readable in RTL */}
-            <span dir="ltr">
-              {((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg
-            </span>
+  ].map(([name, k, color]) => {
+    // Whole or half grams (148.4 → 148.5): precise enough, without decimal noise.
+    const eaten = roundToHalf(tot[k] || 0);
+    const goal = roundToHalf(profile[k] || 0);
+    const over = goal > 0 ? roundToHalf((tot[k] || 0) - profile[k]) : 0;
+    // Extra protein is usually fine (green); extra carbs or fat is over plan (orange).
+    const overColor = k === 'p' ? 'var(--grade-a)' : 'var(--grade-d)';
+    return (
+      <div className="macro" key={k}>
+        <small>
+          {name}
+          {weight > 0 && (
+            <em className="macro-per-kg">
+              {' · '}
+              {/* LTR isolation: keep numeric ratio readable in RTL */}
+              <span dir="ltr">
+                {((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg
+              </span>
+            </em>
+          )}
+        </small>
+        {/* LTR isolation: keep "149g / 130g" order correct in RTL */}
+        <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>
+          <RollingNumber value={eaten} decimals={1} />
+          <em>
+            {t('common.grams')} / {goal > 0 ? <RollingNumber value={goal} decimals={1} /> : '—'}
+            {t('common.grams')}
           </em>
-        )}
-      </small>
-      {/* LTR isolation: keep "18.6g / 130g" order correct in RTL */}
-      <b dir="ltr" style={{ unicodeBidi: 'isolate' }}>
-        <RollingNumber value={tot[k]} decimals={2} />
-        <em>
-          {t('common.grams')} /{' '}
-          {profile[k] ? <RollingNumber value={profile[k]} decimals={2} /> : '—'}
-          {t('common.grams')}
-        </em>
-      </b>
-      <div className="track">
-        <i
-          style={{
-            width: (profile[k] > 0 ? Math.min((tot[k] / profile[k]) * 100, 100) : 0) + '%',
-            background: color,
-          }}
-        />
+          {over > 0 && (
+            <span
+              className="ms-1.5 inline-block rounded-full px-1.5 align-middle text-[10px] font-bold leading-4 tabular-nums"
+              style={{
+                color: overColor,
+                background: `color-mix(in srgb, ${overColor} 14%, transparent)`,
+              }}
+              title={t('summary.macroOver', { grams: over })}
+            >
+              +{over}
+            </span>
+          )}
+        </b>
+        <div className="track">
+          <i
+            style={{
+              width: (profile[k] > 0 ? Math.min((tot[k] / profile[k]) * 100, 100) : 0) + '%',
+              background: color,
+            }}
+          />
+        </div>
       </div>
-    </div>
-  ));
+    );
+  });
   const ring = (
     <div className="energy-ring">
       <svg viewBox="0 0 202 202">
@@ -152,7 +176,6 @@ export function DailySummary({
   );
   const energy = (
     <div className="cal-footer">
-      <small>{t('summary.consumedDailyGoal')}</small>
       {/* LTR isolation: keep "823 / 2,000 kcal" order correct in RTL */}
       <div className="energy-amounts" dir="ltr" style={{ unicodeBidi: 'isolate' }}>
         <b className="consumed-value">
@@ -174,24 +197,89 @@ export function DailySummary({
       </div>
     </div>
   );
+  const weeklyKg = weightChange ? weightChange.changeKg * 7 : 0;
+  const tone = weightChange
+    ? weightTrendTone({ weeklyKg, weight: weight || profile.weight, goal: profile.goal })
+    : 'ok';
+  // Fine trends stay neutral gray; too fast or against the goal turns orange.
+  const toneColor = tone === 'ok' ? 'var(--neutral-85858b)' : 'var(--grade-d)';
+  const kcal = (value) => Math.round(value).toLocaleString(locale);
   const weightEstimate = weightChange && (
-    <div className="daily-weight-estimate">
-      <Scale size={13} aria-hidden="true" />
-      <span>
-        {t('summary.estimatedWeightChange', {
-          change: new Intl.NumberFormat(locale, {
-            signDisplay: 'always',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(weightChange.changeKg),
-        })}
-        {weightChange.adaptive && (
-          <span className="daily-weight-estimate-source">
-            · {t('summary.weightChangeAdaptive')}
-          </span>
-        )}
-      </span>
-    </div>
+    <Button
+      variant="unstyled"
+      onClick={() => setShowWeightInfo(true)}
+      aria-label={t('summary.weightInfoTitle')}
+      className="mx-auto mt-1.5 inline-flex items-center gap-1 rounded-full font-semibold tabular-nums active:scale-95"
+      // Inline: the global button reset (unlayered) would otherwise clear these.
+      style={{
+        height: 24,
+        padding: '0 9px',
+        fontSize: 11,
+        color: toneColor,
+        background: `color-mix(in srgb, ${toneColor} 12%, transparent)`,
+      }}
+    >
+      <Scale size={12} aria-hidden="true" />
+      {t('summary.estimatedWeightChange', {
+        // Shown per week: -0.8 kg/week reads better than -0.11 kg/day.
+        change: new Intl.NumberFormat(locale, {
+          signDisplay: 'always',
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        }).format(weeklyKg),
+      })}
+    </Button>
+  );
+  const weightInfo = weightChange && showWeightInfo && (
+    <ModalSheet title={t('summary.weightInfoTitle')} onClose={() => setShowWeightInfo(false)}>
+      <div className="grid gap-4">
+        <p className="m-0 text-sm text-[var(--neutral-85858b)]">{t('summary.weightInfoIntro')}</p>
+        <div className="grid gap-2 rounded-2xl bg-[var(--surface)] p-4 text-sm">
+          {[
+            [
+              weightChange.adaptive
+                ? t('summary.weightInfoBaseAdaptive')
+                : t('summary.weightInfoBase'),
+              weightChange.baselineKcal,
+            ],
+            [t('summary.weightInfoActivity'), weightChange.activityKcal],
+            [t('summary.weightInfoDigestion'), weightChange.thermicKcal],
+          ].map(([label, value]) => (
+            <div key={label} className="flex justify-between gap-3">
+              <span className="text-[var(--neutral-85858b)]">{label}</span>
+              <b className="font-semibold tabular-nums">
+                {kcal(value)} {t('common.kcal')}
+              </b>
+            </div>
+          ))}
+          <div className="flex justify-between gap-3 border-t border-[var(--neutral-f0f0f4)] pt-2">
+            <span className="text-[var(--neutral-85858b)]">{t('summary.weightInfoEaten')}</span>
+            <b className="font-semibold tabular-nums">
+              {kcal(tot.cal)} {t('common.kcal')}
+            </b>
+          </div>
+          <div className="flex justify-between gap-3 font-semibold">
+            <span>{t('summary.weightInfoBalance')}</span>
+            <span className="tabular-nums" style={{ color: toneColor }}>
+              {new Intl.NumberFormat(locale, { signDisplay: 'always' }).format(
+                Math.round(weightChange.changeKg * KCAL_PER_KG),
+              )}{' '}
+              {t('common.kcal')} ·{' '}
+              {t('summary.perWeek', {
+                change: new Intl.NumberFormat(locale, {
+                  signDisplay: 'always',
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                }).format(weeklyKg),
+              })}
+            </span>
+          </div>
+        </div>
+        <p className="m-0 text-xs text-[var(--neutral-85858b)]">
+          {t(`summary.weightTone.${tone}`)}
+        </p>
+      </div>
+    </ModalSheet>
   );
   return (
     <section className={`card energy-card daily-summary relative balance-${status}`}>
@@ -225,6 +313,7 @@ export function DailySummary({
         {ring}
         {weightEstimate}
       </div>
+      {weightInfo}
       {status !== 'neutral' && (
         <div className="balance-message" role="status">
           {status === 'over' ? (

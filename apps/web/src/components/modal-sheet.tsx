@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@nourish/ui';
 import { ScrollTopButton } from '@/components/scroll-top-button';
-import { useRef, type PointerEvent, type ReactNode, type TransitionEvent } from 'react';
+import { useEffect, useRef, type PointerEvent, type ReactNode, type TransitionEvent } from 'react';
 
 const DISMISS_DISTANCE = 110;
 const DISMISS_VELOCITY = 0.7;
@@ -25,6 +25,17 @@ export function ModalSheet({
   children: ReactNode;
 }) {
   const sheet = useRef<HTMLElement>(null);
+  // Marks the page while any sheet is open, so floating notices outside it can step aside
+  // (a modal sheet blocks clicks everywhere else). Counted, since sheets can stack.
+  useEffect(() => {
+    const body = document.body;
+    body.dataset.sheetsOpen = String(Number(body.dataset.sheetsOpen || 0) + 1);
+    return () => {
+      const left = Number(body.dataset.sheetsOpen || 1) - 1;
+      if (left > 0) body.dataset.sheetsOpen = String(left);
+      else delete body.dataset.sheetsOpen;
+    };
+  }, []);
   const drag = useRef<{
     pointerId: number;
     startY: number;

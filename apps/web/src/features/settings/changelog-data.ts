@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    "version": "0.18.2",
+    "entries": [
+      {
+        "hash": "90e0e9b",
+        "subject": "feat: enhance food rows with quick add functionality and portion editor improvements",
+        "body": "- Updated FoodRows component to support quick add feature with visual feedback for picked items.\n- Improved portion editor to handle unit changes more intuitively, including custom weights and clear input functionality.\n- Added suggested serving units for common household measurements in ServingFields.\n- Implemented food ranking logic to prioritize recently used foods in the add-food list.\n- Updated translations for new features and improved user experience.\n- Added tests for food ranking and portion handling to ensure reliability.\n- Bumped application version to 0.18.2."
+      }
+    ]
+  },
+  {
     "version": "0.16.26",
     "entries": [
       {

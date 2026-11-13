@@ -731,6 +731,11 @@ button.brand {
 .balance-reached {
   --balance-color: #299460;
 }
+/* While the day is still open the card does not judge: the ring keeps the accent (eating less is
+   not automatically good) and the number stays plain. Only over/low/reached get a color. */
+.daily-summary.balance-neutral .energy-amounts > .consumed-value {
+  color: var(--foreground);
+}
 .daily-summary:is(.balance-over, .balance-low, .balance-reached) .tag {
   color: var(--balance-color);
   background: color-mix(in srgb, var(--balance-color) 12%, var(--canvas));

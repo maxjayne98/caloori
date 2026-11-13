@@ -2,6 +2,17 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.18.2
+
+- `90e0e9b` feat: enhance food rows with quick add functionality and portion editor improvements
+  - Updated FoodRows component to support quick add feature with visual feedback for picked items.
+  - Improved portion editor to handle unit changes more intuitively, including custom weights and clear input functionality.
+  - Added suggested serving units for common household measurements in ServingFields.
+  - Implemented food ranking logic to prioritize recently used foods in the add-food list.
+  - Updated translations for new features and improved user experience.
+  - Added tests for food ranking and portion handling to ensure reliability.
+  - Bumped application version to 0.18.2.
+
 ## 0.16.26
 
 - `a4bd79a` feat: update changelog for version 0.16.26, enhance nutrition label parsing, and improve food page UI

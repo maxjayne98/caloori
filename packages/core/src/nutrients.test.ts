@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  roundToHalf,
   barcodeProductToFood,
   calculatePortion,
   emptyState,
@@ -104,4 +105,18 @@ test('every built-in catalog food carries all extra nutrients per serving', () =
   }
   const egg = foods.find((f) => f.id === 'egg-whole-raw') as ExtraNutrients;
   assert.equal(egg.cholesterol, 186);
+});
+
+test('gram amounts round to a whole or a half', () => {
+  assert.equal(roundToHalf(148.2), 148);
+  assert.equal(roundToHalf(148.29), 148);
+  assert.equal(roundToHalf(148.3), 148.5);
+  assert.equal(roundToHalf(148.61), 148.5);
+  assert.equal(roundToHalf(148.7), 148.5);
+  assert.equal(roundToHalf(148.71), 149);
+  assert.equal(roundToHalf(0.1), 0);
+  assert.equal(roundToHalf(0), 0);
+  assert.equal(roundToHalf(-0.1), 0);
+  assert.equal(roundToHalf(-2.4), -2.5);
+  assert.equal(roundToHalf(Number.NaN), 0);
 });

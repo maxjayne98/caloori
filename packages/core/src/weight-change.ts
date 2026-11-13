@@ -1,6 +1,6 @@
 import type { Activity, Profile } from './models';
 
-const KCAL_PER_KG = 7700;
+export const KCAL_PER_KG = 7700;
 const KCAL_PER_DAY = 1440;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -218,4 +218,29 @@ export function estimateRecentWeightTrend({
     loggedDays: changes.length,
     adaptive: adaptiveBaselineKcal !== null,
   };
+}
+
+/**
+ * Whether a weekly weight change looks fine or worth a second look. Too fast either way costs
+ * muscle or adds fat, so speed matters as much as direction:
+ * - more than 1% of body weight a week (0.5% when maintaining) is "fast";
+ * - moving against the goal (gaining while losing, losing while gaining) is "off".
+ */
+export function weightTrendTone({
+  weeklyKg,
+  weight,
+  goal,
+}: {
+  weeklyKg: number;
+  weight?: number | null;
+  goal?: string | null;
+}): 'ok' | 'fast' | 'off' {
+  if (!Number.isFinite(weeklyKg)) return 'ok';
+  // Changes under 0.1 kg/week are noise in this estimate.
+  const meaningful = Math.abs(weeklyKg) >= 0.1;
+  if (meaningful && goal === 'Lose weight' && weeklyKg > 0) return 'off';
+  if (meaningful && goal === 'Gain weight' && weeklyKg < 0) return 'off';
+  const limit = weight && weight > 0 ? weight * (goal === 'Maintain weight' ? 0.005 : 0.01) : null;
+  if (limit !== null && Math.abs(weeklyKg) > limit) return 'fast';
+  return 'ok';
 }

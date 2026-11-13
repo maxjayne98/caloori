@@ -841,7 +841,7 @@ export function App() {
           {!sheet && (
             <div
               role="status"
-              className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[100] mx-auto flex max-w-md items-center gap-3 rounded-2xl border-2 border-(--accent) bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
+              className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[100] [body[data-sheets-open]_&]:hidden mx-auto flex max-w-md items-center gap-3 rounded-2xl border-2 border-(--accent) bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
                 versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}
             >

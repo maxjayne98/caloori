@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  weightTrendTone,
   emptyState,
   estimateAdaptiveBaselineKcal,
   estimateBmr,
@@ -128,4 +129,20 @@ test('recent trend excludes days with no food logs from its average', () => {
   assert.equal(trend.adaptive, false);
   assert.equal(trend.fourWeekKg, trend.weeklyKg * 4);
   assert.ok(Math.abs(trend.estimatedSoFarKg - trend.weeklyKg * (2 / 7)) < 1e-12);
+});
+
+test('weekly weight trend is fine, too fast, or against the goal', () => {
+  // 77 kg: up to 0.77 kg/week is fine when losing or gaining, 0.385 when maintaining.
+  assert.equal(weightTrendTone({ weeklyKg: -0.5, weight: 77, goal: 'Lose weight' }), 'ok');
+  assert.equal(weightTrendTone({ weeklyKg: -0.8, weight: 77, goal: 'Lose weight' }), 'fast');
+  assert.equal(weightTrendTone({ weeklyKg: 0.3, weight: 77, goal: 'Lose weight' }), 'off');
+  assert.equal(weightTrendTone({ weeklyKg: 0.05, weight: 77, goal: 'Lose weight' }), 'ok');
+  assert.equal(weightTrendTone({ weeklyKg: 0.5, weight: 77, goal: 'Gain weight' }), 'ok');
+  assert.equal(weightTrendTone({ weeklyKg: -0.2, weight: 77, goal: 'Gain weight' }), 'off');
+  assert.equal(weightTrendTone({ weeklyKg: 1.2, weight: 77, goal: 'Gain weight' }), 'fast');
+  assert.equal(weightTrendTone({ weeklyKg: -0.3, weight: 77, goal: 'Maintain weight' }), 'ok');
+  assert.equal(weightTrendTone({ weeklyKg: -0.5, weight: 77, goal: 'Maintain weight' }), 'fast');
+  // Unknown weight or goal: only obvious cases are flagged.
+  assert.equal(weightTrendTone({ weeklyKg: -2, weight: null, goal: null }), 'ok');
+  assert.equal(weightTrendTone({ weeklyKg: Number.NaN, weight: 77, goal: 'Lose weight' }), 'ok');
 });
