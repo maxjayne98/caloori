@@ -9,6 +9,24 @@ import { useI18n } from '@/providers/i18n-provider';
 export const SERVING_FILL_EVENT = 'nourish:fill-serving';
 
 type Kind = 'g' | 'ml' | 'serving';
+// Typical weights, in the food's own measure; a starting point the user can correct.
+const SOLID_UNITS = [
+  { key: 'tablespoon', amount: 15 },
+  { key: 'teaspoon', amount: 5 },
+  { key: 'cup', amount: 240 },
+  { key: 'slice', amount: 30 },
+  { key: 'piece', amount: 50 },
+  { key: 'handful', amount: 30 },
+  { key: 'bowl', amount: 250 },
+] as const;
+const LIQUID_UNITS = [
+  { key: 'tablespoon', amount: 15 },
+  { key: 'teaspoon', amount: 5 },
+  { key: 'cup', amount: 240 },
+  { key: 'glass', amount: 250 },
+  { key: 'can', amount: 330 },
+  { key: 'bottle', amount: 500 },
+] as const;
 type Unit = { name: string; grams: string };
 
 /**
@@ -47,6 +65,11 @@ export function ServingFields({
   const cleanUnits = units
     .filter((unit) => unit.name.trim() && +unit.grams > 0)
     .map((unit) => ({ name: unit.name.trim(), grams: +unit.grams }));
+  // Suggested units not added yet; drinks get glass/can/bottle, solids slice/piece/handful.
+  const taken = new Set(units.map((unit) => unit.name.trim().toLowerCase()));
+  const suggestions = (kind === 'ml' ? LIQUID_UNITS : SOLID_UNITS).filter(
+    (unit) => !taken.has(t(`unitSuggest.${unit.key}`).toLowerCase()),
+  );
   const updateUnit = (index: number, patch: Partial<Unit>) =>
     setUnits(units.map((unit, i) => (i === index ? { ...unit, ...patch } : unit)));
 
@@ -170,6 +193,40 @@ export function ServingFields({
             </Button>
           </div>
         ))}
+        {unitsReady && suggestions.length > 0 && (
+          // Common household units with a typical weight; one tap adds them, the weight stays
+          // editable in the row that appears.
+          <div className="flex flex-wrap gap-1.5">
+            {suggestions.map((unit) => (
+              <Button
+                key={unit.key}
+                type="button"
+                variant="unstyled"
+                onClick={() =>
+                  setUnits([
+                    ...units,
+                    { name: t(`unitSuggest.${unit.key}`), grams: String(unit.amount) },
+                  ])
+                }
+                className="inline-flex items-center gap-1 rounded-full font-medium active:scale-95"
+                // Inline: the global button reset (unlayered) would otherwise clear these.
+                style={{
+                  height: 28,
+                  padding: '0 10px',
+                  fontSize: 12,
+                  background: 'var(--accent-soft)',
+                  color: 'var(--accent-text)',
+                }}
+              >
+                <Plus size={12} aria-hidden="true" />
+                {t(`unitSuggest.${unit.key}`)}
+                <span className="opacity-60">
+                  {unit.amount} {measure}
+                </span>
+              </Button>
+            ))}
+          </div>
+        )}
         {unitsReady ? (
           <Button
             type="button"

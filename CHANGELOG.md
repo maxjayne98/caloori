@@ -4,6 +4,7 @@ Generated from Git history by the post-commit hook. Entries are grouped by the a
 
 ## 0.16.26
 
+- `a4bd79a` feat: update changelog for version 0.16.26, enhance nutrition label parsing, and improve food page UI
 - `65cfc57` feat: implement sticky search bar and enhance food page with new filters and actions
 
 ## 0.16.22

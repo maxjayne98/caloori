@@ -195,6 +195,21 @@ export function formatPortion(food) {
   const amount = roundAmount((food.qty ?? 1) / (unit?.factor || 1));
   return portionNumber(amount) + ' ' + (unit ? portionUnitLabel(unit, amount) : 'serving');
 }
+/**
+ * The amount to show after switching units in the portion editor.
+ * - Between countable units (medium → large, tbsp → slice) the number stays: "½ medium" becomes
+ *   "½ large", because switching usually means "it was a large one".
+ * - To grams/ml the current quantity is converted (½ medium → 59 g); "½ g" would be meaningless.
+ * - From grams/ml to a unit it starts at 1, so no "0.434 large".
+ * `qty` is the current quantity in servings (already including any custom unit weight).
+ */
+export function amountAfterUnitChange({ from, to, amount, qty }) {
+  if (!to) return 1;
+  if (from?.id === to.id) return amount > 0 ? amount : 1;
+  if (to.id === 'g') return qty > 0 && to.factor > 0 ? roundAmount(qty / to.factor) : 1;
+  if (from?.id === 'g') return 1;
+  return Number.isFinite(amount) && amount > 0 ? amount : 1;
+}
 export function calculatePortion(food, amount, unitId, gramOverride) {
   let units = getFoodUnits(food),
     unit = units.find((x) => x.id === unitId) || units[0];

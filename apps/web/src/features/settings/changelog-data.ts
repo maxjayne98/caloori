@@ -6,6 +6,11 @@ export const CHANGELOG = [
         "hash": "65cfc57",
         "subject": "feat: implement sticky search bar and enhance food page with new filters and actions",
         "body": ""
+      },
+      {
+        "hash": "a4bd79a",
+        "subject": "feat: update changelog for version 0.16.26, enhance nutrition label parsing, and improve food page UI",
+        "body": ""
       }
     ]
   },

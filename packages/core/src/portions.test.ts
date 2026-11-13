@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  amountAfterUnitChange,
   calculatePortion,
   defaultFoodUnit,
   formatPortion,
@@ -62,4 +63,40 @@ test('personal edits of catalog foods drop household estimates that no longer fi
 test('converted amounts are rounded for display', () => {
   assert.equal(roundAmount(100 / 3), 33.333);
   assert.equal(roundAmount(1 + 1 / 3), 1.333);
+});
+
+test('switching units keeps the number between countable units and converts only to grams', () => {
+  const banana = { id: 'f7', name: 'Banana', serving: '1 medium', cal: 105, p: 1, c: 27, f: 0 };
+  const units = getFoodUnits(banana);
+  const unit = (id: string) => units.find((u) => u.id === id)!;
+  const medium = unit('serving');
+  const large = unit('large');
+  const grams = unit('g');
+  // ½ medium → ½ large (not 0.434 large).
+  assert.equal(amountAfterUnitChange({ from: medium, to: large, amount: 0.5, qty: 0.5 }), 0.5);
+  // ½ medium → 59 g, the same food in grams.
+  assert.equal(amountAfterUnitChange({ from: medium, to: grams, amount: 0.5, qty: 0.5 }), 59);
+  // 59 g → 1 large, a clean start instead of a fraction of a large banana.
+  assert.equal(amountAfterUnitChange({ from: grams, to: large, amount: 59, qty: 0.5 }), 1);
+  // The quantity that reaches grams includes a custom unit weight.
+  const qtyWithOwnWeight = calculatePortion(banana, 1, 'large', 150).qty;
+  assert.equal(
+    amountAfterUnitChange({ from: large, to: grams, amount: 1, qty: qtyWithOwnWeight }),
+    150,
+  );
+  // Same unit, empty or invalid amounts fall back to 1.
+  assert.equal(amountAfterUnitChange({ from: large, to: large, amount: 2, qty: 2 }), 2);
+  assert.equal(amountAfterUnitChange({ from: medium, to: large, amount: NaN, qty: 0 }), 1);
+  assert.equal(amountAfterUnitChange({ from: medium, to: large, amount: 0, qty: 0 }), 1);
+  assert.equal(amountAfterUnitChange({ from: medium, to: grams, amount: 0, qty: 0 }), 1);
+  assert.equal(amountAfterUnitChange({ from: medium, to: undefined, amount: 2, qty: 2 }), 1);
+});
+
+test('custom units count as countable when switching', () => {
+  const drink = { ...chocolate, serving: '100 ml', units: [{ name: 'can', grams: 330 }] };
+  const units = getFoodUnits(drink);
+  const can = units.find((u) => u.id === 'u:can')!;
+  const ml = units.find((u) => u.id === 'g')!;
+  assert.equal(amountAfterUnitChange({ from: can, to: ml, amount: 2, qty: 6.6 }), 660);
+  assert.equal(amountAfterUnitChange({ from: ml, to: can, amount: 660, qty: 6.6 }), 1);
 });

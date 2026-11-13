@@ -93,8 +93,9 @@
   min-height: 64px;
   padding: 12px 16px;
   border-radius: 16px;
-  font-size: 24px;
-  font-weight: 600;
+  /* Same size as the amount beside it, so "2 tablespoon" reads as one value. */
+  font-size: 16px;
+  font-weight: 500;
 }
 .activity-history .card-top > .nourish-select {
   width: auto;

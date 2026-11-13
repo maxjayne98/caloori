@@ -4,7 +4,7 @@ import { WeeklyReportPage } from '@/features/progress/weekly-report-page';
 import { AddFoodSheet } from '@/features/foods/add-sheet';
 import { ProfilePage } from '@/features/profile/profile-page';
 import { AssistantPage } from '@/features/assistant/assistant-page';
-import { ClipboardPaste, Sparkles, Settings, X } from 'lucide-react';
+import { Check, ClipboardPaste, Sparkles, Settings, Undo2, X } from 'lucide-react';
 import { LogWeightSheet } from '@/features/progress/weight-sheet';
 import { MealDetailSheet } from '@/features/diary/diary-sheet';
 import { CopyDaySheet } from '@/features/diary/copy-sheet';
@@ -173,7 +173,7 @@ export function App() {
   }, []);
   useEffect(() => {
     if (!toast) return;
-    let t = setTimeout(() => setToast(''), 2500);
+    let t = setTimeout(() => setToast(''), typeof toast === 'string' ? 2500 : 5000);
     return () => clearTimeout(t);
   }, [toast]);
   useEffect(() => {
@@ -199,7 +199,8 @@ export function App() {
   tot.extras = sumExtraNutrients(list, nutrientCatalog);
   // Energy and protein only count toward the day score once the day is over.
   tot.dayScore = scoreDay(list, profile, { complete: day < today });
-  const notify = (t) => setToast(t),
+  // An optional action (e.g. Undo) turns the toast into a short-lived button.
+  const notify = (t, action) => setToast(action ? { text: t, action } : t),
     // Without a chosen meal (bottom Add button), default to the meal that fits the time of day.
     openAdd = (m = mealForTime(new Date())) => {
       setMeal(m);
@@ -422,6 +423,7 @@ export function App() {
         setQuery={setQuery}
         custom={custom}
         setQty={setQty}
+        entries={entries}
       />
     );
   if (['custom', 'quick', 'editFood'].includes(sheet)) {
@@ -834,34 +836,38 @@ export function App() {
               />
             ))}
           </div>
-          <div
-            role="status"
-            className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-2xl border-2 border-(--accent) bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
-              versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
-            }`}
-          >
-            <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
-            <div className="min-w-0 flex-1">
-              <p className="m-0 truncate whitespace-nowrap text-xs font-semibold">
-                {t('settings.updateAvailable')}
-              </p>
+          {/* Sheets are modal and block clicks outside them, so the notice waits until the
+              sheet closes instead of showing a button that cannot be pressed. */}
+          {!sheet && (
+            <div
+              role="status"
+              className={`fixed inset-x-4 bottom-[calc(92px+env(safe-area-inset-bottom))] z-[100] mx-auto flex max-w-md items-center gap-3 rounded-2xl border-2 border-(--accent) bg-[var(--surface)] p-3 text-[var(--foreground)] shadow-lg transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
+                versionNoticeEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+              }`}
+            >
+              <Sparkles size={18} className="shrink-0 text-[var(--accent)]" aria-hidden="true" />
+              <div className="min-w-0 flex-1">
+                <p className="m-0 truncate whitespace-nowrap text-xs font-semibold">
+                  {t('settings.updateAvailable')}
+                </p>
+              </div>
+              <Button
+                variant="unstyled"
+                className="shrink-0 rounded-lg bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent-text)]"
+                onClick={openVersionChangelog}
+              >
+                {t('settings.whatsNew')}
+              </Button>
+              <Button
+                variant="unstyled"
+                className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--neutral-85858b)] hover:bg-[var(--neutral-e9e9ee)]"
+                aria-label={t('settings.dismissUpdate')}
+                onClick={acknowledgeVersionNotice}
+              >
+                <X size={16} aria-hidden="true" />
+              </Button>
             </div>
-            <Button
-              variant="unstyled"
-              className="shrink-0 rounded-lg bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent-text)]"
-              onClick={openVersionChangelog}
-            >
-              {t('settings.whatsNew')}
-            </Button>
-            <Button
-              variant="unstyled"
-              className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--neutral-85858b)] hover:bg-[var(--neutral-e9e9ee)]"
-              aria-label={t('settings.dismissUpdate')}
-              onClick={acknowledgeVersionNotice}
-            >
-              <X size={16} aria-hidden="true" />
-            </Button>
-          </div>
+          )}
         </>
       )}
       {sheet && (
@@ -891,11 +897,53 @@ export function App() {
           {content}
         </ModalSheet>
       )}
-      {toast && (
-        <div className="toast" role="status">
-          {toast}
-        </div>
-      )}
+      {toast &&
+        (typeof toast === 'string' ? (
+          <div className="toast" role="status">
+            {toast}
+          </div>
+        ) : (
+          // Undoable toasts match the basket card: white, accent edge, a check and an Undo pill.
+          <div
+            className="toast flex items-center gap-2.5 border"
+            role="status"
+            style={{
+              background: 'var(--surface)',
+              color: 'var(--foreground)',
+              borderColor: 'color-mix(in srgb, var(--accent) 22%, transparent)',
+              padding: '6px 6px 6px 8px',
+              boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 20%, transparent)',
+            }}
+          >
+            <span
+              className="grid size-7 shrink-0 place-items-center rounded-full"
+              style={{ background: 'var(--accent-soft)', color: 'var(--accent-text)' }}
+              aria-hidden="true"
+            >
+              <Check size={15} strokeWidth={2.75} />
+            </span>
+            <span className="font-medium">{toast.text}</span>
+            <Button
+              variant="unstyled"
+              className="inline-flex items-center gap-1 rounded-full font-semibold active:scale-95"
+              // Inline: the global button reset (unlayered) would otherwise clear these.
+              style={{
+                height: 30,
+                padding: '0 12px',
+                fontSize: 13,
+                background: 'var(--accent)',
+                color: 'var(--surface)',
+              }}
+              onClick={() => {
+                toast.action.run();
+                setToast('');
+              }}
+            >
+              <Undo2 size={14} aria-hidden="true" />
+              {toast.action.label}
+            </Button>
+          </div>
+        ))}
     </main>
   );
 }
