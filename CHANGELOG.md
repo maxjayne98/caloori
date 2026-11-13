@@ -2,6 +2,10 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.21.0
+
+- `4eec108` feat: update changelog for version 0.20.0, add new translation for percent of goal, and update app version to 0.21.0
+
 ## 0.20.0
 
 - `26e2c74` feat: update changelog for version 0.18.2, enhance food rows with quick add functionality, and improve weight tracking features

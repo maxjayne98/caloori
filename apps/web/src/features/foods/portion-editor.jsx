@@ -19,7 +19,7 @@ import { FoodNutrition } from '@/components/food-nutrition';
 import { MiniGradeScale, PortionScoreLabel } from '@/components/score-badge';
 import { MealPicker } from '@/components/meal-picker';
 import { ClearTextButton } from '@/components/text-actions';
-import { Scale } from 'lucide-react';
+import { ListPlus, Scale } from 'lucide-react';
 import { useI18n } from '@/providers/i18n-provider';
 import { useNourishData } from '@/providers/data-provider';
 export function FoodPortionEditor({
@@ -30,6 +30,8 @@ export function FoodPortionEditor({
   onBack,
   hideMeal = false,
   saveLabel,
+  secondaryLabel,
+  onSecondarySave,
 }) {
   const { t, tMeal } = useI18n();
   const { profile } = useNourishData();
@@ -99,6 +101,12 @@ export function FoodPortionEditor({
     (mode === 'fraction' ? fractionDisplay(value) : portionNumber(value)) +
     ' ' +
     portionUnitLabel(unit, value);
+  // What a save hands back: the totals plus how the amount was entered.
+  const result = () => ({
+    ...tot,
+    meal: selectedMeal,
+    portion: { unit: unitId, amount: value, text, mode, gramOverride: +weight || null },
+  });
   function changeMode(next) {
     if (next === mode) return;
     setError('');
@@ -140,17 +148,7 @@ export function FoodPortionEditor({
           setError(t('portion.enterPositive'));
           return;
         }
-        onSave({
-          ...tot,
-          meal: selectedMeal,
-          portion: {
-            unit: unitId,
-            amount: value,
-            text,
-            mode,
-            gramOverride: +weight || null,
-          },
-        });
+        onSave(result());
       }}
     >
       <div className="portion-food-heading">
@@ -329,12 +327,42 @@ export function FoodPortionEditor({
         </p>
       )}
       <FoodNutrition values={tot} />
-      <Button className="primary" type="submit" disabled={!valid} variant="unstyled">
-        {saveLabel ||
-          (onDelete
-            ? t('portion.saveChanges')
-            : t('meals.addToMeal', { meal: tMeal(selectedMeal) }))}
-      </Button>
+      {/* With a second action the two sit side by side: "Add to list" on the start side, the
+          main save on the end side. */}
+      <div className={onSecondarySave ? 'mt-[19px] flex gap-2' : undefined}>
+        {onSecondarySave && (
+          <Button
+            type="button"
+            disabled={!valid}
+            onClick={() => onSecondarySave(result())}
+            variant="unstyled"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[15px] font-semibold active:scale-[0.98]"
+            // Inline: the global button reset (unlayered) would otherwise clear these.
+            style={{
+              height: 48,
+              padding: '0 16px',
+              fontSize: 14,
+              background: 'var(--accent-soft)',
+              color: 'var(--accent-text)',
+            }}
+          >
+            <ListPlus size={17} aria-hidden="true" />
+            {secondaryLabel}
+          </Button>
+        )}
+        <Button
+          className="primary"
+          type="submit"
+          style={onSecondarySave ? { flex: 1, minWidth: 0, margin: 0, height: 48 } : undefined}
+          disabled={!valid}
+          variant="unstyled"
+        >
+          {saveLabel ||
+            (onDelete
+              ? t('portion.saveChanges')
+              : t('meals.addToMeal', { meal: tMeal(selectedMeal) }))}
+        </Button>
+      </div>
       {onDelete && (
         <Button className="secondary" type="button" onClick={onDelete} variant="unstyled">
           {t('portion.deleteFromDiary')}

@@ -48,8 +48,11 @@ export function AddFoodSheet({
   const pick = (item) => setBasket((items) => [...items, { ...item, basketKey: freshKey() }]);
   const basketCal = basket.reduce((sum, item) => sum + item.cal * (item.qty ?? 1), 0);
 
-  function commit() {
-    const items = basket.map(({ basketKey: _key, ...item }) => item);
+  // Adds the picked foods (plus an optional extra one) to the diary in one go, with Undo.
+  function commit(extra) {
+    const items = [...basket, ...(extra ? [extra] : [])].map(
+      ({ basketKey: _key, ...item }) => item,
+    );
     const before = new Set((entries[day] || []).map((item) => item.key));
     const next = appendDiaryEntries(entries, day, items, profile);
     const added = new Set(
@@ -93,8 +96,13 @@ export function AddFoodSheet({
       // A remembered amount prefills the editor; a food never logged starts at one unit.
       food={chosen}
       initialMeal={meal}
-      saveLabel={t('add.toBasket')}
+      // Main button logs it now (with anything already picked); the second one keeps picking.
       onSave={(data) => {
+        setChosen(null);
+        commit({ ...chosen, qty: data.qty, meal: data.meal, portion: data.portion });
+      }}
+      secondaryLabel={t('add.toBasket')}
+      onSecondarySave={(data) => {
         pick({ ...chosen, qty: data.qty, meal: data.meal, portion: data.portion });
         setChosen(null);
       }}
@@ -203,7 +211,7 @@ export function AddFoodSheet({
             </Button>
             <Button
               variant="unstyled"
-              onClick={commit}
+              onClick={() => commit()}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full font-semibold active:scale-95 motion-reduce:transition-none"
               style={{
                 height: 40,
