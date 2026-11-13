@@ -81,3 +81,70 @@ Salt 1.5 g`);
   assert.equal(eu?.values.sodium, 600);
   assert.equal('salt' in (eu?.values ?? {}), false);
 });
+
+test('reads a Dutch web-shop table with labels and values on separate lines', () => {
+  const parsed = parseNutritionLabel(`Energie Kilocalorieën (kcal)
+221
+Vetten (g)
+16.177
+verzadigde vetzuren (g)
+6.863
+Koolhydraten (g)
+0.202
+suikers (g)
+0.196
+Voedingsvezel (g)
+0.002
+Eiwitten (g)
+18.529
+Zout (g)
+0.328
+Name Dirk Vleeschmeesters Rundergehakt`);
+  const values = parsed?.values as Record<string, number>;
+  assert.equal(parsed?.name, 'Dirk Vleeschmeesters Rundergehakt');
+  assert.equal(values.cal, 221);
+  assert.equal(values.f, 16.177);
+  assert.equal(values.satFat, 6.863);
+  assert.equal(values.c, 0.202);
+  assert.equal(values.sugar, 0.196);
+  assert.equal(values.fiber, 0.002);
+  assert.equal(values.p, 18.529);
+  assert.equal(Math.round(values.sodium), 131);
+});
+
+test('reads a Dutch label table with decimal commas and dotted thousands', () => {
+  const parsed = parseNutritionLabel(`Voedingswaarden per 100 gram
+Energie 1.036 kJ (245 kcal)
+Vet 1,2 g
+waarvan verzadigd 0,3 g
+Koolhydraten 48 g
+waarvan suikers 1,3 g
+Voedingsvezel 4,3 g
+Eiwitten 8,3 g
+Zout 0,6 g`);
+  assert.equal(parsed?.serving, '100 g');
+  assert.deepEqual(parsed?.values, {
+    cal: 245,
+    f: 1.2,
+    c: 48,
+    p: 8.3,
+    sugar: 1.3,
+    fiber: 4.3,
+    satFat: 0.3,
+    sodium: 240,
+  });
+});
+
+test('prefers the kcal row when energy is split over kJ and kcal rows', () => {
+  const parsed = parseNutritionLabel(`Per 100 ml
+Energie (kJ)
+180
+Energie (kcal)
+42
+Koolhydraten (g)
+10,4`);
+  const values = parsed?.values as Record<string, number>;
+  assert.equal(parsed?.serving, '100 ml');
+  assert.equal(values.cal, 42);
+  assert.equal(values.c, 10.4);
+});

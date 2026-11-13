@@ -5,6 +5,9 @@ import { Button, Select } from '@nourish/ui';
 import { Plus, X } from 'lucide-react';
 import { useI18n } from '@/providers/i18n-provider';
 
+/** Dispatched on the food form to fill these fields; detail: { serving, grams }. */
+export const SERVING_FILL_EVENT = 'nourish:fill-serving';
+
 type Kind = 'g' | 'ml' | 'serving';
 type Unit = { name: string; grams: string };
 
@@ -47,8 +50,27 @@ export function ServingFields({
   const updateUnit = (index: number, patch: Partial<Unit>) =>
     setUnits(units.map((unit, i) => (i === index ? { ...unit, ...patch } : unit)));
 
+  // The label importer fills this form from outside: it sends the parsed serving as an event,
+  // because these fields keep their own state and plain input writes would be overwritten.
+  const root = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const form = root.current?.closest('form');
+    if (!form) return;
+    const fill = (event: Event) => {
+      const detail = (event as CustomEvent<{ serving?: string; grams?: number | null }>).detail;
+      const next = parseServing(detail.serving ?? '100 g', detail.grams);
+      setKind(next.kind as Kind);
+      if (next.kind === 'serving') {
+        setName(next.label);
+        setGrams(next.grams ? String(next.grams) : '');
+      } else setAmount(String(next.amount));
+    };
+    form.addEventListener(SERVING_FILL_EVENT, fill);
+    return () => form.removeEventListener(SERVING_FILL_EVENT, fill);
+  }, []);
+
   return (
-    <div className="grid gap-3">
+    <div ref={root} className="grid gap-3">
       <input type="hidden" name="serving" value={servingText} />
       <input type="hidden" name="grams" value={baseGrams} />
       <input type="hidden" name="units" value={JSON.stringify(unitsReady ? cleanUnits : [])} />

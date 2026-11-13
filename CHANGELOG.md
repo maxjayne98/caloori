@@ -2,6 +2,14 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.16.26
+
+- `65cfc57` feat: implement sticky search bar and enhance food page with new filters and actions
+
+## 0.16.22
+
+- `af57a67` feat: update app version to 0.16.22, adjust changelog, and modify related tests
+
 ## 0.16.21
 
 - `091406d` feat: update app version to 0.16.21, adjust changelog, and modify related tests

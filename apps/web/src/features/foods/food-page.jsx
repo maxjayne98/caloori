@@ -1,16 +1,17 @@
 'use client';
 
+import { ClearTextButton } from '@/components/text-actions';
 import { ScrollTopButton } from '@/components/scroll-top-button';
-import { Button } from '@nourish/ui';
+import { Button, Input } from '@nourish/ui';
 import { useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
 import { useI18n } from '@/providers/i18n-provider';
 import { HeartLoader } from '@/components/heart-loader';
-import { Bookmark, ChefHat, Clock, LayoutGrid, Plus, RefreshCw } from 'lucide-react';
+import { StickyContainer } from '@/components/sticky-container';
+import { RefreshCw } from 'lucide-react';
 import { foods, foodLibrary } from '@nourish/core';
 import { Icon } from '@/components/icon';
 import { MealLibrary } from '@/features/meals/meal-library';
-import { FoodSearchBar } from '@/features/foods/food-search-bar';
 import { FoodRows } from '@/features/foods/food-rows';
 export function FoodPage({
   filter,
@@ -34,51 +35,12 @@ export function FoodPage({
   const [refreshing, setRefreshing] = useState(false),
     [refreshMessage, setRefreshMessage] = useState('');
   const filters = [
-    { id: 'All foods', label: t('food.allShort'), Icon: LayoutGrid },
-    { id: 'Saved meals', label: t('food.mealsShort'), Icon: Bookmark },
-    // Text, not an icon: no icon reads clearly as "my foods".
-    { id: 'My foods', label: t('food.mineShort') },
-    { id: 'Recent', label: t('food.recent'), Icon: Clock },
-    { id: 'Recipes', label: t('food.recipes'), Icon: ChefHat },
+    { id: 'All foods', label: t('food.allFoods') },
+    { id: 'Saved meals', label: t('food.savedMeals') },
+    { id: 'My foods', label: t('food.myFoods') },
+    { id: 'Recent', label: t('food.recent') },
+    { id: 'Recipes', label: t('food.recipes') },
   ];
-  // Compact filter chips sharing one row with the search actions: icons only, and the chosen
-  // filter also shows its name.
-  const filterChips = (
-    <div
-      role="tablist"
-      aria-label={t('food.filters')}
-      className="flex min-w-0 items-center gap-1 overflow-x-auto"
-      // Scrolls sideways on very narrow screens; inline because the global scrollbar rule wins.
-      style={{ scrollbarWidth: 'none' }}
-    >
-      {filters.map((f) => {
-        const selected = filter === f.id;
-        return (
-          <Button
-            key={f.id}
-            role="tab"
-            aria-selected={selected}
-            aria-label={f.label}
-            title={f.label}
-            onClick={() => setFilter(f.id)}
-            variant="unstyled"
-            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-medium"
-            // Inline so the global button reset cannot override size and colors.
-            style={{
-              height: 30,
-              padding: selected ? '0 10px 0 9px' : '0 9px',
-              fontSize: 12,
-              background: selected ? 'var(--accent)' : 'var(--accent-soft)',
-              color: selected ? 'var(--surface)' : 'var(--accent-text)',
-            }}
-          >
-            {f.Icon && <f.Icon size={14} aria-hidden="true" />}
-            {(selected || !f.Icon) && <span>{f.label}</span>}
-          </Button>
-        );
-      })}
-    </div>
-  );
   return (
     <>
       <div className="intro food-intro">
@@ -125,49 +87,49 @@ export function FoodPage({
           </div>
         )}
       </div>
-      {filter === 'Saved meals' ? (
-        <>
-          <div
-            className="mb-[18px] flex overflow-x-auto"
-            // Inline: the global slim-scrollbar rule (unlayered) beats utilities.
-            style={{ scrollbarWidth: 'none' }}
+      <div className="pills">
+        {filters.map((f) => (
+          <Button
+            className={filter === f.id ? 'selected' : ''}
+            onClick={() => setFilter(f.id)}
+            key={f.id}
+            variant="unstyled"
           >
-            {filterChips}
-          </div>
-          <MealLibrary {...libraryProps} />
-        </>
+            {f.label}
+          </Button>
+        ))}
+      </div>
+      {filter === 'Saved meals' ? (
+        <MealLibrary {...libraryProps} />
       ) : (
         <>
-          <FoodSearchBar
-            query={query}
-            setQuery={setQuery}
-            start={filterChips}
-            iconOnly
-            actions={[
-              {
-                key: 'barcode',
-                label: t('food.barcode'),
-                icon: <Icon type="Barcode" />,
-                onClick: () => setSheet('barcode'),
-                accent: true,
-              },
-              filter === 'Recipes'
-                ? {
-                    key: 'recipe',
-                    label: t('sheet.recipe'),
-                    icon: <Plus aria-hidden="true" />,
-                    onClick: () => setSheet('recipe'),
-                    accent: true,
-                  }
-                : {
-                    key: 'custom',
-                    label: t('sheet.custom'),
-                    icon: <Plus aria-hidden="true" />,
-                    onClick: () => setSheet('custom'),
-                    accent: true,
-                  },
-            ]}
-          />
+          <StickyContainer className="food-library-sticky">
+            <div className="relative mb-[15px]">
+              <Input
+                className="search"
+                style={{ marginBottom: 0, paddingInlineEnd: 44 }}
+                placeholder={t('food.searchPlaceholder')}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label={t('food.searchAria')}
+                unstyled
+              />
+              <ClearTextButton value={query} onChange={setQuery} />
+            </div>
+            <div className="food-library-actions">
+              <Button
+                className="link"
+                onClick={() => setSheet(filter === 'Recipes' ? 'recipe' : 'custom')}
+                variant="unstyled"
+              >
+                {filter === 'Recipes' ? '+ ' + t('sheet.recipe') : '+ ' + t('sheet.custom')}
+              </Button>
+              <Button className="link" onClick={() => setSheet('barcode')} variant="unstyled">
+                <Icon type="Barcode" />
+                {t('sheet.barcode')}
+              </Button>
+            </div>
+          </StickyContainer>
           <div className="pb-36">
             <FoodRows
               items={(filter === 'Recent'

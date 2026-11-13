@@ -1,5 +1,25 @@
 export const CHANGELOG = [
   {
+    "version": "0.16.26",
+    "entries": [
+      {
+        "hash": "65cfc57",
+        "subject": "feat: implement sticky search bar and enhance food page with new filters and actions",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.16.22",
+    "entries": [
+      {
+        "hash": "af57a67",
+        "subject": "feat: update app version to 0.16.22, adjust changelog, and modify related tests",
+        "body": ""
+      }
+    ]
+  },
+  {
     "version": "0.16.21",
     "entries": [
       {

@@ -5,26 +5,25 @@ import { ArrowDownToLine } from 'lucide-react';
 import { Button } from '@nourish/ui';
 import { parseNutritionLabel } from '@nourish/core';
 import { TextActions } from '@/components/text-actions';
+import { SERVING_FILL_EVENT } from '@/features/foods/serving-fields';
+import { useI18n } from '@/providers/i18n-provider';
 
 export function NutritionLabelImport({ notify, open, onOpenChange }) {
+  const { t } = useI18n();
   const [text, setText] = useState('');
   return (
     <>
       {open && (
         <div className="nutrition-label-panel" id="nutrition-label-panel">
           <p className="nutrition-label-instructions" id="nutrition-label-instructions">
-            Paste plain text or a table, with one nutrient and value per line. Include “Per 100
-            Gram” if the values are per 100 g. Supported: Energy (kcal or kJ), Fat, Carbohydrates,
-            and Proteins. Optional: “Name: …” and “Serving size: 2 slices (50 g)”. A serving weight
-            converts per-100-g values; without one, the serving is set to 100 g. Other label rows
-            are ignored.
+            {t('label.instructions')}
           </p>
-          <pre className="nutrition-label-example">{`Per 100 Gram
-Energy 1,036 kJ (245 kcal)
-Fat 1.2 g
-Carbohydrates 48 g
-Proteins 8.3 g`}</pre>
-          <label htmlFor="nutrition-label">Nutrition label text</label>
+          <pre className="nutrition-label-example">{`Per 100 gram
+Energie 1.036 kJ (245 kcal)
+Vet 1,2 g
+Koolhydraten 48 g
+Eiwitten 8,3 g`}</pre>
+          <label htmlFor="nutrition-label">{t('label.text')}</label>
           <div className="relative">
             <textarea
               id="nutrition-label"
@@ -48,26 +47,27 @@ Proteins 8.3 g`}</pre>
               const form = event.currentTarget.form;
               const parsed = parseNutritionLabel(new FormData(form).get('nutritionLabel'));
               if (!parsed) {
-                notify('Could not find supported nutrition values in that text.');
+                notify(t('label.notFound'));
                 return;
               }
-              const values = {
-                name: parsed.name,
-                serving: parsed.serving,
-                grams: parsed.gramsPerServing,
-                ...parsed.values,
-              };
+              const values = { name: parsed.name, ...parsed.values };
               for (const [name, value] of Object.entries(values)) {
                 if (value === undefined || value === null) continue;
                 const input = form.elements.namedItem(name);
                 if (input) input.value = String(value);
               }
-              notify('Nutrition details filled. Please review before saving.');
+              if (parsed.serving)
+                form.dispatchEvent(
+                  new CustomEvent(SERVING_FILL_EVENT, {
+                    detail: { serving: parsed.serving, grams: parsed.gramsPerServing },
+                  }),
+                );
+              notify(t('label.filled'));
               onOpenChange(false);
             }}
           >
             <ArrowDownToLine size={16} aria-hidden="true" />
-            Fill nutrition fields
+            {t('label.fill')}
           </Button>
         </div>
       )}
