@@ -116,9 +116,6 @@ export function DailySummary({
     // Whole or half grams (148.4 → 148.5): precise enough, without decimal noise.
     const eaten = roundToHalf(tot[k] || 0);
     const goal = roundToHalf(profile[k] || 0);
-    const over = goal > 0 ? roundToHalf((tot[k] || 0) - profile[k]) : 0;
-    // Extra protein is usually fine (green); extra carbs or fat is over plan (orange).
-    const overColor = k === 'p' ? 'var(--grade-a)' : 'var(--grade-d)';
     return (
       <div className="macro" key={k}>
         <small className="inline-flex items-center gap-1.5">
@@ -145,18 +142,6 @@ export function DailySummary({
             {t('common.grams')} / {goal > 0 ? <RollingNumber value={goal} decimals={1} /> : '—'}
             {t('common.grams')}
           </em>
-          {over > 0 && (
-            <span
-              className="ms-1 inline-block rounded-full px-1 align-middle text-[9px] font-bold leading-4 tabular-nums min-[421px]:ms-1.5 min-[421px]:px-1.5 min-[421px]:text-[10px]"
-              style={{
-                color: overColor,
-                background: `color-mix(in srgb, ${overColor} 14%, transparent)`,
-              }}
-              title={t('summary.macroOver', { grams: over })}
-            >
-              +{over}
-            </span>
-          )}
         </b>
         <div className="track">
           <i
