@@ -445,9 +445,17 @@ button.brand {
 .daily-summary .dashboard-macro-block .macro b {
   white-space: nowrap;
 }
-/* On phones the macro name matters more than g/kg; the ratio returns on wider screens. */
+/* On phones there is no room beside the name, so g/kg moves to its own line under it. */
 @media (max-width: 420px) {
+  .daily-summary .macro small {
+    flex-wrap: wrap;
+    row-gap: 1px;
+  }
   .daily-summary .macro .macro-per-kg {
+    flex-basis: 100%;
+    padding-inline-start: 12px;
+  }
+  .daily-summary .macro .macro-per-kg-sep {
     display: none;
   }
 }

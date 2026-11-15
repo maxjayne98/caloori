@@ -127,7 +127,7 @@ export function DailySummary({
           {name}
           {weight > 0 && (
             <em className="macro-per-kg">
-              {' · '}
+              <span className="macro-per-kg-sep">{' · '}</span>
               {/* LTR isolation: keep numeric ratio readable in RTL */}
               <span dir="ltr">
                 {((tot[k] || 0) / weight).toFixed(1)} {t('common.grams')}/kg
