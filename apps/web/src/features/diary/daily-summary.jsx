@@ -1,6 +1,6 @@
 'use client';
 import { GradeMark } from '@/components/score-badge';
-import { CircleCheck, Scale } from 'lucide-react';
+import { CircleCheck, Scale, TrendingDown, TrendingUp } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
 
@@ -31,7 +31,6 @@ export function DailySummary({
 }) {
   const { t, locale } = useI18n();
   const [now, setNow] = useState(() => new Date());
-  const [showWeightInfo, setShowWeightInfo] = useState(false);
   // The ring starts empty and fills to today's value once the card is on screen; the existing
   // stroke transition animates it (and is off for reduced motion, so it simply appears).
   const [ringReady, setRingReady] = useState(false);
@@ -208,7 +207,6 @@ export function DailySummary({
         <span>
           {tot.cal > profile.cal ? t('summary.kcalOverGoal') : t('summary.kcalRemaining')}
         </span>
-        
       </div>
     </div>
   );
@@ -235,6 +233,135 @@ export function DailySummary({
       </div>
     </div>
   );
+  return (
+    <section
+      className={`card energy-card daily-summary relative balance-${status}`}
+      // Layered surface: a faint accent wash in the corner, a hairline edge and a soft lift.
+      style={{
+        background:
+          'radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 7%, var(--surface)) 0%, var(--surface) 55%)',
+        border: '1px solid color-mix(in srgb, var(--foreground) 6%, transparent)',
+        boxShadow:
+          '0 1px 2px color-mix(in srgb, var(--foreground) 4%, transparent), 0 12px 32px color-mix(in srgb, var(--accent) 8%, transparent)',
+      }}
+    >
+      <DayEnergyHeader tot={tot} onScore={onScore} label={labels[status]} />
+      <div className="energy-details">
+        {energy}
+        <div className="dashboard-macro-block">
+          <div className="macros">{macroItems}</div>
+        </div>
+      </div>
+      <div className="daily-energy-chart">
+        {ring}
+        {weightChange && (
+          // Same readout capsule as the Energy gauges card, centered under the ring.
+          <div className="mt-2 flex justify-center">
+            <WeightEstimate
+              weightChange={weightChange}
+              weight={weight}
+              profile={profile}
+              tot={tot}
+              variant="notch"
+            />
+          </div>
+        )}
+      </div>
+      {status !== 'neutral' && (
+        <div className="balance-message" role="status">
+          {status === 'over' ? (
+            <span className="balance-message-cat">
+              <ChubbyCat />
+            </span>
+          ) : status === 'low' ? (
+            <span className="balance-message-cat">
+              <SkinnyCat />
+            </span>
+          ) : (
+            <span className="balance-message-icon" aria-hidden="true">
+              <CircleCheck size={16} />
+            </span>
+          )}
+          <p>
+            {status === 'over' ? (
+              <>
+                <strong>{t('summary.msgOverStrong')}</strong> {t('summary.msgOverText')}
+              </>
+            ) : status === 'low' ? (
+              <>
+                <strong>{t('summary.msgLowStrong')}</strong> {t('summary.msgLowText')}
+              </>
+            ) : (
+              <strong>{t('summary.msgReached')}</strong>
+            )}
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** "Daily energy" title, day score and balance tag, shared by Daily energy and Energy gauges. */
+export function DayEnergyHeader({ tot, onScore, label }) {
+  const { t } = useI18n();
+  return (
+    <div className="card-top">
+      <span className="inline-flex items-center gap-2">
+        {t('summary.dailyEnergy')}
+        {tot.dayScore && (
+          <Button
+            variant="unstyled"
+            className="grid"
+            onClick={onScore}
+            aria-label={t('insights.dayTitle')}
+          >
+            <GradeMark
+              {...tot.dayScore}
+              size="md"
+              label={t('score.day', { score: tot.dayScore.score })}
+            />
+          </Button>
+        )}
+      </span>
+      <span className="tag">{label}</span>
+    </div>
+  );
+}
+
+/** Balance status and today's weight estimate for a day; shared by both energy cards. */
+export function useDayEnergy({ tot, profile, weight, day, entries, activities, weights, hasFood }) {
+  const { t } = useI18n();
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  const status = balanceStatus(tot.cal, profile.cal, day, now);
+  const label = {
+    neutral: t('summary.balanceNeutral'),
+    over: t('summary.balanceOver'),
+    low: t('summary.balanceLow'),
+    reached: t('summary.balanceReached'),
+  }[status];
+  const adaptiveBaselineKcal = hasFood
+    ? estimateAdaptiveBaselineKcal({ entries, activities, weights, profile, throughDate: day })
+    : null;
+  const weightChange =
+    hasFood &&
+    estimateDailyWeightChange({
+      profile,
+      intake: tot.cal,
+      weight,
+      activities: activities[day] ?? [],
+      adaptiveBaselineKcal,
+    });
+  return { status, label, weightChange };
+}
+
+/** Today's weight effect as a pill; tapping it opens the breakdown with the weekly pace. */
+export function WeightEstimate({ weightChange, weight, profile, tot, variant = 'pill' }) {
+  const { t, locale } = useI18n();
+  const [showWeightInfo, setShowWeightInfo] = useState(false);
   const weeklyKg = weightChange ? weightChange.changeKg * 7 : 0;
   const tone = weightChange
     ? weightTrendTone({ weeklyKg, weight: weight || profile.weight, goal: profile.goal })
@@ -242,7 +369,42 @@ export function DailySummary({
   // Fine trends stay neutral gray; too fast or against the goal turns orange.
   const toneColor = tone === 'ok' ? 'var(--neutral-85858b)' : 'var(--grade-d)';
   const kcal = (value) => Math.round(value).toLocaleString(locale);
-  const weightEstimate = weightChange && (
+  const grams = Math.round((weightChange.changeKg * 1000) / 10) * 10;
+  // Notch: a readout capsule for the open bottom of a gauge. A trend arrow in the tone color,
+  // the signed grams, and a quiet "today", on a white capsule with a hairline edge.
+  const Trend = grams > 0 ? TrendingUp : TrendingDown;
+  const weightNotch = (
+    <Button
+      variant="unstyled"
+      onClick={() => setShowWeightInfo(true)}
+      aria-label={t('summary.weightInfoTitle')}
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full tabular-nums active:scale-95"
+      // Inline: the global button reset (unlayered) would otherwise clear these.
+      style={{
+        height: 30,
+        padding: '0 11px 0 4px',
+        background: 'var(--surface)',
+        border: '1px solid color-mix(in srgb, var(--foreground) 8%, transparent)',
+        boxShadow: '0 4px 12px color-mix(in srgb, var(--foreground) 7%, transparent)',
+      }}
+    >
+      <span
+        className="grid size-[22px] place-items-center rounded-full"
+        style={{ color: 'var(--surface)', background: toneColor }}
+        aria-hidden="true"
+      >
+        <Trend size={13} strokeWidth={2.5} />
+      </span>
+      <span className="text-[13px] font-bold" style={{ color: 'var(--foreground)' }}>
+        {new Intl.NumberFormat(locale, { signDisplay: 'always' }).format(grams)}
+        <span className="ms-px text-[10px] font-semibold">g</span>
+      </span>
+      <span className="text-[10px]" style={{ color: 'var(--neutral-85858b)' }}>
+        {t('summary.today')}
+      </span>
+    </Button>
+  );
+  const weightEstimate = (
     <Button
       variant="unstyled"
       onClick={() => setShowWeightInfo(true)}
@@ -266,7 +428,7 @@ export function DailySummary({
       })}
     </Button>
   );
-  const weightInfo = weightChange && showWeightInfo && (
+  const weightInfo = showWeightInfo && (
     <ModalSheet title={t('summary.weightInfoTitle')} onClose={() => setShowWeightInfo(false)}>
       <div className="grid gap-4">
         <p className="m-0 text-sm text-[var(--neutral-85858b)]">{t('summary.weightInfoIntro')}</p>
@@ -318,78 +480,9 @@ export function DailySummary({
     </ModalSheet>
   );
   return (
-    <section
-      className={`card energy-card daily-summary relative balance-${status}`}
-      // Layered surface: a faint accent wash in the corner, a hairline edge and a soft lift.
-      style={{
-        background:
-          'radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 7%, var(--surface)) 0%, var(--surface) 55%)',
-        border: '1px solid color-mix(in srgb, var(--foreground) 6%, transparent)',
-        boxShadow:
-          '0 1px 2px color-mix(in srgb, var(--foreground) 4%, transparent), 0 12px 32px color-mix(in srgb, var(--accent) 8%, transparent)',
-      }}
-    >
-      <div className="card-top">
-        <span className="inline-flex items-center gap-2">
-          {t('summary.dailyEnergy')}
-          {tot.dayScore && (
-            <Button
-              variant="unstyled"
-              className="grid"
-              onClick={onScore}
-              aria-label={t('insights.dayTitle')}
-            >
-              <GradeMark
-                {...tot.dayScore}
-                size="md"
-                label={t('score.day', { score: tot.dayScore.score })}
-              />
-            </Button>
-          )}
-        </span>
-        <span className="tag">{labels[status]}</span>
-      </div>
-      <div className="energy-details">
-        {energy}
-        <div className="dashboard-macro-block">
-          <div className="macros">{macroItems}</div>
-        </div>
-      </div>
-      <div className="daily-energy-chart">
-        {ring}
-        {weightEstimate}
-      </div>
+    <>
+      {variant === 'notch' ? weightNotch : weightEstimate}
       {weightInfo}
-      {status !== 'neutral' && (
-        <div className="balance-message" role="status">
-          {status === 'over' ? (
-            <span className="balance-message-cat">
-              <ChubbyCat />
-            </span>
-          ) : status === 'low' ? (
-            <span className="balance-message-cat">
-              <SkinnyCat />
-            </span>
-          ) : (
-            <span className="balance-message-icon" aria-hidden="true">
-              <CircleCheck size={16} />
-            </span>
-          )}
-          <p>
-            {status === 'over' ? (
-              <>
-                <strong>{t('summary.msgOverStrong')}</strong> {t('summary.msgOverText')}
-              </>
-            ) : status === 'low' ? (
-              <>
-                <strong>{t('summary.msgLowStrong')}</strong> {t('summary.msgLowText')}
-              </>
-            ) : (
-              <strong>{t('summary.msgReached')}</strong>
-            )}
-          </p>
-        </div>
-      )}
-    </section>
+    </>
   );
 }

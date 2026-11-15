@@ -1,5 +1,12 @@
 /** Rearrangeable sections of the Today page, in their default order. */
-export const TODAY_SECTIONS = ['greeting', 'days', 'summary', 'meals', 'activity'] as const;
+export const TODAY_SECTIONS = [
+  'greeting',
+  'days',
+  'summary',
+  'gauges',
+  'meals',
+  'activity',
+] as const;
 export type TodaySectionId = (typeof TODAY_SECTIONS)[number];
 
 export interface TodaySection {

@@ -1,5 +1,65 @@
 export const CHANGELOG = [
   {
+    "version": "0.22.8",
+    "entries": [
+      {
+        "hash": "0f537fc",
+        "subject": "feat: update DailySummary component with new weight display and translations; add EnergyGauges component for enhanced calorie tracking;",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.21.7",
+    "entries": [
+      {
+        "hash": "2b7f42a",
+        "subject": "feat: update estimated weight display in DailySummary component and add new translation for today's weight; bump app version to 0.21.7",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.21.6",
+    "entries": [
+      {
+        "hash": "6f8619b",
+        "subject": "feat: update app version to 0.21.6, modify DailySummary component for better mobile display, and adjust i18n tests",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.21.5",
+    "entries": [
+      {
+        "hash": "561feda",
+        "subject": "feat: update app version to 0.21.5 and remove unused over macro display in DailySummary component",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.21.3",
+    "entries": [
+      {
+        "hash": "ac6a91b",
+        "subject": "feat: enhance DailySummary component with animation for energy ring and update app version to 0.21.3",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "version": "0.21.2",
+    "entries": [
+      {
+        "hash": "cfe7abf",
+        "subject": "feat: update changelog for version 0.21.0, add new entries for recent features, and update app version to 0.21.2",
+        "body": ""
+      }
+    ]
+  },
+  {
     "version": "0.21.0",
     "entries": [
       {

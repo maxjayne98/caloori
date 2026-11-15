@@ -2,6 +2,30 @@
 
 Generated from Git history by the post-commit hook. Entries are grouped by the app version recorded in each commit.
 
+## 0.22.8
+
+- `0f537fc` feat: update DailySummary component with new weight display and translations; add EnergyGauges component for enhanced calorie tracking;
+
+## 0.21.7
+
+- `2b7f42a` feat: update estimated weight display in DailySummary component and add new translation for today's weight; bump app version to 0.21.7
+
+## 0.21.6
+
+- `6f8619b` feat: update app version to 0.21.6, modify DailySummary component for better mobile display, and adjust i18n tests
+
+## 0.21.5
+
+- `561feda` feat: update app version to 0.21.5 and remove unused over macro display in DailySummary component
+
+## 0.21.3
+
+- `ac6a91b` feat: enhance DailySummary component with animation for energy ring and update app version to 0.21.3
+
+## 0.21.2
+
+- `cfe7abf` feat: update changelog for version 0.21.0, add new entries for recent features, and update app version to 0.21.2
+
 ## 0.21.0
 
 - `4eec108` feat: update changelog for version 0.20.0, add new translation for percent of goal, and update app version to 0.21.0

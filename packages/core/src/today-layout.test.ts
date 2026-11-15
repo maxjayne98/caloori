@@ -15,6 +15,7 @@ test('missing or old layouts fall back to the default, keeping saved choices', (
     'greeting',
     'days',
     'summary',
+    'gauges',
     'meals',
     'activity',
   ]);
@@ -24,8 +25,8 @@ test('missing or old layouts fall back to the default, keeping saved choices', (
     { id: 'unknown' },
     { id: 'meals' },
   ]);
-  // Layouts saved before the greeting became a section get it back in first place.
-  assert.deepEqual(ids(saved), ['greeting', 'days', 'meals', 'summary', 'activity']);
+  // Sections added later (greeting, gauges) slot in at their default position.
+  assert.deepEqual(ids(saved), ['greeting', 'days', 'meals', 'gauges', 'summary', 'activity']);
   assert.equal(saved.find((s) => s.id === 'summary')?.hidden, true);
 });
 
@@ -34,8 +35,9 @@ test('moving and hiding sections', () => {
   assert.deepEqual(ids(moveTodaySection(layout, 'meals', -1)), [
     'greeting',
     'days',
-    'meals',
     'summary',
+    'meals',
+    'gauges',
     'activity',
   ]);
   assert.deepEqual(ids(moveTodaySection(layout, 'greeting', -1)), ids(layout));

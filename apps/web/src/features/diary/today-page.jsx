@@ -1,4 +1,5 @@
 'use client';
+import { EnergyGauges } from '@/features/diary/energy-gauges';
 
 import { useEffect, useState } from 'react';
 import { useNourishData } from '@/providers/data-provider';
@@ -221,6 +222,20 @@ export function TodayPage({
           onScore={onDayScore}
         />
       </>
+    ),
+    // Optional visual card; can be hidden or moved from the Today layout editor.
+    gauges: (
+      <EnergyGauges
+        tot={tot}
+        profile={profile}
+        weight={weight}
+        day={day}
+        entries={entries}
+        activities={activities}
+        weights={weights}
+        hasFood={list.length > 0}
+        onScore={onDayScore}
+      />
     ),
     meals: (
       <>

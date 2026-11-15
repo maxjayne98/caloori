@@ -20,5 +20,6 @@ export * from './weight-change';
 export * from './assistant';
 export * from './weekly-report';
 export * from './food-ranking';
+export * from './energy-gauges';
 export * from './version';
 export * from './i18n';
