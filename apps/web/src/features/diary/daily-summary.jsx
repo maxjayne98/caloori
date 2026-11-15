@@ -258,13 +258,11 @@ export function DailySummary({
       }}
     >
       <Scale size={12} aria-hidden="true" />
-      {t('summary.estimatedWeightChange', {
-        // Shown per week: -0.8 kg/week reads better than -0.11 kg/day.
-        change: new Intl.NumberFormat(locale, {
-          signDisplay: 'always',
-          minimumFractionDigits: 1,
-          maximumFractionDigits: 1,
-        }).format(weeklyKg),
+      {t('summary.estimatedWeightToday', {
+        // Today's effect in grams (rounded to 10 g); the sheet shows the weekly pace.
+        change: new Intl.NumberFormat(locale, { signDisplay: 'always' }).format(
+          Math.round((weightChange.changeKg * 1000) / 10) * 10,
+        ),
       })}
     </Button>
   );
