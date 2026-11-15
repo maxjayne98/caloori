@@ -4,7 +4,7 @@ import { CircleCheck, Scale, TrendingDown, TrendingUp } from 'lucide-react';
 import { ChubbyCat } from '@/components/chubby-cat';
 import { SkinnyCat } from '@/components/skinny-cat';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import {
   balanceStatus,
   roundToHalf,
@@ -302,24 +302,60 @@ export function DailySummary({
 }
 
 /** "Daily energy" title, day score and balance tag, shared by Daily energy and Energy gauges. */
-export function DayEnergyHeader({ tot, onScore, label }) {
+/** Seven-day score line drawn beside the day score; gaps (empty days) are skipped. */
+function ScoreSparkline({ trend, color }) {
+  // Scaled to the week's own range (at least 20 points) so small day-to-day changes stay visible.
+  const known = trend.filter((score) => score != null);
+  const mid = (Math.min(...known) + Math.max(...known)) / 2;
+  const span = Math.max(20, Math.max(...known) - Math.min(...known));
+  const points = trend
+    .map((score, i) =>
+      score == null
+        ? null
+        : [2 + (i * 32) / (trend.length - 1 || 1), 7 - ((score - mid) / span) * 10],
+    )
+    .filter(Boolean);
+  if (points.length < 2) return null;
+  const last = points[points.length - 1];
+  return (
+    <svg width="36" height="14" viewBox="0 0 36 14" aria-hidden="true" className="shrink-0">
+      <polyline
+        points={points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.75"
+      />
+      <circle cx={last[0]} cy={last[1]} r="2" fill={color} />
+    </svg>
+  );
+}
+
+/** "Daily energy" title, day score with its 7-day trend, and balance tag; shared by both cards. */
+export function DayEnergyHeader({ tot, onScore, label, trend = null }) {
   const { t } = useI18n();
+  const score = tot.dayScore;
+  const color = score ? `var(--grade-${score.grade.toLowerCase()})` : 'currentColor';
   return (
     <div className="card-top">
       <span className="inline-flex items-center gap-2">
         {t('summary.dailyEnergy')}
-        {tot.dayScore && (
+        {score && (
           <Button
             variant="unstyled"
-            className="grid"
+            className="inline-flex items-center gap-1.5 rounded-full"
             onClick={onScore}
             aria-label={t('insights.dayTitle')}
+            // Inline: the global button reset (unlayered) would otherwise clear these.
+            style={{
+              padding: '0 8px 0 0',
+              background: `color-mix(in srgb, ${color} 8%, transparent)`,
+            }}
           >
-            <GradeMark
-              {...tot.dayScore}
-              size="md"
-              label={t('score.day', { score: tot.dayScore.score })}
-            />
+            <GradeMark {...score} size="md" label={t('score.day', { score: score.score })} />
+            {trend && <ScoreSparkline trend={trend} color={color} />}
           </Button>
         )}
       </span>
@@ -343,18 +379,25 @@ export function useDayEnergy({ tot, profile, weight, day, entries, activities, w
     low: t('summary.balanceLow'),
     reached: t('summary.balanceReached'),
   }[status];
-  const adaptiveBaselineKcal = hasFood
-    ? estimateAdaptiveBaselineKcal({ entries, activities, weights, profile, throughDate: day })
-    : null;
-  const weightChange =
-    hasFood &&
-    estimateDailyWeightChange({
+  // Memoized: the estimate walks the whole history, and the gauges card re-renders every frame
+  // while it animates. It only needs recomputing when the data itself changes.
+  const weightChange = useMemo(() => {
+    if (!hasFood) return null;
+    const adaptiveBaselineKcal = estimateAdaptiveBaselineKcal({
+      entries,
+      activities,
+      weights,
+      profile,
+      throughDate: day,
+    });
+    return estimateDailyWeightChange({
       profile,
       intake: tot.cal,
       weight,
       activities: activities[day] ?? [],
       adaptiveBaselineKcal,
     });
+  }, [hasFood, entries, activities, weights, profile, day, tot.cal, weight]);
   return { status, label, weightChange };
 }
 
@@ -378,28 +421,27 @@ export function WeightEstimate({ weightChange, weight, profile, tot, variant = '
       variant="unstyled"
       onClick={() => setShowWeightInfo(true)}
       aria-label={t('summary.weightInfoTitle')}
-      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full tabular-nums active:scale-95"
+      // Compact on every screen: it sits in the dial's opening, under the numbers.
+      className="inline-flex h-[22px] items-center gap-1 whitespace-nowrap rounded-full ps-[2px] pe-[7px] tabular-nums active:scale-95"
       // Inline: the global button reset (unlayered) would otherwise clear these.
       style={{
-        height: 30,
-        padding: '0 11px 0 4px',
         background: 'var(--surface)',
         border: '1px solid color-mix(in srgb, var(--foreground) 8%, transparent)',
         boxShadow: '0 4px 12px color-mix(in srgb, var(--foreground) 7%, transparent)',
       }}
     >
       <span
-        className="grid size-[22px] place-items-center rounded-full"
+        className="grid size-[17px] place-items-center rounded-full"
         style={{ color: 'var(--surface)', background: toneColor }}
         aria-hidden="true"
       >
-        <Trend size={13} strokeWidth={2.5} />
+        <Trend className="size-[10px]" strokeWidth={2.75} />
       </span>
-      <span className="text-[13px] font-bold" style={{ color: 'var(--foreground)' }}>
+      <span className="text-[11px] font-bold" style={{ color: 'var(--foreground)' }}>
         {new Intl.NumberFormat(locale, { signDisplay: 'always' }).format(grams)}
-        <span className="ms-px text-[10px] font-semibold">g</span>
+        <span className="ms-px text-[9px] font-semibold">g</span>
       </span>
-      <span className="text-[10px]" style={{ color: 'var(--neutral-85858b)' }}>
+      <span className="text-[9px]" style={{ color: 'var(--neutral-85858b)' }}>
         {t('summary.today')}
       </span>
     </Button>

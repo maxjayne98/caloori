@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useRef, useState } from 'react';
 import { macroSegments, macroTargetBand } from '@nourish/core';
 import { DayEnergyHeader, useDayEnergy, WeightEstimate } from '@/features/diary/daily-summary';
 import { useI18n } from '@/providers/i18n-provider';
@@ -23,6 +24,39 @@ function arc(cx: number, cy: number, r: number, a0: number, a1: number) {
   const [x0, y0] = point(a0);
   const [x1, y1] = point(a1);
   return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+}
+
+/**
+ * Totals that move smoothly to their new values: from zero on first open (the card fills up),
+ * then from the old to the new numbers when food is added or removed. Reduced motion jumps.
+ */
+function useAnimatedTotals(target: Totals): Totals {
+  const [shown, setShown] = useState<Totals>({ cal: 0, p: 0, c: 0, f: 0 });
+  const from = useRef(shown);
+  from.current = shown;
+  const { cal, p, c, f } = target;
+  useEffect(() => {
+    const goal = { cal: cal || 0, p: p || 0, c: c || 0, f: f || 0 };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(goal);
+      return;
+    }
+    const start = performance.now();
+    const begin = from.current;
+    const duration = 750;
+    let frame = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // Ease-out quart: quick start, and the last stretch settles without crawling.
+      const eased = 1 - Math.pow(1 - t, 4);
+      const mix = (key: keyof Totals) => begin[key] + (goal[key] - begin[key]) * eased;
+      setShown({ cal: mix('cal'), p: mix('p'), c: mix('c'), f: mix('f') });
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [cal, p, c, f]);
+  return shown;
 }
 
 /**
@@ -152,11 +186,26 @@ export function EnergyGauges({
     weights,
     hasFood,
   });
+  const shown = useAnimatedTotals(tot);
   const goal = Number(profile.cal) || 0;
   if (!goal) return null;
   // The dial is built from the macros: each segment is colored by where its calories came from.
-  const { segments, overKcal } = macroSegments(tot, goal, SEGMENTS);
-  const left = Math.round(goal - tot.cal);
+  const { segments, overKcal } = macroSegments(shown, goal, SEGMENTS);
+  const left = Math.round(goal - shown.cal);
+  // Draw order: empty track, then the segment being filled, then the filled ones. Each round cap
+  // overlaps its neighbor, so whatever is drawn later must be the part that should look rounded.
+  const layer = ({ macro, i }: { macro: string | null; i: number }) =>
+    macro ? 2 : i === segments.indexOf(null) ? 1 : 0;
+  // The next segment's share of fill (0–1) and the color it will take (the last macro so far).
+  const exact = Math.min((shown.cal / goal) * SEGMENTS, SEGMENTS);
+  const lastMacro = [...segments].reverse().find(Boolean);
+  const partial = {
+    index: segments.indexOf(null),
+    // A segment counts as filled once the total passes its middle, so the open one runs from
+    // half a segment below that point (0) up to it (1).
+    amount: Math.min(1, Math.max(0, exact - segments.indexOf(null) + 0.5)),
+    color: lastMacro ? MACRO_COLOR[lastMacro] : 'var(--accent-soft)',
+  };
   const number = (value: number) => Math.round(value).toLocaleString(locale);
   const sweep = 260;
   const start = 140;
@@ -184,7 +233,7 @@ export function EnergyGauges({
       <div className="flex items-center justify-between gap-2">
         <div className="grid shrink-0 gap-1">
           {MACROS.map(({ key, label, color }) => {
-            const value = tot[key] || 0;
+            const value = shown[key] || 0;
             return (
               <MacroGauge
                 key={key}
@@ -211,7 +260,7 @@ export function EnergyGauges({
               filled segments on top: the filled run then ends in a rounded tip, not a dent. */}
             {segments
               .map((macro, i) => ({ macro, i }))
-              .sort((a, b) => Number(!!a.macro) - Number(!!b.macro))
+              .sort((a, b) => layer(a) - layer(b))
               .map(({ macro, i }) => (
                 <path
                   key={i}
@@ -219,7 +268,16 @@ export function EnergyGauges({
                   fill="none"
                   strokeWidth={13}
                   strokeLinecap="round"
-                  stroke={macro ? MACRO_COLOR[macro] : 'var(--accent-soft)'}
+                  stroke={
+                    macro
+                      ? MACRO_COLOR[macro]
+                      : i === partial.index
+                        ? partial.color
+                        : 'var(--accent-soft)'
+                  }
+                  // The segment being filled fades in with its fraction, so the dial grows smoothly
+                  // instead of jumping a whole segment at a time.
+                  opacity={!macro && i === partial.index ? partial.amount : 1}
                 />
               ))}
             <text
@@ -259,7 +317,7 @@ export function EnergyGauges({
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
               <tspan fontSize="12" fontWeight="700" style={{ fill: 'var(--foreground)' }}>
-                {number(tot.cal)}
+                {number(shown.cal)}
               </tspan>
               <tspan fontSize="10" style={{ fill: 'var(--neutral-85858b)' }}>
                 {' '}
